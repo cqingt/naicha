@@ -1,0 +1,26 @@
+<?php $__env->startSection('title','商品列表'); ?>
+
+<?php $__env->startSection('body'); ?>
+    <blockquote class="layui-elem-quote layui-text">
+        商品列表
+        <?php /*<a href="<?php echo e(url('admin/shops/create')); ?>"class="layui-btn" style="margin-left: 30px;">添加</a>*/ ?>
+    </blockquote>
+
+    <table id="goods_table" lay-filter="goods_table"></table>
+    <script type="text/html" id="bartools">
+        {{#  if(d.deleted_at){ }}
+        <button class="layui-btn layui-btn-xs" lay-event="online"><i class="layui-icon">&#xe642;</i>  上架 </button>
+        {{# } else { }}
+        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="offline"><i class="layui-icon">&#xe642;</i>  下架 </button>
+        {{#  } }}
+
+        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</button>
+
+        <?php /*<a class="layui-btn layui-btn-xs" lay-event="lock">锁定</a>*/ ?>
+
+    </script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('scripts'); ?>
+    <script src="<?php echo e(asset('assets/admin/js/modules/goods.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

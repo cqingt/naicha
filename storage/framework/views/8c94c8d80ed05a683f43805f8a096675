@@ -1,0 +1,59 @@
+<?php $__env->startSection('title','PinYer-Admin'); ?>
+<?php $__env->startSection('styles'); ?>
+    <style>
+        .layui-tab-title li:first-child > i {
+            display: none;
+        }
+    </style>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('body'); ?>
+    <div class="layui-header">
+        <div class="layui-logo">Admin后台管理</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <?php echo $__env->make('admin.layouts._header', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="left-menu">
+                <?php echo $__env->make('admin.layouts._sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <div class="layui-tab" lay-allowClose="true" lay-filter="tab-switch">
+            <ul class="layui-tab-title">
+                <li class="layui-this" >后台首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+
+                    <blockquote class="layui-elem-quote layui-text">
+                        服务器环境
+                    </blockquote>
+
+                    <?php foreach($envs as $env): ?>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><?php echo e($env['name']); ?></label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" required  lay-verify="required"  class="layui-input" value="<?php echo e($env['value']); ?>">
+                        </div>
+                    </div>
+                        <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        <?php echo $__env->make('admin.layouts._footer', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+    </div>
+    <?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('scripts'); ?>
+    <script src="<?php echo e(asset('assets/admin/js/modules/index.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

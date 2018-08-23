@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+    <title><?php echo $__env->yieldContent('title','Laravel-admin'); ?></title>
+    <link rel="stylesheet" href="<?php echo e(asset('assets/admin/layui/css/layui.css')); ?>">
+    <?php echo $__env->yieldContent('styles'); ?>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!-- 内容主体区域 -->
+    <?php echo $__env->yieldContent('body'); ?>
+
+</div>
+<script src="<?php echo e(asset('assets/admin/layui/layui.js')); ?>"></script>
+
+<?php echo $__env->yieldContent('scripts'); ?>
+</body>
+</html>
