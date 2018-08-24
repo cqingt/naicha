@@ -11,16 +11,16 @@ abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function success()
+    public function success($data = [])
     {
-        $result = ['code' => 1, 'msg' => '操作成功'];
+        $result = ['code' => 1, 'msg' => '操作成功', 'data' => $data];
 
         return response()->json($result);
     }
 
-    public function error()
+    public function error($msg = '')
     {
-        $result = ['code' => 0, 'msg' => '操作失败'];
+        $result = ['code' => 0, 'msg' => $msg ? : '操作失败'];
 
         return response()->json($result);
     }

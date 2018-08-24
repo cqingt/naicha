@@ -40,10 +40,13 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     Route::get('/members/list','MembersController@list');
     Route::resource('members','MembersController');
 
-    Route::get('/goods/list','GoodsController@list');
+    Route::get('/orders/list','OrdersController@list');
     Route::resource('orders','OrdersController');
 
+    Route::get('/coupons/list','CouponsController@list');
     Route::resource('coupons','CouponsController');
+
+    Route::get('/pushes/list','PushesController@list');
     Route::resource('pushes','PushesController');
 
     Route::get('/goods/list','GoodsController@list');
@@ -51,6 +54,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 
     Route::get('/shops/list','ShopsController@list');
     Route::resource('shops','ShopsController');
+
+    Route::post('/upload/image','UploadController@image');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

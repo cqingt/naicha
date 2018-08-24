@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
-
+use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -38,11 +38,23 @@ class ShopsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,[
+        $validator = Validator::make($request->all(), [
             'name'  => 'required|min:2|max:25|unique:shops,name',
             'address' =>  'required',
             'contact'  =>  'required'
+        ], [
+            'name.min' => '店铺名称最少2个字符',
+            'name.max' => '店铺名称不能多于25个字符',
+            'name.unique' => '店铺名不能重复',
+            'address.required' => '地址不能为空',
+            'contact.required' => '联系方式不能为空',
         ]);
+
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
+
+            return $this->error($error);
+        }
 
         $maxId = Shop::max('id');
         $maxId = $maxId ? 10001 + $maxId : 10001;
@@ -117,10 +129,19 @@ class ShopsController extends Controller
         $shop = Shop::find($id);
         $data = $request->all();
 
-        $this->validate($request,[
+        $validator = Validator::make($request->all(), [
             'address'  => 'required',
             'contact' =>  'required'
+        ], [
+            'address.required' => '地址不能为空',
+            'contact.required' => '联系方式不能为空',
         ]);
+
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
+
+            return $this->error($error);
+        }
 
         if ($shop->update($data)) {
             return $this->success();

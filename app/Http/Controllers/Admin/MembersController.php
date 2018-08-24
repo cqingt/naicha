@@ -81,7 +81,7 @@ class MembersController extends Controller
             'code'  =>  0,
             'msg'   =>  '',
             'count' => $data->total(),
-            'data'  => $items,
+            'data'  => $items
         ];
         return response()->json($result);
     }
