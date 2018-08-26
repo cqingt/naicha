@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     Route::resource('orders','OrdersController');
 
     Route::get('/coupons/list','CouponsController@list');
+    Route::post('/coupons/{id}/grant','CouponsController@grant');
     Route::resource('coupons','CouponsController');
 
     Route::get('/pushes/list','PushesController@list');

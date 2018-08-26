@@ -8,7 +8,7 @@ class Push extends Model
 {
     protected $table = 'pushes';
 
-    protected $fillable = ['title', 'image', 'shop_id', 'position', 'position'];
+    protected $fillable = ['title', 'image', 'shop_id', 'position'];
 
     public function shop()
     {
