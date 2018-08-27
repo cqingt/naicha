@@ -1,8 +1,8 @@
 <li class="layui-nav-item layui-nav-itemed">
     <a class="" href="javascript:;"><i class="layui-icon" style="margin-right: 5px">&#xe620;</i>系统管理</a>
     <dl class="layui-nav-child">
-        <dd id="S001" name="{{ url('admin/config/create') }}" class="layui-this"><a href="javascript:;">网站配置</a></dd>
-        <dd id="S0001" name="{{ url('admin/data/statistics') }}"><a href="javascript:;">数据统计</a></dd>
+        {{--<dd id="S001" name="{{ url('admin/config/create') }}" class="layui-this"><a href="javascript:;">网站配置</a></dd>--}}
+        <dd id="S0001" name="{{ url('admin/data/index') }}"><a href="javascript:;">数据统计</a></dd>
     </dl>
 </li>
 

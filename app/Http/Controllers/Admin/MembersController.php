@@ -60,8 +60,20 @@ class MembersController extends Controller
     public function list(Request $request)
     {
         $perPage = $request->get('limit'); // 每页数量由首页控制
+        $username = $request->get('username');
+        $telephone = $request->get('telephone');
 
-        $data = Member::orderBy('id', 'desc')->paginate($perPage);
+        $query = Member::query();
+
+        if ($telephone) {
+            $query->where('telephone', 'like', $telephone . '%');
+        }
+
+        if ($username) {
+            $query->where('username', 'like', "%{$username}%");
+        }
+
+        $data = $query->orderBy('id', 'desc')->paginate($perPage);
 
         $items = $data->items();
 

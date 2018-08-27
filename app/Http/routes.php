@@ -57,6 +57,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     Route::resource('shops','ShopsController');
 
     Route::post('/upload/image','UploadController@image');
+    Route::get('/data/index','DataController@index'); // 数据统计
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

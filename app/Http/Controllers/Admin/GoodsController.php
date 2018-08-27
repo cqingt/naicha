@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Models\Category;
 use App\Http\Models\Goods;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,8 @@ class GoodsController extends Controller
      */
     public function index()
     {
-        return view('admin.goods.index');
+        $categories = Category::all();
+        return view('admin.goods.index', compact('categories'));
     }
 
     /**
@@ -55,8 +57,20 @@ class GoodsController extends Controller
     public function list(Request $request)
     {
         $perPage = $request->get('limit'); // 每页数量由首页控制
+        $categoryId = $request->get('category_id');
+        $name = $request->get('name');
 
-        $data = Goods::withTrashed()->orderBy('id', 'desc')->paginate($perPage);
+        $query = Goods::withTrashed();
+
+        if ($categoryId) {
+            $query->where('category_id', '=', $categoryId);
+        }
+
+        if ($name) {
+            $query->where('name', 'like', "%{$name}%");
+        }
+
+        $data = $query->orderBy('id', 'desc')->paginate($perPage);
         $items = $data->items();
 
         foreach ($items as &$item) {

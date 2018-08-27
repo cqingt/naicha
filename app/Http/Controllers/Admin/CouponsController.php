@@ -45,12 +45,12 @@ class CouponsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'      => 'required',
-            'start_time' => 'required',
-            'stop_time'  => 'required',
+            'start_time' => 'required|date',
+            'stop_time'  => 'required|date',
             'shop_id'    => 'integer',
-            'match_price'   => 'required',
-            'reduced_price' => 'required',
-            'amount'        => 'integer'
+            'match_price'   => 'required|numeric',
+            'reduced_price' => 'required|numeric',
+            'amount'        => 'integer|numeric'
         ], [
             'title.required' => '优惠券标题不能为空',
             'start_time.required' => '有效期开始时间不能为空',
@@ -156,12 +156,12 @@ class CouponsController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title'         => 'required',
-            'start_time'    => 'required',
-            'stop_time'     => 'required',
-            'shop_id'       => 'integer',
-            'match_price'   => 'required',
-            'reduced_price' => 'required',
-            'amount'        => 'integer'
+            'start_time' => 'required|date',
+            'stop_time'  => 'required|date',
+            'shop_id'    => 'integer',
+            'match_price'   => 'required|numeric',
+            'reduced_price' => 'required|numeric',
+            'amount'        => 'integer|numeric'
         ], [
             'title.required' => '优惠券标题不能为空',
             'start_time.required' => '有效期开始时间不能为空',
@@ -191,12 +191,6 @@ class CouponsController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         if (Coupon::find($id)->delete()) {
@@ -222,13 +216,13 @@ class CouponsController extends Controller
             if ($coupon->amount > 0) {
                 if ($time == $coupon->amount) {
                     break;
-                } else {
-                    MemberCoupon::create([
-                        'coupon_id' => $coupon->id,
-                        'member_id' => $member->id,
-                    ]);
                 }
             }
+
+            MemberCoupon::create([
+                'coupon_id' => $coupon->id,
+                'member_id' => $member->id,
+            ]);
 
             $time ++;
         }

@@ -7,6 +7,35 @@
         {{--<a href="{{ url('admin/shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
     </blockquote>
 
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item demoTable">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">商品分类</label>
+                <div class="layui-input-inline">
+                    <select name="category_id" lay-search="" id="category_id">
+                        <option value="">直接选择或搜索选择</option>
+                        @foreach($categories as $category)
+                            <option value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">商品名称</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" name="name" id="goods_name" autocomplete="off" value="">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <button class="layui-btn" data-type="reload">搜索</button>
+                <button class="layui-btn" data-type="reset">清空</button>
+            </div>
+        </div>
+    </div>
+
     <table id="goods_table" lay-filter="goods_table"></table>
     <script type="text/html" id="bartools">
         @{{#  if(d.deleted_at){ }}

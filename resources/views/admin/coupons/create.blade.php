@@ -32,7 +32,7 @@
                 <div class="layui-form-item">
             <label class="layui-form-label">优惠券条件</label>
             <div class="layui-input-block">
-                <span>满</span> <input type="text" name="match_price" autocomplete="off" placeholder="" class="layui-input" style="display: inline-block !important;width: 80px;">
+                <span>满</span> <input type="text" name="match_price" autocomplete="off" value="0" class="layui-input" style="display: inline-block !important;width: 80px;">
                 <span>元，减</span> <input type="text" name="reduced_price" lay-verify="required" autocomplete="off" class="layui-input" style="display: inline-block !important;width: 80px;">
                 <span>元</span>
             </div>
@@ -49,14 +49,14 @@
         <div class="layui-form-item">
             <label class="layui-form-label">开始时间</label>
             <div class="layui-input-inline">
-                <input type="text" name="start_time" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" >
+                <input type="text" name="start_time" lay-verify="required" id="start_time" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off" class="layui-input" >
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">结束时间</label>
             <div class="layui-input-inline">
-                <input type="text" name="stop_time" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" >
+                <input type="text" name="stop_time" lay-verify="required" id="stop_time" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off" class="layui-input" >
             </div>
         </div>
 
