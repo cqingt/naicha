@@ -1,7 +1,8 @@
-layui.use(['table','form','jquery'], function(){
+layui.use(['table','form','jquery','laydate'], function(){
     var table = layui.table
         ,form = layui.form
-        ,$ = layui.jquery;
+        ,$ = layui.jquery
+        ,laydate = layui.laydate;
 
     var _mod = 'orders';
 
@@ -23,6 +24,7 @@ layui.use(['table','form','jquery'], function(){
             ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
             ,{title: '操作', width:120, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]]
+        ,id: 'testReload'
     });
 
     table.on('tool(orders_table)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -61,5 +63,57 @@ layui.use(['table','form','jquery'], function(){
             //do something
             location.href= '/admin/' + _mod + '/'+obj.data.id;
         }
+    });
+
+    var $ = layui.$, active = {
+        reload: function(){
+            //执行重载
+            table.reload('testReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    order_sn: $('#order_sn').val(),
+                    shop_id: $('#shop_id').val(),
+                    status:  $('#status').val(),
+                    start_time: $('#start_time').val(),
+                    stop_time: $('#stop_time').val(),
+                    pay_type: $('#pay_type').val()
+                }
+            });
+        },
+        reset: function () {
+            $('#order_sn, #shop_id,#status,#start_time,#stop_time').val('');
+
+            //执行重载
+            table.reload('testReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    order_sn: '',
+                    shop_id: '',
+                    status: '',
+                    start_time: '',
+                    stop_time: '',
+                    pay_type: ''
+                }
+            });
+        }
+    };
+
+    $('.demoTable .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
+    laydate.render({
+        elem: '#start_time'
+        , type: 'datetime'
+    });
+
+    laydate.render({
+        elem: '#stop_time'
+        , type: 'datetime'
     });
 });

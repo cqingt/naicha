@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Models\Order;
+use App\Http\Models\Shop;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -17,7 +18,8 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        return view('admin.orders.index');
+        $shops = Shop::all();
+        return view('admin.orders.index', compact('shops'));
     }
 
     /**
@@ -72,8 +74,23 @@ class OrdersController extends Controller
     public function list(Request $request)
     {
         $perPage = $request->get('limit'); // 每页数量由首页控制
+        $orderSn = $request->get('order_sn');
+        $shopId = $request->get('shop_id');
+        $status = $request->get('status');
+        $payType = $request->get('pay_type');
+        $startTime = $request->get('start_time');
+        $stopTime = $request->get('stop_time');
 
-        $data = Order::orderBy('id', 'desc')->paginate($perPage);
+        $orm = Order::query();
+
+        $shopId && $orm->where('shop_id', '=', $shopId);
+        $orderSn && $orm->where('order_sn', 'like', "{$orderSn}%");
+        is_numeric($status) && $orm->where('status', '=', $status);
+        is_numeric($payType) && $orm->where('pay_type', '=', $payType);
+        $startTime && $orm->where('created_at', '>=', $startTime);
+        $stopTime && $orm->where('created_at', '<=', $stopTime);
+
+        $data = $orm->orderBy('id', 'desc')->paginate($perPage);
 
         $items = $data->items();
 
