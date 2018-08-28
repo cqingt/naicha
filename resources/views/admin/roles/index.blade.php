@@ -13,6 +13,6 @@
     </script>
 @endsection
 @section('scripts')
-    <script src="{{ asset('assets/admin/roles.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/modules/roles.js') }}"></script>
 @endsection
 

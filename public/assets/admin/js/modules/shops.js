@@ -4,7 +4,7 @@ layui.use(['table','form','jquery'], function(){
         ,$ = layui.jquery;
 
     var _mod = 'shops';
-    //第一个实例
+
     table.render({
         elem: '#shops_table'
         ,url: '/admin/' + _mod + '/list' //数据接口
@@ -12,17 +12,18 @@ layui.use(['table','form','jquery'], function(){
         ,cellMinWidth: 80
         ,page: true //开启分页
         ,cols: [[ //表头
-            {fixed: 'left',checkbox : true}
-            ,{field: 'id', title: 'ID', width:50, align:'center'}
-            ,{field: 'name', title: '店铺名称', align:'center'}
-            ,{field: 'flag', title: '店铺标识', align:'center'}
-            ,{field: 'address', title: '地址', align:'center'}
-            ,{field: 'contact', title: '联系方式', align:'center'}
-            ,{field: 'created_at', title: '创建时间',align:'center'}
-            ,{field: 'updated_at', title: '更新时间',align:'center'}
-            ,{title: '操作', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
+            // {fixed: 'left',checkbox : true}
+            {field: 'id', title: 'ID', width:'5%', align:'center'}
+            ,{field: 'name', title: '店铺名称', align:'center', width:'15%'}
+            ,{field: 'flag', title: '店铺标识', align:'center', width:'10%'}
+            ,{field: 'address', title: '地址', align:'center', width:'20%'}
+            ,{field: 'contact', title: '联系方式', align:'center', width:'10%'}
+            ,{field: 'created_at', title: '创建时间',align:'center', width:'12%'}
+            ,{field: 'updated_at', title: '更新时间',align:'center', width:'12%'}
+            ,{field: 'operator', title: '操作', align:'center', toolbar: '#bartools', width:'16%'} //这里的toolbar值是模板元素的选择器
         ]]
     });
+
     //监听工具条
     table.on('tool(shops_table)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
         var data = obj.data; //获得当前行数据

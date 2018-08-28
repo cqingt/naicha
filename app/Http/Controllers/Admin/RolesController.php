@@ -16,8 +16,8 @@ class RolesController extends Controller
 
     public function roles(Role $roles,Request $request)
     {
-        $count=$roles->count();
-        $data=getRoleOrPermissionApi($request,$roles);
+        $count = $roles->count();
+        $data = getRoleOrPermissionApi($request,$roles);
 
         return [
             'code'  =>  0,
@@ -29,7 +29,7 @@ class RolesController extends Controller
 
     public function create(Role $roles)
     {
-        $permissions=Permission::all()->pluck('name')->toArray();
+        $permissions = Permission::all()->pluck('name')->toArray();
         return view('admin.roles.create_and_edit',compact('roles','permissions'));
     }
 

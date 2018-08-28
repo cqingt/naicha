@@ -13,16 +13,16 @@ layui.use(['table','form','jquery','laydate'], function(){
         ,page: true //开启分页
         ,cols: [[ //表头
             // {fixed: 'left',checkbox : true}
-            {field: 'id', title: 'ID', width:50, align:'center'}
-            ,{field: 'order_sn', title: '订单号', width:180, align:'center'}
-            ,{field: 'member_name', title: '会员姓名', align:'center',width:150}
-            ,{field: 'shop_name', title: '归属店铺', align:'center',width:150}
-            ,{field: 'status', title: '订单状态', align:'center',width:120}
-            ,{field: 'price', title: '支付价格', align:'center',width:100}
-            ,{field: 'pay_type', title: '支付方式', align:'center',width:150}
-            ,{field: 'payed_at', title: '支付时间', align:'center',width:190}
-            ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{title: '操作', width:120, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
+            {field: 'id', title: 'ID', width: '5%', align:'center'}
+            ,{field: 'order_sn', title: '订单号', width:'12%', align:'center'}
+            ,{field: 'member_name', title: '会员姓名', align:'center',width:'12%'}
+            ,{field: 'shop_name', title: '归属店铺', align:'center',width:'10%'}
+            ,{field: 'status', title: '订单状态', align:'center',width:'8%'}
+            ,{field: 'price', title: '支付价格', align:'center',width:'8%'}
+            ,{field: 'pay_type', title: '支付方式', align:'center',width:'9%'}
+            ,{field: 'payed_at', title: '支付时间', align:'center',width:'12%'}
+            ,{field: 'created_at', title: '创建时间',align:'center', width: '12%'}
+            ,{title: '操作', width:'12%', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]]
         ,id: 'testReload'
     });

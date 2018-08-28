@@ -1,5 +1,5 @@
 <ul class="layui-nav layui-layout-left">
-    <li class="layui-nav-item"><a href="">控制台</a></li>
+    <li class="layui-nav-item"><a href="{{url('admin/dashboard')}}">控制台</a></li>
     {{--<li class="layui-nav-item">
         <a href="javascript:;">下拉菜单</a>
         <dl class="layui-nav-child">
@@ -15,9 +15,6 @@
             <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
             {{ Auth::user()->name }}
         </a>
-        <dl class="layui-nav-child">
-            <dd><a href="">修改密码</a></dd>
-        </dl>
     </li>
     <li class="layui-nav-item">
         <a href="{{ url('auth/logout') }}"

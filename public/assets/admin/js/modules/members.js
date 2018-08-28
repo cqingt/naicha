@@ -12,15 +12,15 @@ layui.use(['table','form','jquery'], function(){
         ,page: true //开启分页
         ,cols: [[ //表头
             // {fixed: 'left',checkbox : true}
-            {field: 'id', title: 'ID', align:'center', width:80}
-            ,{field: 'username', title: '用户名称', align:'center',width:150}
-            ,{field: 'shop_name', title: '归属店铺', align:'center',width:150}
-            ,{field: 'telephone', title: '手机号', align:'center',width:150}
-            ,{field: 'avatar', title: '头像', align:'center',width:150, templet:'#imgTpl'}
-            ,{field: 'age', title: '年龄', align:'center',width:190}
-            ,{field: 'gender', title: '性别', align:'center',width:130}
-            ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
+            {field: 'id', title: 'ID', align:'center', width:'5%'}
+            ,{field: 'username', title: '用户名称', align:'center',width:'20%'}
+            ,{field: 'shop_name', title: '注册店铺', align:'center',width:'15%'}
+            ,{field: 'telephone', title: '手机号', align:'center',width:'10%'}
+            ,{field: 'avatar', title: '头像', align:'center',width:'12%', templet:'#imgTpl'}
+            ,{field: 'age', title: '年龄', align:'center',width:'7%'}
+            ,{field: 'gender', title: '性别', align:'center',width:'7%'}
+            ,{field: 'created_at', title: '创建时间',align:'center', width: '12%'}
+            ,{field: 'updated_at', title: '更新时间',align:'center', width: '12%'}
         ]]
         ,id: 'testReload'
     });

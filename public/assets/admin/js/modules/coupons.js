@@ -13,15 +13,15 @@ layui.use(['table','form','jquery', 'laydate'], function(){
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
-            {field: 'id', title: 'ID', width:50, align:'center'}
-            ,{field: 'shop_name', title: '所属店铺', align:'center',width:150}
-            ,{field: 'title', title: '优惠券标题', align:'center',width:200}
-            ,{field: 'amount', title: '发放数量', align:'center',width:90}
-            ,{field: 'start_time', title: '优惠券开始时间', align:'center',width:160}
-            ,{field: 'stop_time', title: '优惠券结束时间', align:'center',width:160}
-            ,{field: 'send_status', title: '发放状态', align:'center',width:100}
-            ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{title: '操作', width:220, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
+            {field: 'id', title: 'ID', width:'5%', align:'center'}
+            ,{field: 'shop_name', title: '所属店铺', align:'center',width:'10%'}
+            ,{field: 'title', title: '优惠券标题', align:'center',width:'20%'}
+            ,{field: 'amount', title: '发放数量', align:'center',width:'8%'}
+            ,{field: 'start_time', title: '优惠券开始时间', align:'center',width:'12%'}
+            ,{field: 'stop_time', title: '优惠券结束时间', align:'center',width:'12%'}
+            ,{field: 'send_status', title: '发放状态', align:'center',width:'8%'}
+            ,{field: 'created_at', title: '创建时间',align:'center', width: '12%'}
+            ,{title: '操作', width:'13%', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]]
     });
     //监听工具条

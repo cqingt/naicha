@@ -26,38 +26,57 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 
     Route::get('/dashboard', 'IndexController@index')->name('home');
 
-    Route::get('down','ConfigController@down');
-    Route::get('up','ConfigController@up');
+    // 重置密码
+    Route::get('/users/resetPwd', 'UsersController@resetPwd');
+    Route::post('/users/reset', 'UsersController@postReset');
+
+    // 用户管理
     Route::get('/users/index','UsersController@index');
-    Route::get('/users/create','UsersController@create');
+//    Route::get('/users/create','UsersController@create');
     Route::get('/users/show','UsersController@show');
+    Route::post('/users/store','UsersController@store');
+    Route::put('/users/update/{id}','UsersController@update');
+    Route::post('/users/{id}/edit','UsersController@edit');
+//    Route::get('/users','UsersController@index');
+    Route::resource('users','UsersController');
+
     //Route::resource('roles','RolesController');
     Route::get('/roles/index','RolesController@index');
     Route::get('/roles/create','RolesController@create');
+    Route::get('/roles/roles','RolesController@roles');
+    Route::resource('roles','RolesController');
+
     //Route::resource('permissions','PermissionController');
     Route::get('/permissions/index','PermissionController@index');
 
+    // 会员管理
     Route::get('/members/list','MembersController@list');
     Route::resource('members','MembersController');
 
+    // 订单列表
     Route::get('/orders/list','OrdersController@list');
     Route::resource('orders','OrdersController');
 
+    // 优惠券
     Route::get('/coupons/list','CouponsController@list');
     Route::post('/coupons/{id}/grant','CouponsController@grant');
     Route::resource('coupons','CouponsController');
 
+    // 推送列表
     Route::get('/pushes/list','PushesController@list');
     Route::resource('pushes','PushesController');
 
+    // 商品列表
     Route::get('/goods/list','GoodsController@list');
     Route::resource('goods','GoodsController');
 
+    // 店铺
     Route::get('/shops/list','ShopsController@list');
     Route::resource('shops','ShopsController');
 
+    // 数据统计
     Route::post('/upload/image','UploadController@image');
-    Route::get('/data/index','DataController@index'); // 数据统计
+    Route::get('/data/index','DataController@index');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

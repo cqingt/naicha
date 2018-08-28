@@ -35,6 +35,9 @@ layui.use(['table','form','jquery'], function(){
                 $.ajax({
                     type: 'DELETE',
                     dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     url: '/admin/users/'+obj.data.id,
                     success: function(data) {
                         if(data.code==1){
@@ -115,4 +118,34 @@ layui.use(['table','form','jquery'], function(){
         });
         return false;
     });
+
+    // 重置密码
+    form.on('submit(resets)', function (data) {
+
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: data.form.action,
+            data: data.field,
+            success: function(data) {
+                if(data.code==1){
+                    layer.alert(data.msg,{icon: 1}, function () {
+                        location.reload();
+                    });
+                }else{
+                    layer.alert(data.msg,{icon: 2});
+                }
+            },
+            error : function (msg) {
+                console.log('error');
+                var json=JSON.parse(msg.responseText);
+                $.each(json.errors,function(index,error){
+                    $.each(error,function(key,value){
+                        layer.alert(value,{icon: 2});
+                    });
+                });
+            }
+        });
+        return false;
+    })
 });

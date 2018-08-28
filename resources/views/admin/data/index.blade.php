@@ -53,8 +53,7 @@
                         <p class="layuiadmin-big-font">{{$order}}</p>
                         <p>
                             总计订单数
-                            <span class="layuiadmin-span-color">{{$orders}}单<i
-                                        class="layui-inline layui-icon layui-icon-face-smile-b"></i></span>
+                            <span class="layuiadmin-span-color">{{$orders}}单</span>
                         </p>
                     </div>
                 </div>
@@ -69,8 +68,7 @@
                     <div class="layui-card-body layuiadmin-card-list">
                         <p class="layuiadmin-big-font">{{$amount or '0.00'}}</p>
                         <p>总营业额
-                            <span class="layuiadmin-span-color">{{$amounts or '0.00'}}元 <i
-                                        class="layui-inline layui-icon layui-icon-dollar"></i></span>
+                            <span class="layuiadmin-span-color">{{$amounts or '0.00'}}元 </span>
                         </p>
                     </div>
                 </div>
@@ -84,8 +82,7 @@
 
                     <div class="layui-card-body layuiadmin-card-list">
                         <p class="layuiadmin-big-font">{{$member}}</p>
-                        <p>总计会员<span class="layuiadmin-span-color">{{$members}}个 <i
-                                        class="layui-inline layui-icon layui-icon-user"></i></span></p>
+                        <p>总计会员<span class="layuiadmin-span-color">{{$members}}个 </span></p>
                     </div>
                 </div>
             </div>
@@ -101,8 +98,7 @@
                         <p class="layuiadmin-big-font">{{$shop}}</p>
                         <p>
                             总计店铺数
-                            <span class="layuiadmin-span-color">{{$shops}}家 <i
-                                        class="layui-inline layui-icon layui-icon-flag"></i></span>
+                            <span class="layuiadmin-span-color">{{$shops}}家 </span>
                         </p>
                     </div>
                 </div>

@@ -5,7 +5,7 @@ layui.use(['table','element','form','jquery'], function(){
     //第一个实例
     table.render({
         elem: '#roles_table'
-        ,url: '/admin/api/roles' //数据接口
+        ,url: '/admin/roles/roles' //数据接口
         ,limit: 5
         ,page: true //开启分页
         ,cols: [[ //表头

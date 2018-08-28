@@ -12,14 +12,14 @@ layui.use(['table','form','jquery','upload'], function(){
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
-            {field: 'id', title: 'ID', width:50, align:'center'}
-            ,{field: 'shop_name', title: '推送店铺', align:'center',width:150}
-            ,{field: 'title', title: '标题', align:'center',width:150}
-            ,{field: 'position', title: '排序', align:'center',width:100}
-            ,{field: 'image', title: '展示图片', align:'center',width:190, templet:'#imgTpl'}
-            ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
-            ,{title: '操作', width:150, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
+            {field: 'id', title: 'ID', width:'5%', align:'center'}
+            ,{field: 'shop_name', title: '推送店铺', align:'center',width:'12%'}
+            ,{field: 'title', title: '标题', align:'center',width: '20%'}
+            ,{field: 'position', title: '排序', align:'center',width:'8%'}
+            ,{field: 'image', title: '展示图片', align:'center',width:'10%', templet:'#imgTpl'}
+            ,{field: 'created_at', title: '创建时间',align:'center', width: '15%'}
+            ,{field: 'updated_at', title: '更新时间',align:'center', width: '15%'}
+            ,{title: '操作', width:'15%', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]]
     });
     //监听工具条
