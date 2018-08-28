@@ -4,6 +4,10 @@
     <style>
         body{overflow-y: scroll;}
         .layui-body{overflow-y: scroll;}
+        .layui-table-cell{
+            height: auto!important;
+            white-space: normal;
+        }
     </style>
 @endsection
 @section('body')
@@ -27,7 +31,7 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" data-type="reload">搜索</button>
-                <button class="layui-btn" data-type="reset">清空</button>
+                <button class="layui-btn layui-btn-primary" data-type="reset">清空</button>
             </div>
         </div>
     </div>
@@ -36,9 +40,9 @@
     <script type="text/html" id="bartools">
         <button class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>  编辑</button>
         <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</button>
-
-        {{--<a class="layui-btn layui-btn-xs" lay-event="lock">锁定</a>--}}
-
+    </script>
+    <script type="text/html" id="imgTpl">
+        <img src="@{{ d.avatar }}">
     </script>
 @endsection
 @section('scripts')

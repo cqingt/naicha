@@ -62,7 +62,7 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" data-type="reload">搜索</button>
-                <button class="layui-btn" data-type="reset">清空</button>
+                <button class="layui-btn layui-btn-primary" data-type="reset">清空</button>
             </div>
         </div>
     </div>

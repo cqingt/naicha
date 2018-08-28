@@ -15,14 +15,15 @@ layui.use(['table','form','jquery'], function(){
             {field: 'id', title: 'ID', width:50, align:'center'}
             ,{field: 'category_name', title: '分类名称', align:'center',width:150}
             ,{field: 'name', title: '商品名称', align:'center',width:250}
-            ,{field: 'image', title: '商品图片', align:'center',width:150, templet:'<div><img src="{{d.image}}"></div>',style:'height:50px;'}
+            ,{field: 'image', title: '商品图片', align:'center',width:150, templet:'#imgTpl'}
             ,{field: 'price', title: '价格', align:'center',width:120}
             ,{field: 'deploy', title: '商品属性', align:'center',width:300}
             ,{field: 'status', title: '状态', align:'center',width:110}
             // ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
             ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
             ,{title: '操作', width:170, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
-        ]]
+        ]],
+        id: 'testReload'
     });
 
     //监听工具条
@@ -130,5 +131,42 @@ layui.use(['table','form','jquery'], function(){
             }
         });
         return false;
+    });
+
+    var $ = layui.$,
+        active = {
+            reload: function(){
+                var category = $('#category_id'),
+                    goods = $('#goods_name');
+
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        category_id: category.val(),
+                        name: goods.val()
+                    }
+                });
+            },
+            reset: function () {
+                $('#category_id, #goods_name').val('');
+
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        category_id: '',
+                        name: ''
+                    }
+                });
+            }
+        };
+
+    $('.demoTable .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
     });
 });

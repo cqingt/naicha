@@ -1,5 +1,13 @@
 @extends('admin.layouts.app')
 @section('title','商品列表')
+@section('styles')
+    <style>
+        .layui-table-cell{
+            height: auto!important;
+            white-space: normal;
+        }
+    </style>
+@endsection
 
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
@@ -31,7 +39,7 @@
 
             <div class="layui-inline">
                 <button class="layui-btn" data-type="reload">搜索</button>
-                <button class="layui-btn" data-type="reset">清空</button>
+                <button class="layui-btn layui-btn-primary" data-type="reset">清空</button>
             </div>
         </div>
     </div>
@@ -45,9 +53,10 @@
         @{{#  } }}
 
         <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</button>
+    </script>
 
-        {{--<a class="layui-btn layui-btn-xs" lay-event="lock">锁定</a>--}}
-
+    <script type="text/html" id="imgTpl">
+        <img src="@{{ d.image }}">
     </script>
 @endsection
 @section('scripts')

@@ -16,7 +16,7 @@ layui.use(['table','form','jquery','upload'], function(){
             ,{field: 'shop_name', title: '推送店铺', align:'center',width:150}
             ,{field: 'title', title: '标题', align:'center',width:150}
             ,{field: 'position', title: '排序', align:'center',width:100}
-            ,{field: 'image', title: '展示图片', align:'center',width:190, templet:'<div><img src="{{d.image}}"></div>',style:'height:50px;'}
+            ,{field: 'image', title: '展示图片', align:'center',width:190, templet:'#imgTpl'}
             ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
             ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
             ,{title: '操作', width:150, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器

@@ -1,7 +1,8 @@
-layui.use(['table','form','jquery'], function(){
+layui.use(['table','form','jquery', 'laydate'], function(){
     var table = layui.table
         ,form = layui.form
         ,$ = layui.jquery
+        ,laydate = layui.laydate
         ,upload = layui.upload;
 
     var _mod = 'coupons';
@@ -90,7 +91,18 @@ layui.use(['table','form','jquery'], function(){
 
     });
 
-    
+    // 结束时间
+    laydate.render({
+        elem: '#stop_time'
+        ,type: 'datetime'
+    });
+
+    // 开始时间
+    laydate.render({
+        elem: '#start_time'
+        ,type: 'datetime'
+    });
+
     //监听提交
     form.on('submit(coupons)', function(data){
         $.ajax({

@@ -9,17 +9,18 @@ layui.use(['table','form','jquery'], function(){
         elem: '#shops_table'
         ,url: '/admin/' + _mod + '/list' //数据接口
         ,limit: 10
+        ,cellMinWidth: 80
         ,page: true //开启分页
         ,cols: [[ //表头
             {fixed: 'left',checkbox : true}
             ,{field: 'id', title: 'ID', width:50, align:'center'}
-            ,{field: 'name', title: '店铺名称', align:'center',width:150}
-            ,{field: 'flag', title: '店铺标识', align:'center',width:150}
-            ,{field: 'address', title: '地址', align:'center',width:190}
-            ,{field: 'contact', title: '联系方式', align:'center',width:130}
-            ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
-            ,{title: '操作', width:150, align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
+            ,{field: 'name', title: '店铺名称', align:'center'}
+            ,{field: 'flag', title: '店铺标识', align:'center'}
+            ,{field: 'address', title: '地址', align:'center'}
+            ,{field: 'contact', title: '联系方式', align:'center'}
+            ,{field: 'created_at', title: '创建时间',align:'center'}
+            ,{field: 'updated_at', title: '更新时间',align:'center'}
+            ,{title: '操作', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]]
     });
     //监听工具条

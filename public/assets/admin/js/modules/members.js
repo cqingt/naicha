@@ -12,16 +12,17 @@ layui.use(['table','form','jquery'], function(){
         ,page: true //开启分页
         ,cols: [[ //表头
             // {fixed: 'left',checkbox : true}
-            {field: 'id', title: 'ID', width:50, align:'center'}
+            {field: 'id', title: 'ID', align:'center', width:80}
             ,{field: 'username', title: '用户名称', align:'center',width:150}
             ,{field: 'shop_name', title: '归属店铺', align:'center',width:150}
             ,{field: 'telephone', title: '手机号', align:'center',width:150}
-            ,{field: 'avatar', title: '头像', align:'center',width:150, templet:'<div><img src="{{d.avatar}}"></div>',style:'height:50px;'}
+            ,{field: 'avatar', title: '头像', align:'center',width:150, templet:'#imgTpl'}
             ,{field: 'age', title: '年龄', align:'center',width:190}
             ,{field: 'gender', title: '性别', align:'center',width:130}
             ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
             ,{field: 'updated_at', title: '更新时间',align:'center', width: 165}
         ]]
+        ,id: 'testReload'
     });
 
     table.on('tool(members_table)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -95,4 +96,42 @@ layui.use(['table','form','jquery'], function(){
         });
         return false;
     });
+
+    var $ = layui.$,
+        active = {
+            reload: function(){
+                var username = $('#username'),
+                    telephone = $('#telephone');
+
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username.val(),
+                        telephone: telephone.val()
+                    }
+                });
+            },
+            reset: function () {
+                $('#username, #telephone').val('');
+
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: '',
+                        telephone: ''
+                    }
+                });
+            }
+    };
+
+    $('.demoTable .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
 });
