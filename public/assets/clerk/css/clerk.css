@@ -1,0 +1,24 @@
+.layui-layout-admin .layui-side{
+    width: 150px !important;
+}
+.layui-side-scroll{
+    width:150px !important;
+}
+.layui-nav-tree{
+    width:150px !important;
+    text-align: center;
+    margin-top: 10px;
+}
+.layui-layout-admin .layui-logo{
+    text-align: left;
+    margin-left: 30px;
+}
+.layui-body{
+    left:150px !important;
+}
+.layui-layout-admin .layui-body{
+    bottom:0 !important;
+}
+.layui-form{
+    margin: 0 10px !important;
+}

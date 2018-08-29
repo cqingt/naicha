@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Models\Role;
 use App\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -63,5 +65,24 @@ class AuthController extends Controller
             //'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    /**
+     * 验证后跳转
+     * @param Request $request
+     * @param $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function authenticated(Request $request, $user)
+    {
+        $roleId = $user->role_id;
+        $roleArray = Role::find($roleId, ['name']);
+        $role = $roleArray ? $roleArray['name'] : '';
+
+        if (strcasecmp('clerk', $role) === 0) {
+            $this->redirectPath = '/clerk/index';
+        }
+
+        return redirect()->intended($this->redirectPath());
     }
 }

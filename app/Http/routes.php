@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// 后台管理
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth' ], function () {
     //Route::get('/dashboard', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@home');
@@ -78,6 +79,20 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     // 数据统计
     Route::post('/upload/image','UploadController@image');
     Route::get('/data/index','DataController@index');
+});
+
+// 店员管理
+Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
+    Route::get('/','IndexController@index');
+    Route::get('/index','IndexController@index');
+    Route::get('/index/data','IndexController@data');
+    Route::get('/orders','OrdersController@index');
+    Route::get('/orders/create','OrdersController@create');
+    Route::get('/messages','MessagesController@index');
+
+    Route::get('/orders/list','OrdersController@list');
+    Route::resource('orders','OrdersController');
+
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

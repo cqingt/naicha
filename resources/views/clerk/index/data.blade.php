@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('clerk.layouts.app')
 @section('title','数据统计')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('assets/admin/css/admin.css') }}">
@@ -32,11 +32,11 @@
                         <input type="text" name="stop_time" id="stop_time" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off" class="layui-input"  value="{{$stop}}">
                     </div>
                 </div>
-                <div class="layui-form-item" style="display: inline-block">
-                <div class="layui-input-inline" style="margin-bottom: 4px;margin-left:20px; ">
-                    <button class="layui-btn layui-btn-sm" id="searchBtn">搜 索</button>
-                    {{--<button type="reset" id="reset" class="layui-btn layui-btn-primary layui-btn-sm">清空</button>--}}
-                </div>
+                <div class="layui-form-item" style="display: inline-block;margin-left: 5%;">
+
+                    <div class="layui-input-inline" style="margin-bottom: 4px;">
+                        <button class="layui-btn layui-btn-sm" id="searchBtn">搜 索</button>
+                    </div>
                 </div>
             </form>
         {{--</div>--}}
@@ -45,14 +45,14 @@
             <div class="layui-col-sm6 layui-col-md3">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        新增订单
+                        待处理订单
                         <span class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
                     </div>
 
                     <div class="layui-card-body layuiadmin-card-list">
                         <p class="layuiadmin-big-font">{{$order}}</p>
                         <p>
-                            总计订单数
+                            已处理订单数
                             <span class="layuiadmin-span-color">{{$orders}}单</span>
                         </p>
                     </div>
@@ -62,45 +62,27 @@
             <div class="layui-col-sm6 layui-col-md3">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        营业额<span class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
-                    </div>
-
-                    <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{$amount or '0.00'}}</p>
-                        <p>总营业额
-                            <span class="layuiadmin-span-color">{{$amounts or '0.00'}}元 </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="layui-col-sm6 layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">新增会员<span
-                                class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
+                        我的下单数<span class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
                     </div>
 
                     <div class="layui-card-body layuiadmin-card-list">
                         <p class="layuiadmin-big-font">{{$member}}</p>
-                        <p>总计会员<span class="layuiadmin-span-color">{{$members}}个 </span></p>
+                        <p>总下单数<span class="layuiadmin-span-color">{{$members}}单 </span></p>
                     </div>
                 </div>
             </div>
 
             <div class="layui-col-sm6 layui-col-md3">
                 <div class="layui-card">
-                    <div class="layui-card-header">
-                        新增店铺
-                        <span class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
+                    <div class="layui-card-header">我的下单金额<span class="layui-badge layui-bg-green  layuiadmin-badge">{{$showTxt}}</span>
                     </div>
-
                     <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{$shop}}</p>
-                        <p>
-                            总计店铺数
-                            <span class="layuiadmin-span-color">{{$shops}}家 </span>
+                        <p class="layuiadmin-big-font">{{$amount or '0.00'}}</p>
+                        <p>总下单金额
+                            <span class="layuiadmin-span-color">{{$amounts or '0.00'}}元 </span>
                         </p>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -108,5 +90,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('assets/admin/js/modules/data.js') }}"></script>
+    <script src="{{ asset('assets/clerk/js/modules/data.js') }}"></script>
 @endsection

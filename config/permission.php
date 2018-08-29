@@ -14,6 +14,6 @@ return [
         'goods' => ['index', 'update', 'list']
     ],
     'Clerk' => [
-
+        'users' => ['resetPwd', 'postReset']
     ]
 ];

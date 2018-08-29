@@ -59,7 +59,7 @@ class UsersController extends CommonController
 
         $result = User::create([
             'name'  =>  $request->name,
-            'email' =>  $request->email,
+            'email' =>  $request->email ? : $request->name . '@email.com',
             'password' => bcrypt($request->password),
             'role_id' => $request->role_id
         ]);
@@ -96,6 +96,8 @@ class UsersController extends CommonController
 
             return $this->error($error);
         }
+
+        $data['email'] = ! isset($data['email']) ? $data['name'] . '@email.com' : $data['email'];
 
         if ($user->update($data)) {
             return $this->success();
