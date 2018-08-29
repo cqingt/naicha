@@ -42,10 +42,10 @@
         <div class="layui-form-item">
             <label class="layui-form-label">选择角色</label>
             <div class="layui-input-inline">
-                <select name="role" lay-verify="" lay-search="">
+                <select name="role_id" lay-verify="required" lay-search="">
                     <option value="">直接选择或搜索选择</option>
                     @foreach($roles as $item)
-                    <option value="{{ $item }}" {{ (isset($role)&&$role==$item) ?'selected':'' }}>{{ $item }}</option>
+                    <option value="{{ $item->id }}" {{ $user->role_id == $item->id ? 'selected': '' }}>{{ $item->name }}</option>
                     @endforeach
                 </select>
             </div>

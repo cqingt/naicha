@@ -9,11 +9,11 @@ use App\Http\Models\Member;
 use App\Http\Models\Order;
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Admin\CommonController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class DataController extends Controller
+class DataController extends CommonController
 {
     // 日期筛选
     protected $dates = [

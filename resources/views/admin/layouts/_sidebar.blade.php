@@ -54,6 +54,6 @@
         <dd id="S001" name="{{ url('admin/users/resetPwd') }}"><a href="javascript:;">修改密码</a></dd>
         <dd id="S002" name="{{ url('admin/users/index') }}"><a href="javascript:;">员工列表</a></dd>
         <dd id="S003" name="{{ url('admin/roles/index') }}"><a href="javascript:;">角色</a></dd>
-        <dd id="S004" name="{{ url('admin/permissions/index') }}"><a href="javascript:;">权限</a></dd>
+        {{--<dd id="S004" name="{{ url('admin/permissions/index') }}"><a href="javascript:;">权限</a></dd>--}}
     </dl>
 </li>

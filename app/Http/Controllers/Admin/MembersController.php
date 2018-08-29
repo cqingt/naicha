@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Models\Member;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Admin\CommonController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class MembersController extends Controller
+class MembersController extends CommonController
 {
     /**
      * Display a listing of the resource.

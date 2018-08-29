@@ -6,11 +6,11 @@ layui.use(['table','form','jquery'], function(){
     table.render({
         elem: '#users_table'
         ,url: '/admin/users/show' //数据接口
-        ,limit: 5
+        ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
             {fixed: 'left',checkbox : true}
-            ,{field: 'id', title: 'ID', width:50, align:'center',sort: true}
+            ,{field: 'id', title: 'ID', width:50, align:'center'}
             ,{field: 'name', title: '用户名', align:'center',width:150}
             ,{field: 'email', title: '邮箱', align:'center',width:190}
             ,{field: 'roles', title: '角色', align:'center',width:130}

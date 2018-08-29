@@ -2,18 +2,19 @@ layui.use(['table','element','form','jquery'], function(){
     var table = layui.table
         ,form = layui.form
         ,$ = layui.jquery;
-    //第一个实例
+    var _mod = 'roles';
     table.render({
         elem: '#roles_table'
-        ,url: '/admin/roles/roles' //数据接口
-        ,limit: 5
+        ,url: '/admin/roles/list' //数据接口
+        ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
-            {fixed: 'left',checkbox : true}
-            ,{field: 'id', title: 'ID', width:50, align:'center',sort: true}
-            ,{field: 'name', title: '角色名称', align:'center',width:150}
-            ,{field: 'permission', title: '权限名称', align:'center'}
-            ,{title: '操作', width:150, align:'center', toolbar: '#roles_tools'} //这里的toolbar值是模板元素的选择器
+            // {fixed: 'left',checkbox : true}
+            {field: 'id', title: 'ID', width: '5%', align:'center',sort: true}
+            ,{field: 'name', title: '角色名称', align:'center',width:'15%'}
+            ,{field: 'description', title: '说明', align:'center',width:'35%'}
+            // ,{field: 'permission', title: '权限名称', align:'center'}
+            ,{title: '操作', width:'10%', align:'center', toolbar: '#roles_tools'} //这里的toolbar值是模板元素的选择器
         ]]
     });
     //监听工具条
@@ -33,6 +34,9 @@ layui.use(['table','element','form','jquery'], function(){
                     type: 'DELETE',
                     dataType: 'json',
                     url: '/admin/roles/'+obj.data.id,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -86,6 +90,9 @@ layui.use(['table','element','form','jquery'], function(){
             dataType: 'json',
             url: data.form.action,
             data: data.field,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(data) {
                 if(data.code==1){
                     layer.alert(data.msg,{icon: 1});

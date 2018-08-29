@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     Route::get('/roles/index','RolesController@index');
     Route::get('/roles/create','RolesController@create');
     Route::get('/roles/roles','RolesController@roles');
+    Route::get('/roles/list','RolesController@list');
     Route::resource('roles','RolesController');
 
     //Route::resource('permissions','PermissionController');

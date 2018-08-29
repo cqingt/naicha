@@ -10,9 +10,9 @@ use App\Http\Models\Coupon;
 use App\Http\Requests;
 use Validator;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\CommonController;
 
-
-class CouponsController extends Controller
+class CouponsController extends CommonController
 {
     /**
      * Display a listing of the resource.

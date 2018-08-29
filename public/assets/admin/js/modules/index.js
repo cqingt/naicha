@@ -78,7 +78,10 @@ layui.use(['element','jquery','form', 'layedit'],function(){
 
     //监听左侧菜单点击
     element.on('nav(left-menu)', function(elem){
-        addTab(elem[0].innerText,elem[0].attributes[1].nodeValue,elem[0].id);
+        var _href = $(this).attr('name');
+
+        addTab(elem[0].innerText, _href, elem[0].id);
+        //addTab(elem[0].innerText,elem[0].attributes[1].nodeValue,elem[0].id);
     });
     //监听tab选项卡切换
     element.on('tab(tab-switch)', function(data){

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Models\Push;
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Admin\CommonController;
 use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use \Illuminate\Http\Exception\HttpResponseException;
 
-class PushesController extends Controller
+class PushesController extends CommonController
 {
     /**
      * Display a listing of the resource.

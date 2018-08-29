@@ -6,9 +6,9 @@ use App\Http\Models\Shop;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\CommonController;
 
-class ShopsController extends Controller
+class ShopsController extends CommonController
 {
     /**
      * 列表页

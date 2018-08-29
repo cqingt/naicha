@@ -4,38 +4,41 @@ namespace App\Http\Controllers\Admin;
 
 use Validator;
 use App\Http\Models\User;
+use App\Http\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\CommonController;
 use Hash;
-use DB;
 
-class UsersController extends Controller
+class UsersController extends CommonController
 {
-
     public function index()
     {
         return view('admin.users.index');
     }
 
-    public function show(User $users, Request $request)
+    public function show(Request $request)
     {
-        $count = $users->count();
-        $data = getRoleOrPermissionApi($request,$users);
+        $perPage = $request->get('limit'); // 每页数量由首页控制
 
-        //$data=$user->skip($limit*($page-1))->take($limit)->get()->toArray();
+        $data = User::orderBy('id', 'asc')->paginate($perPage);
 
+        $items = $data->items();
+
+        foreach ($items as &$item) {
+            $item['roles'] = $item->role ? $item->role->name : '--';
+        }
         return [
             'code'  =>  0,
             'msg'   =>  '',
-            'count' =>  $count,
-            'data'  => $data,
+            'count' => $data->total(),
+            'data'  => $items,
         ];
     }
 
     public function create(User $user)
     {
-        $roles = Role::all()->pluck('name')->toArray();
+        $roles = Role::all();
         return view('admin.users.create_and_edit',compact('user','roles'));
     }
 
@@ -43,8 +46,9 @@ class UsersController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'  => 'required|min:3|max:15',
-            'email' =>  'required|email|unique:users,email',
-            'password'  =>  'required|min:6|max:20|confirmed'
+            'email' =>  'email|unique:users,email',
+            'password'  =>  'required|min:6|max:20|confirmed',
+            'role_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -53,39 +57,38 @@ class UsersController extends Controller
             return $this->error($error);
         }
 
-        $user=User::create([
+        $result = User::create([
             'name'  =>  $request->name,
             'email' =>  $request->email,
             'password' => bcrypt($request->password),
+            'role_id' => $request->role_id
         ]);
-        if($request->role){
-            $user->assignRole($request->role);
+
+        if ($result) {
+            return $this->success();
+        } else {
+            return $this->error();
         }
-        return ['code'=>1,'msg'=>'添加成功'];
     }
 
     public function edit(Request $request, $id)
     {
         $user = User::find($id);
-        $roles = Role::all()->pluck('name')->toArray();
-        $role = DB::table('user_has_roles')
-            ->join('roles', 'user_has_roles.role_id', '=', 'roles.id')
-            ->where('user_has_roles.user_id', '=', $user->id)
-            ->pluck('name');
-        //$role  = $user->roles()->pluck('name')->first();
+        $roles = Role::all();
 
-        return view('admin.users.create_and_edit',compact('user','roles','role'));
+        return view('admin.users.create_and_edit',compact('user','roles'));
     }
 
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-        $data=array_filter($request->all());
+        $data = array_filter($request->all());
 
         $validator = Validator::make($request->all(), [
             'name'  => 'required|min:3|max:15',
-            'email' =>  'required|email|unique:users,email,'.$user->id,
-            'password'  =>  'required|min:6|confirmed'
+            'email' =>  'email|unique:users,email,'.$user->id,
+            'password' =>  'required|min:6|confirmed',
+            'role_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -94,31 +97,17 @@ class UsersController extends Controller
             return $this->error($error);
         }
 
-        $user->update($data);
-
-        $roleId = DB::table('roles')->where('name', $request->get('role'))->pluck('id');
-
-        $hasRole = DB::table('user_has_roles')->where('user_id', '=', $user->id)->get();
-
-        if ($hasRole) {
-            $hasRole->update(['role_id' => $roleId]);
+        if ($user->update($data)) {
+            return $this->success();
         } else {
-            DB::table('user_has_roles')->insert(['role_id' => $roleId, 'user_id' => $user->id]);
+            return $this->error();
         }
-
-        /*$role=$user->roles()->pluck('name')->first();
-        if($role){
-            $user->removeRole($role);
-        }
-        if($request->role){
-            $user->assignRole($request->role);
-        }*/
-        return ['code'=>1, 'msg'=>'修改成功'];
     }
 
     public function destroy($id)
     {
         User::find($id)->delete();
+
         return ['code'=>1,'msg'=>'删除成功'];
     }
 

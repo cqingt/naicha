@@ -3,86 +3,155 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\CommonController;
+use App\Http\Models\Role;
+use Validator;
 
-class RolesController extends Controller
+class RolesController extends CommonController
 {
     public function index()
     {
         return view('admin.roles.index');
     }
 
-    public function roles(Role $roles,Request $request)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
-        $count = $roles->count();
-        $data = getRoleOrPermissionApi($request,$roles);
-
-        return [
-            'code'  =>  0,
-            'msg'   =>  '',
-            'count' =>  $count,
-            'data'  =>$data,
-        ];
+        $roles = new Role();
+        return view('admin.roles.create_and_edit',compact('roles'));
     }
 
-    public function create(Role $roles)
-    {
-        $permissions = Permission::all()->pluck('name')->toArray();
-        return view('admin.roles.create_and_edit',compact('roles','permissions'));
-    }
-
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
-        $this->validate($request,[
-            'name'  => 'required|unique:roles,name',
+        $validator = Validator::make($request->all(), [
+            'name'   => 'required|min:2|unique:roles,name',
+        ], [
+            'name.min' => '角色名最少2个字符',
+            'name.required' => '角色名必填',
+            'name.unique' => '角色名已存在',
         ]);
-        $role = Role::create(['name' => $request->name]);
-        if($request->permission){
-            $role->givePermissionTo($request->permission);
+
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
+
+            return $this->error($error);
         }
-        return ['code'=>1,'msg'=>'修改成功'];
+
+        $result = Role::create([
+            'name'        =>  $request->name,
+            'description' => $request->description
+        ]);
+
+        if($result){
+            return $this->success();
+        } else {
+            return $this->error();
+        }
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * 列表API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function list(Request $request)
+    {
+        $perPage = $request->get('limit'); // 每页数量由首页控制
+
+        $data = Role::orderBy('id', 'asc')->paginate($perPage);
+
+        $items = $data->items();
+
+        $result = [
+            'code'  =>  0,
+            'msg'   =>  '',
+            'count' => $data->total(),
+            'data'  => $items
+        ];
+        return response()->json($result);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function edit($id)
     {
-        $roles=Role::find($id);
-        $roles->permission=$roles->permissions()->pluck('name')->toArray();
-        $permissions=Permission::all()->pluck('name')->toArray();
-        return view('admin.roles.create_and_edit',compact('roles','permissions'));
+        $roles = Role::find($id);
+
+        return view('admin.roles.create_and_edit', compact('roles'));
     }
 
-    public function update(Request $request,$id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
     {
-        $data=array_filter($request->all());
-        $this->validate($request,[
-            'name'  => 'required|min:3|max:15',
+        $validator = Validator::make($request->all(), [
+            'name'   => 'required|min:2|unique:roles,name,' . $id,
+        ], [
+            'name.min' => '角色名最少2个字符',
+            'name.required' => '角色名必填',
+            'name.unique' => '角色名已存在',
         ]);
-        $role=Role::find($id);
-        $role->update(['name'=>$data['name']]);
 
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
 
-        $permissions=$role->permissions()->pluck('name')->toArray();
-
-        if($permissions){
-            foreach($permissions as $item){
-                $role->revokePermissionTo($item);
-            }
+            return $this->error($error);
         }
-        if(isset($data['permission'])){
-            $role->givePermissionTo($data['permission']);
+
+        $result = Role::find($id)->update([
+            'name'        =>  $request->name,
+            'description' => $request->description
+        ]);
+
+        if($result){
+            return $this->success();
+        } else {
+            return $this->error();
         }
-        return ['code'=>1,'msg'=>'修改成功'];
     }
+
+    /**
+     * 删除
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function destroy($id)
     {
-        $roles=Role::find($id);
-        $permissions=$roles->permissions()->pluck('name')->toArray();
-        foreach($permissions as $item){
-            $roles->revokePermissionTo($item);
+        if (Role::find($id)->delete()) {
+            return $this->success();
+        } else {
+            return $this->error();
         }
-        $roles->delete();
-        return ['code'=>1,'msg'=>'删除成功'];
     }
 }

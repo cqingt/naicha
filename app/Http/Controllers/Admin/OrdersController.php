@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Models\Order;
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Admin\CommonController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class OrdersController extends Controller
+class OrdersController extends CommonController
 {
     /**
      * Display a listing of the resource.

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Models\Category;
 use App\Http\Models\Goods;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Admin\CommonController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class GoodsController extends Controller
+class GoodsController extends CommonController
 {
     /**
      * Display a listing of the resource.
