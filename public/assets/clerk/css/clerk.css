@@ -22,3 +22,6 @@
 .layui-form{
     margin: 0 10px !important;
 }
+.layui-container {
+    width: 840px ! important;
+}

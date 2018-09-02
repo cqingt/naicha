@@ -17,8 +17,8 @@
                 <col width="150">
                 <col width="150">
                 <col width="150">
+                <col width="150">
                 <col width="200">
-                <col>
             </colgroup>
             <thead>
             <tr>

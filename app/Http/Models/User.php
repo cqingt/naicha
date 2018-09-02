@@ -3,14 +3,14 @@
 namespace App\Http\Models;
 
 //use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
+//use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Auth\Authenticatable;
 use Eloquent as Model;
 
 class User extends Model
 {
     protected $table = 'users';
-    use HasRoles;
+    //use HasRoles;
     use Authenticatable;
     /**
      * The attributes that are mass assignable.

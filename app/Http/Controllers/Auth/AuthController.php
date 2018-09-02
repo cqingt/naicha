@@ -82,7 +82,7 @@ class AuthController extends Controller
         if (strcasecmp('clerk', $role) === 0) {
             $this->redirectPath = '/clerk/index';
         }
-
+        //echo $role;echo $this->redirectPath();exit;
         return redirect()->intended($this->redirectPath());
     }
 }

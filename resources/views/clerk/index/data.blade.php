@@ -7,7 +7,7 @@
 @section('body')
     <div class="layui-fluid">
         {{--<div class="layui-card-header layuiadmin-card-header-auto">--}}
-            <form class="layui-form" action="{{ url('admin/data/index') }}" method="GET" style="margin: 20px 0 10px; float: right;">
+            <form class="layui-form" action="{{ url('admin/data/index') }}" method="GET" style="margin: 20px 0 10px; ">
                 <div class="layui-form-item" style="display: inline-block;">
                     <label class="layui-form-label">快捷操作</label>
                     <div class="layui-input-inline">

@@ -61,8 +61,13 @@
 
     <script type="text/html" id="bartools">
         <button class="layui-btn layui-btn-xs" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>
-        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>订单完成</button>
+        @{{#  if(d.status_type == 1){ }}
+        <button class="layui-btn layui-btn-blue layui-btn-xs" lay-event="update"><i class="layui-icon">&#xe6b2;</i>修改订单</button>
+        
+        <button class="layui-btn layui-btn-blue layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>订单完成</button>
+        @{{# } }}
     </script>
+
 @endsection
 @section('scripts')
     <script src="{{ asset('assets/clerk/js/modules/orders.js') }}"></script>
