@@ -1,5 +1,12 @@
 @extends('clerk.layouts.app')
 @section('title','订单详情')
+@section('styles')
+    <style>
+        .layui-layout-body{
+            overflow: scroll;
+        }
+    </style>
+@endsection
 
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
@@ -33,7 +40,7 @@
             <tbody>
             <tr>
                 <td>{{$order->order_sn}}</td>
-                <td>{{$order->member->username}}</td>
+                <td>{{$order->member->username or '--' }}</td>
                 <td>{{$order->status}}</td>
                 <td>{{$order->price}}</td>
                 <td>{{$order->pay_type}}</td>

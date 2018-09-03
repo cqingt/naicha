@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Clerk;
 use App\Http\Models\Category;
 use App\Http\Models\Goods;
 use App\Http\Models\Order;
+use App\Http\Models\OrderDetail;
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
+use DB;
 
 class OrdersController extends CommonController
 {
@@ -42,12 +44,14 @@ class OrdersController extends CommonController
             $data[$product->category_id]['items'][] = $product;
         }
 
+        // 2级品类分组 id
         $categoryOne = [20, 21, 22, 23, 24, 25];
         $categoryTwo = [26, 27, 28, 29];
         $categoryThree = [30, 31, 32, 33];
+        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类
 
         //$products = $this->getTree();
-        return view('clerk.orders.create', compact('products', 'data', 'categoryOne', 'categoryTwo', 'categoryThree'));
+        return view('clerk.orders.create', compact(['products', 'data', 'categoryOne', 'categoryTwo', 'categoryThree', 'categoryMilk']));
     }
 
     /**
@@ -58,7 +62,76 @@ class OrdersController extends CommonController
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        $allow = [37, 38, 39];
+        $goodsIdArr = $request->get('goods_id');
+        $doubleId = $request->get('double'); // 一级品类双倍
+        $weight = $request->get('weight'); // 单选 分量
+
+        $goodsIds = array_filter($goodsIdArr, function ($id){
+            return $id>0;
+        });
+
+        if (in_array(37, $goodsIds) || in_array(38, $goodsIds) || in_array(39, $goodsIds)) {
+            if (empty($weight)) {
+                return $this->error('请选择糖浆分量');
+            }
+        }
+
+        $goodsInfo = Goods::whereIn('id', $goodsIds)->get();
+
+        DB::beginTransaction();
+        try{
+            $total = 0;
+            foreach ($goodsInfo as $item) {
+                if ($doubleId && $item['id'] == $doubleId) {
+                    $total += $item['price'] * 2;
+                } else {
+                    $total += $item['price'];
+                }
+            }
+
+            $date =  date('Y-m-d H:i:s');
+            Order::insert([
+                'shop_id' => 1,
+                'member_id' => 0,
+                'order_sn' => date('YmdHis') . rand(1000, 9999), // 待完善
+                'price' => $total,
+                'original_price' => $total,
+                'pay_type' => 0,
+                'status' => 1,
+                'payed_at' => $date,
+                'created_at' => $date,
+                'operator' => $request->user()->id,
+            ]);
+
+            $orderId = DB::getPdo()->lastInsertId();//Order::insertGetId();
+
+            if (! $orderId) {
+                throw new \Exception('订单新增失败');
+            }
+
+            foreach ($goodsInfo as $item) {
+                OrderDetail::insert([
+                    'goods_name' => $item['name'],
+                    'goods_image' => $item['image'],
+                    'order_id' => $orderId,
+                    'goods_num' => ($doubleId && $item['id'] == $doubleId) ? 2 : 1,
+                    'goods_price' => $item['price'],
+                    'package_num' => 1,
+                    'deploy' => in_array($item['id'], $allow) ? $weight : '',
+                    'created_at' => $date
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e){
+            DB::rollback();//事务回滚
+
+            return $this->error($e->getMessage());
+        }
+
+        return $this->success('下单成功');
     }
 
     /**
@@ -114,7 +187,7 @@ class OrdersController extends CommonController
 
         foreach ($items as &$item) {
             $item['shop_name'] = $item->shop->name;
-            $item['member_name'] = $item->member->username;
+            $item['member_name'] = $item->member ? $item->member->username : '';
             $item['status_type'] = $item['status'];
             $item['status'] = $this->getStatus($item['status']);
             $item['pay_type'] = $this->getPayType($item['pay_type']);
