@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Validator;
 use App\Http\Models\User;
 use App\Http\Models\Role;
+use App\Http\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\CommonController;
@@ -27,6 +28,7 @@ class UsersController extends CommonController
 
         foreach ($items as &$item) {
             $item['roles'] = $item->role ? $item->role->name : '--';
+            $item['shop_name'] = $item->shop ? $item->shop->name : '--';
         }
         return [
             'code'  =>  0,
@@ -39,16 +41,20 @@ class UsersController extends CommonController
     public function create(User $user)
     {
         $roles = Role::all();
-        return view('admin.users.create_and_edit',compact('user','roles'));
+        $shops = Shop::all();
+        return view('admin.users.create_and_edit',compact('user','roles', 'shops'));
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'  => 'required|min:3|max:15',
-            'email' =>  'email|unique:users,email',
+            'name'      => 'required|min:3|max:15',
+            'email'     =>  'email|unique:users,email',
             'password'  =>  'required|min:6|max:20|confirmed',
-            'role_id' => 'required'
+            'role_id'   => 'required',
+            'real_name' => 'required',
+            'telephone' => 'regex:/^1[34578][0-9]{9}$/',
+            'shop_id'   => 'integer',
         ]);
 
         if ($validator->fails()) {
@@ -75,8 +81,9 @@ class UsersController extends CommonController
     {
         $user = User::find($id);
         $roles = Role::all();
+        $shops = Shop::all();
 
-        return view('admin.users.create_and_edit',compact('user','roles'));
+        return view('admin.users.create_and_edit',compact('user','roles', 'shops'));
     }
 
     public function update(Request $request, $id)
@@ -85,10 +92,13 @@ class UsersController extends CommonController
         $data = array_filter($request->all());
 
         $validator = Validator::make($request->all(), [
-            'name'  => 'required|min:3|max:15',
-            'email' =>  'email|unique:users,email,'.$user->id,
-            'password' =>  'required|min:6|confirmed',
-            'role_id' => 'required'
+            'name'      => 'required|min:3|max:15',
+            'real_name' => 'required',
+            'telephone' => 'regex:/^1[34578][0-9]{9}$/',
+            'shop_id'   => 'integer',
+            'email'     =>  'email|unique:users,email,'.$user->id,
+            'password'  =>  'required|min:6|confirmed',
+            'role_id'   => 'required'
         ]);
 
         if ($validator->fails()) {

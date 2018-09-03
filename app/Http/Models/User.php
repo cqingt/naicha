@@ -18,7 +18,7 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id'
+        'name', 'email', 'password', 'role_id', 'real_name', 'telephone', 'shop_id'
     ];
 
     /**
@@ -42,5 +42,10 @@ class User extends Model
     public function role()
     {
         return $this->belongsTo('App\Http\Models\Role');
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo('App\Http\Models\Shop');
     }
 }

@@ -7,7 +7,7 @@
 @section('body')
     <div class="layui-fluid">
         {{--<div class="layui-card-header layuiadmin-card-header-auto">--}}
-            <form class="layui-form" action="{{ url('admin/data/index') }}" method="GET" style="margin: 20px 0 10px; ">
+            <form class="layui-form" action="{{ url('clerk/index/data') }}" method="GET" style="margin: 20px 0 10px; ">
                 <div class="layui-form-item" style="display: inline-block;">
                     <label class="layui-form-label">快捷操作</label>
                     <div class="layui-input-inline">
@@ -50,10 +50,10 @@
                     </div>
 
                     <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{$order}}</p>
+                        <p class="layuiadmin-big-font">{{$todo}}</p>
                         <p>
                             已处理订单数
-                            <span class="layuiadmin-span-color">{{$orders}}单</span>
+                            <span class="layuiadmin-span-color">{{$done}}单</span>
                         </p>
                     </div>
                 </div>
@@ -66,8 +66,8 @@
                     </div>
 
                     <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{$member}}</p>
-                        <p>总下单数<span class="layuiadmin-span-color">{{$members}}单 </span></p>
+                        <p class="layuiadmin-big-font">{{$order}}</p>
+                        <p>总下单数<span class="layuiadmin-span-color">{{$orders}}单 </span></p>
                     </div>
                 </div>
             </div>

@@ -7,6 +7,8 @@ use Eloquent as Model;
 class Order extends Model
 {
     protected $table = 'orders';
+    protected $fillable = ['status'];
+
 
     public function member()
     {

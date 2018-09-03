@@ -20,6 +20,30 @@
                 <input type="text" name="name" lay-verify="required|name" autocomplete="off" placeholder="请输入用户名称" class="layui-input" value="{{ old('name', $user->name ) }}">
             </div>
         </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">真实姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="real_name" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" value="{{ old('real_name', $user->real_name ) }}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="telephone" lay-verify="required" autocomplete="off" placeholder="请输入手机号" class="layui-input" value="{{ old('telephone', $user->telephone ) }}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属店铺</label>
+                <div class="layui-input-inline">
+                    <select name="shop_id" lay-search="">
+                        <option value="">直接选择或搜索选择</option>
+                        @foreach($shops as $shop)
+                            <option value="{{$shop->id}}"  @if($shop->id == $user->shop_id) selected="selected" @endif  >{{$shop->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
         <div class="layui-form-item">
             <label class="layui-form-label">用户邮箱</label>
             <div class="layui-input-inline">

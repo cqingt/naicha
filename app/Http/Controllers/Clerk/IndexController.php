@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Clerk;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Clerk\CommonController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Models\Order;
 
 class IndexController extends CommonController
 {
@@ -51,17 +53,15 @@ class IndexController extends CommonController
         }
 
         // 统计数据
-        $shops = 1;
-        $shop =2;
-        $members = 3;
-        $member = 4;
-        $orders = 5;
-        $order = 6;
-        $amounts = 7;
-        $amount = 8;
+        $todo = $this->getTodo($dateBetween);
+        $done = $this->getDone($dateBetween);
+        $orders = $this->getOrders($dateBetween, true);
+        $order = $this->getOrders($dateBetween);;
+        $amounts = $this->getAmount($dateBetween, true);
+        $amount = $this->getAmount($dateBetween);
 
         $assign = [
-            'start', 'stop', 'dates', 'currentDate', 'shops', 'shop', 'members', 'member', 'orders', 'order', 'amounts', 'amount', 'showTxt'
+            'start', 'stop', 'dates', 'currentDate', 'todo', 'done', 'orders', 'order', 'amounts', 'amount', 'showTxt'
         ];
 
         return view('clerk.index.data', compact($assign));
@@ -84,12 +84,45 @@ class IndexController extends CommonController
         return [date('Y-m-d H:i:s', strtotime($start)), date('Y-m-d H:i:s', strtotime($stop))];
     }
 
+    // 下单数
     protected function getOrders($condition, $total = false)
     {
+        $user = Auth::user();
+
+        // 已处理
         if ($total) {
-            return Order::whereIn('status', [1, 2, 3])->count();
+            return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->count();
         }
 
-        return Order::whereIn('status', [1, 2, 3])->whereBetween('created_at', $condition)->count();
+        // 待处理
+        return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereBetween('created_at', $condition)->count();
+    }
+
+    // 下单金额
+    protected function getAmount($condition, $total = false)
+    {
+        $user = Auth::user();
+        if ($total) {
+            return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2])->sum('price');
+        }
+
+        return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2])->whereBetween('created_at', $condition)->sum('price');
+    }
+
+    // 待做的订单数
+    protected function getTodo($condition, $total = false)
+    {
+        $user = Auth::user();
+
+        return Order::where(['shop_id' => $user->shop_id, 'status' => 1])->whereBetween('created_at', $condition)->count();
+    }
+
+
+    // 已处理的订单数
+    protected function getDone($condition)
+    {
+        $user = Auth::user();
+
+        return Order::where(['shop_id' => $user->shop_id, 'operator' => $user->id, 'status' => 3])->whereBetween('created_at', $condition)->count();
     }
 }

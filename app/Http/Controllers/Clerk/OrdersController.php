@@ -72,6 +72,10 @@ class OrdersController extends CommonController
             return $id>0;
         });
 
+        if (empty($goodsIds)) {
+            return $this->error('请选择商品');
+        }
+
         if (in_array(37, $goodsIds) || in_array(38, $goodsIds) || in_array(39, $goodsIds)) {
             if (empty($weight)) {
                 return $this->error('请选择糖浆分量');
@@ -93,16 +97,16 @@ class OrdersController extends CommonController
 
             $date =  date('Y-m-d H:i:s');
             Order::insert([
-                'shop_id' => 1,
-                'member_id' => 0,
-                'order_sn' => date('YmdHis') . rand(1000, 9999), // 待完善
-                'price' => $total,
+                'shop_id'        => 1,
+                'member_id'      => 0,
+                'order_sn'       => $this->getOrderSn(),
+                'price'          => $total,
                 'original_price' => $total,
-                'pay_type' => 0,
-                'status' => 1,
-                'payed_at' => $date,
-                'created_at' => $date,
-                'operator' => $request->user()->id,
+                'pay_type'       => 0,   // 店员下单
+                'status'         => 1,     // 已支付
+                'payed_at'       => $date,
+                'created_at'     => $date,
+                'user_id'        => $request->user()->id,
             ]);
 
             $orderId = DB::getPdo()->lastInsertId();//Order::insertGetId();
@@ -113,14 +117,14 @@ class OrdersController extends CommonController
 
             foreach ($goodsInfo as $item) {
                 OrderDetail::insert([
-                    'goods_name' => $item['name'],
+                    'goods_name'  => $item['name'],
                     'goods_image' => $item['image'],
-                    'order_id' => $orderId,
-                    'goods_num' => ($doubleId && $item['id'] == $doubleId) ? 2 : 1,
+                    'order_id'    => $orderId,
+                    'goods_num'   => ($doubleId && $item['id'] == $doubleId) ? 2 : 1,
                     'goods_price' => $item['price'],
                     'package_num' => 1,
-                    'deploy' => in_array($item['id'], $allow) ? $weight : '',
-                    'created_at' => $date
+                    'deploy'      => in_array($item['id'], $allow) ? $weight : '',
+                    'created_at'  => $date
                 ]);
             }
 
@@ -132,6 +136,19 @@ class OrdersController extends CommonController
         }
 
         return $this->success('下单成功');
+    }
+
+    /**
+     * 获取订单号
+     * @return string
+     */
+    protected function getOrderSn()
+    {
+        do {
+            $orderSn = date('YmdHis') . rand(1000, 9999);
+        } while (Order::where('order_sn', $orderSn)->count());
+
+        return $orderSn;
     }
 
     /**
@@ -222,7 +239,13 @@ class OrdersController extends CommonController
      */
     public function update(Request $request, $id)
     {
-        //
+       // dump($id);
+
+        if (Order::find($id)->update(['status' => 3])) {
+            return $this->success();
+        } else {
+            return $this->error();
+        }
     }
 
     /**

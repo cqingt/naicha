@@ -30,7 +30,7 @@
                 <div class="layui-input-inline">
                     <select name="pay_type" lay-search="" id="pay_type">
                         <option value="">所有</option>
-                        <option value="0">线下支付</option>
+                        <option value="0">店员下单</option>
                         <option value="1">微信支付</option>
                     </select>
                 </div>
@@ -62,9 +62,9 @@
     <script type="text/html" id="bartools">
         <button class="layui-btn layui-btn-xs" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>
         @{{#  if(d.status_type == 1){ }}
-        <button class="layui-btn layui-btn-blue layui-btn-xs" lay-event="update"><i class="layui-icon">&#xe6b2;</i>修改订单</button>
+        <button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="update"><i class="layui-icon">&#xe642;</i>修改</button>
         
-        <button class="layui-btn layui-btn-blue layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>订单完成</button>
+        <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>
         @{{# } }}
     </script>
 

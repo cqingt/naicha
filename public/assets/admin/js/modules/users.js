@@ -9,9 +9,11 @@ layui.use(['table','form','jquery'], function(){
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
-            {fixed: 'left',checkbox : true}
-            ,{field: 'id', title: 'ID', width:50, align:'center'}
+            {field: 'id', title: 'ID', width:50, align:'center'}
             ,{field: 'name', title: '用户名', align:'center',width:150}
+            ,{field: 'real_name', title: '真实姓名', align:'center',width:150}
+            ,{field: 'telephone', title: '手机号', align:'center',width:150}
+            ,{field: 'shop_name', title: '归属店铺', align:'center',width:150}
             ,{field: 'email', title: '邮箱', align:'center',width:190}
             ,{field: 'roles', title: '角色', align:'center',width:130}
             ,{field: 'created_at', title: '创建时间',align:'center', width: 165 ,sort: true}

@@ -21,7 +21,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             ,{field: 'price', title: '价格', align:'center', width:'90'}
             ,{field: 'pay_type', title: '支付方式', align:'center', width:'100'}
             ,{field: 'payed_at', title: '支付时间', align:'center', width:'160'}
-            ,{title: '操作',align:'center', toolbar: '#bartools', width: '250', fixed: 'right'} //这里的toolbar值是模板元素的选择器
+            ,{title: '操作',align:'center', toolbar: '#bartools', width: '220', fixed: 'right'} //这里的toolbar值是模板元素的选择器
         ]]
         ,id: 'testReload'
     });
@@ -57,8 +57,37 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 });
             });
         } else if (layEvent === 'show') { // 展示
+
             //do something
             location.href= '/clerk/' + _mod + '/'+obj.data.id;
+
+        } else if (layEvent === 'success') { // 完成订单
+
+            layer.confirm('订单确定完成吗', function (index) {
+                layer.close(index);
+                //向服务端发送删除指令
+                $.ajax({
+                    type: 'PUT',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/clerk/' + _mod + '/' + obj.data.id,
+                    success: function(data) {
+                        if(data.code==1){
+                            layer.alert(data.msg,{icon: 1}, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.alert(data.msg,{icon: 2});
+                        }
+                    },
+                    error : function (msg) {
+                        console.log('error');
+                        layer.alert(data.msg,{icon: 2});
+                    }
+                });
+            });
         }
     });
 
@@ -99,6 +128,10 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         }
     };
 
+    let carts = [
+
+    ];
+
     $('.demoTable .layui-btn').on('click', function(){
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
@@ -117,8 +150,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
     var _tab = 0;
 
     // 选项
-    $('.header button').on('click', function (event) {
-        event.preventDefault();
+    $('.header button').on('click', function () {
         var _index = $(this).index();
 
         _tab = _index;
@@ -147,7 +179,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         } else {
             // 选中
             $('.header-child .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
 
             // 设置一级品类双倍参数
             $('.double').data('price', $(this).data('price'));
@@ -179,7 +216,11 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         } else {
 
             $('.header-choose-one .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
 
             // 奶类排斥
             if ($(this).data('milk')) {
@@ -209,7 +250,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             }
 
             $('.header-two .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
         }
 
         calculate();
@@ -222,8 +268,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-two-choose .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
-            
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
         }
 
         calculate();
@@ -236,8 +286,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-four .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
-            
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
         }
 
         calculate();
@@ -250,8 +304,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-five .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
-            
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
         }
 
         calculate();
@@ -264,16 +322,19 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-last .cmdlist-container').removeClass('active');
-            $(this).addClass('active');
-            
+
+            if ($(this).find('img').length) {
+                $(this).addClass('active');
+            } else {
+                return;
+            }
         }
 
         calculate();
     });
 
     // 糖类按钮
-    $('button.change-item').on('click', function (event) {
-        event.preventDefault();
+    $('button.change-item').on('click', function () {
         var parent = $(this).parents('.header-three-item');
         $('.header-three-item').addClass('disabled');
 
@@ -305,7 +366,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             layer.msg('容量超出了500ml，请重新选择');
             return false;
         } else if (volume < 500) {
-            layer.msg('容量未达到500ml，不能下单');
+            layer.msg('容量未达到500ml，请继续选择');
             return false;
         }
 
@@ -392,4 +453,51 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         m = Math.pow(10, Math.max(r1, r2));
         return (arg1 * m + arg2 * m) / m;
     }
+
+    $('.add-cup').on('click', function (event) {
+        $('.carts>.cups').find('button').last().addClass('layui-btn-primary');
+        let len = $('.carts>.cups').find('button').length + 1;
+        let html = '<button class="layui-btn layui-btn-sm " type="button">CUP-' +  len  + '</button>';
+
+        $('.carts > .cups').append(html);
+    });
+
+    $('.shop-cart').on('click', function () {
+        if ($('.carts').is(':visible')) {
+            $('.carts').hide();
+            $(this).addClass('layui-btn-primary');
+        } else {
+            $('.carts').show();
+            $(this).removeClass('layui-btn-primary');
+        }
+    });
+
+    // 删除多杯
+    $('.carts .delete-cup').on('click', function () {
+        if ($('.carts > .cups>button').length === 1) {
+            layer.msg('只有一杯，不能删除');
+            return
+        }
+
+        $('.carts > .cups>button').each(function (i, item) {
+            if (! $(item).hasClass('layui-btn-primary')) {
+                $(item).remove();
+
+                // 删除第一个，设置第二个，直接退出，否则会多次删除
+                if (i === 0) {
+                    $('.carts > .cups>button').eq(0).removeClass('layui-btn-primary');
+                    return false;
+                }
+
+                $('.carts > .cups>button').eq(i-1).removeClass('layui-btn-primary');
+            }
+        })
+    });
+
+    // 购物车选择
+    $('.cups').on('click', 'button', function () {
+        let _index = $(this).index();
+        $('.cups').find('button').addClass('layui-btn-primary');
+        $('.cups').find('button').eq(_index).removeClass('layui-btn-primary');
+    })
 });

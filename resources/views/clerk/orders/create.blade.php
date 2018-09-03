@@ -72,10 +72,10 @@
         }
         .count-item {
             margin-right: 30px;
-            font-size: 18px;
+            font-size: 16px;
         }
         .count-item .num{
-            font-size: 20px;
+            font-size: 18px;
             font-weight:bolder;
         }
         .submit-bar{
@@ -93,10 +93,11 @@
             padding: 5px;
         }
         .submit-bar .submit{
+            margin-top: 8px;
             float: right;
         }
         .header-last {
-            margin-bottom:60px;
+            margin-bottom:120px;
         }
         .header-three {
             background: #393D49;
@@ -135,6 +136,48 @@
              color: #333;
              text-decoration: none;
          }
+        button.layui-btn.layui-btn-primary.shop-cart {
+            position: relative;
+            margin-right: 5px;
+        }
+        .shop-cart span.cups {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            color: #009688;
+            border: 1px solid #009688;
+            display: block;
+            width: 20px;
+            font-weight: bolder;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            border-radius: 20px;
+        }
+        span.goods.deleted {
+            height: 80px;
+            display: block;
+            text-align: center;
+            line-height: 80px;
+            border: 1px solid #ccc;
+        }
+        .submit-bar .carts {
+            position: absolute;
+            bottom: 56px;
+            left: 0px;
+            background: #fff;
+            width: 98%;
+            height: 60px;
+            padding-left: 20px;
+            line-height: 60px;
+            border: 1px solid #ddd;
+        }
+        .submit-bar .cups{
+            display: inline-block;
+        }
+        .delete-cup{
+
+        }
     </style>
 @endsection
 
@@ -148,9 +191,9 @@
         {{ csrf_field() }}
             <!-- 品类选择 -->
             <div class="header" style="text-align: center">
-                <button class="layui-btn layui-btn-radius">茶底</button>
-                <button class="layui-btn layui-btn-primary layui-btn-radius">牛奶</button>
-                <button class="layui-btn layui-btn-primary layui-btn-radius">其他</button>
+                <button class="layui-btn layui-btn-radius" type="button">茶底</button>
+                <button class="layui-btn layui-btn-primary layui-btn-radius" type="button">牛奶</button>
+                <button class="layui-btn layui-btn-primary layui-btn-radius" type="button">其他</button>
             </div>
 
             <!-- 一级品类 -->
@@ -160,7 +203,13 @@
                     <div class="layui-col-md2 layui-col-sm2">
                         <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[1]['volume']}}">
                             <a href="javascript:;" class="layui-inline">
-                                <img class="goods layui-circle" src="{{$item['image']}}">
+
+                                @if($item['deleted_at'])
+                                    <span class="goods deleted layui-circle">下架</span>
+                                @else
+                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                @endif
+
                                 <span>{{$item['name']}}</span>
                                 <input type="hidden" name="goods_id[]">
                             </a>
@@ -174,7 +223,11 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-milk="1" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[2]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -188,7 +241,13 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[3]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
+
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -211,7 +270,11 @@
                                 <div class="cmdlist-container" @if(in_array($item['id'], $categoryMilk)) data-milk="1" @endif data-pk="{{$item['id']}}"
                                      data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[4]['volume']}}">
                                     <a href="javascript:;" class="layui-inline">
-                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                        @if($item['deleted_at'])
+                                            <span class="goods deleted layui-circle">下架</span>
+                                        @else
+                                            <img class="goods layui-circle" src="{{$item['image']}}">
+                                        @endif
                                         <span>{{$item['name']}}</span>
                                         <input type="hidden" name="goods_id[]">
                                     </a>
@@ -236,7 +299,11 @@
                                 <div class="layui-col-md2 layui-col-sm2">
                                     <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
                                         <a href="javascript:;" class="layui-inline">
-                                            <img class="goods layui-circle" src="{{$item['image']}}">
+                                            @if($item['deleted_at'])
+                                                <span class="goods deleted layui-circle">下架</span>
+                                            @else
+                                                <img class="goods layui-circle" src="{{$item['image']}}">
+                                            @endif
                                             <span>{{$item['name']}}</span>
                                             <input type="hidden" name="goods_id[]">
                                         </a>
@@ -260,7 +327,11 @@
                                     <div class="layui-col-md2 layui-col-sm2">
                                         <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
                                             <a href="javascript:;" class="layui-inline">
-                                                <img class="goods layui-circle" src="{{$item['image']}}">
+                                                @if($item['deleted_at'])
+                                                    <span class="goods deleted layui-circle">下架</span>
+                                                @else
+                                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                                @endif
                                                 <span>{{$item['name']}}</span>
                                                 <input type="hidden" name="goods_id[]">
                                             </a>
@@ -284,7 +355,11 @@
                                     <div class="layui-col-md2 layui-col-sm2">
                                         <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
                                             <a href="javascript:;" class="layui-inline">
-                                                <img class="goods layui-circle" src="{{$item['image']}}">
+                                                @if($item['deleted_at'])
+                                                    <span class="goods deleted layui-circle">下架</span>
+                                                @else
+                                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                                @endif
                                                 <span>{{$item['name']}}</span>
                                                 <input type="hidden" name="goods_id[]">
                                             </a>
@@ -329,7 +404,11 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[6]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -347,20 +426,22 @@
             <div class="header-three">
 
                 @foreach($data[7]['items'] as $key => $item)
-                <div class="header-three-item disabled " data-pk="{{$item['id']}}">
-                    <label class="layui-form-label">
-                        <button class="layui-btn layui-btn-primary layui-btn-radius change-item">{{$item['name']}}</button>
-                        <input type="hidden" name="goods_id[]">
-                    </label>
+                    @if (! $item['deleted_at'])
+                    <div class="header-three-item disabled " data-pk="{{$item['id']}}">
+                        <label class="layui-form-label">
+                            <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
+                            <input type="hidden" name="goods_id[]">
+                        </label>
 
-                    <div class="layui-input-block select-item">
-                        <input type="radio" name="weight" value="多糖" title="多糖" lay-filter="filter">
-                        <input type="radio" name="weight" value="正常" title="正常" lay-filter="filter">
-                        <input type="radio" name="weight" value="少糖" title="少糖" lay-filter="filter">
-                        <input type="radio" name="weight" value="半糖" title="半糖" lay-filter="filter">
-                        <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
+                        <div class="layui-input-block select-item">
+                            <input type="radio" name="weight" value="多糖" title="多糖" lay-filter="filter">
+                            <input type="radio" name="weight" value="正常" title="正常" lay-filter="filter">
+                            <input type="radio" name="weight" value="少糖" title="少糖" lay-filter="filter">
+                            <input type="radio" name="weight" value="半糖" title="半糖" lay-filter="filter">
+                            <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
+                        </div>
                     </div>
-                </div>
+                    @endif
                 @endforeach
             </div>
 
@@ -375,7 +456,11 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[8]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -396,7 +481,11 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[9]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -417,7 +506,11 @@
                         <div class="layui-col-md2 layui-col-sm2">
                             <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[10]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
-                                    <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @if($item['deleted_at'])
+                                        <span class="goods deleted layui-circle">下架</span>
+                                    @else
+                                        <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @endif
                                     <span>{{$item['name']}}</span>
                                     <input type="hidden" name="goods_id[]">
                                 </a>
@@ -427,13 +520,37 @@
                 </div>
             </div>
             <div class="submit-bar">
-                <div class="count">
-                    <div class="count-item goods-num">商品总数: <span class="num"> 0</span></div>
-                    <div class="count-item goods-cal">卡路里: <span class="num"> 0</span>cal</div>
-                    <div class="count-item goods-volume">容量: <span class="num"> 0</span>ml</div>
-                    <div class="count-item goods-price">订单金额: <span class="num"> 0.00</span></div>
+                <div class="carts" style="display: none">
+                    <button class="layui-btn layui-btn-sm add-cup" type="button">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                    <div class="cups">
+                        <button class="layui-btn layui-btn-sm" type="button">CUP-1</button>
+                    </div>
+
+                    <button class="layui-btn layui-btn-sm layui-btn-primary delete-cup" type="button">
+                        <i class="layui-icon">&#xe640;</i>
+                    </button>
                 </div>
-                <button class="layui-btn submit" lay-submit="" lay-filter="confirm">确认下单</button>
+                <div class="count">
+                    <button class="layui-btn layui-btn-primary shop-cart" type="button">
+                        <i class="layui-icon">&#xe657;</i>
+                        <span class="cups" style="display: none;">3</span>
+                    </button>
+
+                    <div class="count-item cups-num">杯数: <span class="num"> 1</span></div>
+                    {{--<div class="count-item goods-cal">卡路里: <span class="num"> 0</span>cal</div>--}}
+                    {{--<div class="count-item goods-volume">容量: <span class="num"> 0</span>ml</div>--}}
+                    <div class="count-item current-cup">当前杯: <span class="num"> CUP-1</span></div>
+                    <div class="count-item order-price">当前杯金额: <span class="num"> 0.00</span></div>
+                    <div class="count-item order-total">订单总金额: <span class="num"> 0.00</span></div>
+                </div>
+{{--                <div class="layui-btn-group">
+                    <button class="layui-btn layui-btn-sm add-cup" type="button">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                </div>--}}
+                <button class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认下单</button>
             </div>
         </form>
 
