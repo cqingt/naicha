@@ -7,7 +7,7 @@
         }
 
         .header-child {
-            margin: 20px;
+            margin: 20px 0;
         }
 
         .layui-row .layui-col-sm2 {
@@ -96,7 +96,7 @@
             margin-top: 8px;
             float: right;
         }
-        .header-last {
+        .header-three {
             margin-bottom:120px;
         }
         .header-three {
@@ -106,7 +106,7 @@
             -moz-border-radius: 3px;
             border-radius: 3px;
             padding:10px;
-            margin: 20px 0;
+            /*margin: 20px 0;*/
         }
         .header-three-item.disabled {
             color: #999;
@@ -175,8 +175,20 @@
         .submit-bar .cups{
             display: inline-block;
         }
-        .delete-cup{
-
+        .header-end{
+            margin-bottom: 120px;
+        }
+        .goods-item{
+            margin-bottom: 30px;
+        }
+        .header-end{
+            text-align: center;
+        }
+        .header-end .layui-row{
+            margin-top: 10px;
+        }
+        .header-end .layui-input-block{
+            margin-left:0
         }
     </style>
 @endsection
@@ -189,6 +201,7 @@
     <div class="layui-container">
         <form class="layui-form" action="{{ url('clerk/orders') }}" method="post">
         {{ csrf_field() }}
+            <div id="container">
             <!-- 品类选择 -->
             <div class="header" style="text-align: center">
                 <button class="layui-btn layui-btn-radius" type="button">茶底</button>
@@ -197,7 +210,10 @@
             </div>
 
             <!-- 一级品类 -->
-            <div class="header-child">
+            <div class="goods-item header-child">
+                <div class="site-title">
+                    <fieldset><legend><a name="fieldset">一级品类(250ml)</a></legend></fieldset>
+                </div>
                 <div class="header-child-0 layui-row layui-col-space30">
                     @foreach($data[1]['items'] as $key => $item)
                     <div class="layui-col-md2 layui-col-sm2">
@@ -258,9 +274,9 @@
             </div>
 
             <!-- 一级可选 -->
-            <div class="header-choose-one">
+            <div class="goods-item header-choose-one">
                 <div class="site-title">
-                    <fieldset><legend><a name="fieldset">可选配料</a></legend></fieldset>
+                    <fieldset><legend><a name="fieldset">可选配料(50ml)</a></legend></fieldset>
                 </div>
                 <h3 class="category"></h3>
                 <div class="header-choose-item header-choose-0">
@@ -286,10 +302,10 @@
             </div>
 
             <!-- 二级品类 -->
-            <div class="header-two">
+            <div class="goods-item header-two">
                 <div class="header-two-item">
                     <div class="site-title">
-                        <fieldset><legend><a name="fieldset">果瓜类</a></legend></fieldset>
+                        <fieldset><legend><a name="fieldset">二级品类 - 果瓜类(150ml)</a></legend></fieldset>
                     </div>
                     {{--<h3 class="category">果瓜类</h3>--}}
                     <div class="header-choose-1">
@@ -317,7 +333,7 @@
 
                 <div class="header-two-item">
                     <div class="site-title">
-                        <fieldset><legend><a name="fieldset">柑橘类</a></legend></fieldset>
+                        <fieldset><legend><a name="fieldset">二级品类 - 柑橘类(150ml)</a></legend></fieldset>
                     </div>
                     {{--<h3 class="category">柑橘类</h3>--}}
                     <div class="header-choose-2">
@@ -345,7 +361,7 @@
 
                 <div class="header-two-item">
                     <div class="site-title">
-                        <fieldset><legend><a name="fieldset">谷物类</a></legend></fieldset>
+                        <fieldset><legend><a name="fieldset">二级品类 - 谷物类(150ml)</a></legend></fieldset>
                     </div>
                     {{--<h3 class="category">谷物类</h3>--}}
                     <div class="header-choose-2">
@@ -373,13 +389,13 @@
 
                 <div class="header-two-item">
                     <div class="site-title">
-                        <fieldset><legend><a name="fieldset">其他</a></legend></fieldset>
+                        <fieldset><legend><a name="fieldset">二级品类 - 其他(250ml)</a></legend></fieldset>
                     </div>
                     {{--<h3 class="category">其他</h3>--}}
                     <div class="header-choose-2">
                         <div class="layui-row layui-col-space30">
                             <div class="layui-col-md2 layui-col-sm2">
-                                <div class="cmdlist-container double" data-price="" data-calorie="" data-volume="250">
+                                <div class="cmdlist-container double" data-pk="-1" data-price="" data-calorie="" data-volume="250">
                                     <a href="javascript:;">
                                         <img class="goods layui-circle"
                                              src="https://www.layui.com/admin/std/dist/layuiadmin/style/res/template/portrait.png">
@@ -394,7 +410,7 @@
             </div>
 
             <!-- 二级可选 -->
-            <div class="header-two-choose">
+            <div class="goods-item header-two-choose">
                 <div class="site-title">
                     <fieldset><legend><a name="fieldset">二级可选</a></legend></fieldset>
                 </div>
@@ -418,37 +434,10 @@
                 </div>
             </div>
 
-            {{--<hr>--}}
-            <div class="site-title">
-                <fieldset style="width:100%;"><legend><a name="fieldset">糖类可选</a></legend></fieldset>
-            </div>
-            <!-- 三级品类 -->
-            <div class="header-three">
-
-                @foreach($data[7]['items'] as $key => $item)
-                    @if (! $item['deleted_at'])
-                    <div class="header-three-item disabled " data-pk="{{$item['id']}}">
-                        <label class="layui-form-label">
-                            <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
-                            <input type="hidden" name="goods_id[]">
-                        </label>
-
-                        <div class="layui-input-block select-item">
-                            <input type="radio" name="weight" value="多糖" title="多糖" lay-filter="filter">
-                            <input type="radio" name="weight" value="正常" title="正常" lay-filter="filter">
-                            <input type="radio" name="weight" value="少糖" title="少糖" lay-filter="filter">
-                            <input type="radio" name="weight" value="半糖" title="半糖" lay-filter="filter">
-                            <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
-                        </div>
-                    </div>
-                    @endif
-                @endforeach
-            </div>
-
             <!-- 四级品类 -->
-            <div class="header-four">
+            <div class="goods-item header-four">
                 <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">可选配料</a></legend></fieldset>
+                    <fieldset style="width:100%;"><legend><a name="fieldset">可选配料(25ml)</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">配料类</h3>--}}
                 <div class="header-child-1 layui-row layui-col-space30">
@@ -471,9 +460,9 @@
             </div>
 
             <!-- 五级品类 -->
-            <div class="header-five">
+            <div class="goods-item header-five">
                 <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖</a></legend></fieldset>
+                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖(50ml)</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">奶盖</h3>--}}
                 <div class="header-child-1 layui-row layui-col-space30">
@@ -496,7 +485,7 @@
             </div>
 
             <!-- 撒料 -->
-            <div class="header-last">
+            <div class="goods-item header-last">
                 <div class="site-title">
                     <fieldset style="width:100%;"><legend><a name="fieldset">奶盖撒料</a></legend></fieldset>
                 </div>
@@ -518,6 +507,54 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+
+                {{--<hr>--}}
+                <div class="site-title">
+                    <fieldset style="width:100%;"><legend><a name="fieldset">糖类可选</a></legend></fieldset>
+                </div>
+                <!-- 三级品类 -->
+                <div class="goods-item header-three">
+
+                    @foreach($data[7]['items'] as $key => $item)
+                        @if (! $item['deleted_at'])
+                            <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}">
+                                <label class="layui-form-label">
+                                    <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
+                                    <input type="hidden" name="goods_id[]">
+                                </label>
+
+                                <div class="layui-input-block select-item">
+                                    <input type="radio" name="weight" value="多糖" title="多糖" lay-filter="filter">
+                                    <input type="radio" name="weight" value="正常" title="正常" lay-filter="filter">
+                                    <input type="radio" name="weight" value="少糖" title="少糖" lay-filter="filter">
+                                    <input type="radio" name="weight" value="半糖" title="半糖" lay-filter="filter">
+                                    <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+
+                <div class="header-end">
+                    <div class="site-title">
+                        <fieldset style="width:100%;"><legend><a name="fieldset">温度选择</a></legend></fieldset>
+                    </div>
+                    {{--<h3 class="category">奶盖撒料</h3>--}}
+                    <div class="layui-row layui-col-space30">
+                        <button class="layui-btn layui-btn-radius temp" type="button">热饮</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-radius temp" type="button">冷饮</button>
+                        <input type="hidden" name="temperature" value="热饮">
+                        <div class="temperature" style="display: none">
+                            <div class="layui-input-block select-item">
+                                <input type="radio" name="temperature" value="正常冰" title="正常冰" lay-filter="temperature" checked>
+                                <input type="radio" name="temperature" value="少冰" title="少冰" lay-filter="temperature">
+                                <input type="radio" name="temperature" value="去冰" title="去冰" lay-filter="temperature">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="submit-bar">
                 <div class="carts" style="display: none">
@@ -542,7 +579,8 @@
                     {{--<div class="count-item goods-cal">卡路里: <span class="num"> 0</span>cal</div>--}}
                     {{--<div class="count-item goods-volume">容量: <span class="num"> 0</span>ml</div>--}}
                     <div class="count-item current-cup">当前杯: <span class="num"> CUP-1</span></div>
-                    <div class="count-item order-price">当前杯金额: <span class="num"> 0.00</span></div>
+                    <div class="count-item order-volume">容量: <span class="num"> 0</span>ml</div>
+                    <div class="count-item order-price">金额: <span class="num"> 0.00</span></div>
                     <div class="count-item order-total">订单总金额: <span class="num"> 0.00</span></div>
                 </div>
 {{--                <div class="layui-btn-group">

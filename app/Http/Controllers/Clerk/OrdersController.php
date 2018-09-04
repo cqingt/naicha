@@ -62,70 +62,77 @@ class OrdersController extends CommonController
      */
     public function store(Request $request)
     {
-        //dd($request->all());
-        $allow = [37, 38, 39];
-        $goodsIdArr = $request->get('goods_id');
-        $doubleId = $request->get('double'); // 一级品类双倍
-        $weight = $request->get('weight'); // 单选 分量
+        $data = $request->get('data');
+        $date =  date('Y-m-d H:i:s');
 
-        $goodsIds = array_filter($goodsIdArr, function ($id){
-            return $id>0;
-        });
-
-        if (empty($goodsIds)) {
-            return $this->error('请选择商品');
+        if (empty($data)) {
+            return $this->error('请选择商品下单');
         }
 
-        if (in_array(37, $goodsIds) || in_array(38, $goodsIds) || in_array(39, $goodsIds)) {
-            if (empty($weight)) {
-                return $this->error('请选择糖浆分量');
+        $totalPrice = 0;
+        $orderPrice = 0; // 订单总价
+        $index = 1;
+        $temperature = []; // 订单，每杯温度
+        $insertData = [];
+
+        foreach ($data as $key => $item) {
+            $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
+            $item['temperature'] && $temperature[$index] = $item['temperature']; // 设置温度
+
+            $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
+
+            foreach ($goodsInfo as $goods) {
+                $insertData[] = [
+                    'goods_name'  => $goods['name'],
+                    'goods_image' => $goods['image'],
+                    'goods_num'   => $goods['id'] == $item['double'] ? 2 : 1,
+                    'goods_price' => $goods['price'],
+                    'package_num' => $index,
+                    'deploy'      => $item['sugar'] == $goods['id'] ? $item['weight'] : '',
+                    'created_at'  => $date
+                ];
+                $goodsPrice = bcmul($goods['price'], $goods['id'] == $item['double'] ? 2 : 1, 2);
+                $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
             }
+
+            $index++;
+
+            $totalPrice = bcadd($totalPrice,  $item['price'], 2);
         }
 
-        $goodsInfo = Goods::whereIn('id', $goodsIds)->get();
+        if (0 != bccomp($totalPrice, $orderPrice, 2)) {
+            echo $totalPrice, ',', $orderPrice;exit;
+            return $this->error('订单价格有误');
+        }
+        //dd($insertData);exit;
 
         DB::beginTransaction();
         try{
-            $total = 0;
-            foreach ($goodsInfo as $item) {
-                if ($doubleId && $item['id'] == $doubleId) {
-                    $total += $item['price'] * 2;
-                } else {
-                    $total += $item['price'];
-                }
-            }
 
-            $date =  date('Y-m-d H:i:s');
             Order::insert([
-                'shop_id'        => 1,
+                'shop_id'        => $request->user()->shop_id,
                 'member_id'      => 0,
                 'order_sn'       => $this->getOrderSn(),
-                'price'          => $total,
-                'original_price' => $total,
-                'pay_type'       => 0,   // 店员下单
+                'price'          => $orderPrice,
+                'original_price' => $orderPrice,
+                'pay_type'       => 0,     // 店员下单
                 'status'         => 1,     // 已支付
                 'payed_at'       => $date,
                 'created_at'     => $date,
                 'user_id'        => $request->user()->id,
+                'temperature'    => $temperature ? serialize($temperature) : ''
             ]);
 
-            $orderId = DB::getPdo()->lastInsertId();//Order::insertGetId();
+            $orderId = DB::getPdo()->lastInsertId();
 
             if (! $orderId) {
                 throw new \Exception('订单新增失败');
             }
 
-            foreach ($goodsInfo as $item) {
-                OrderDetail::insert([
-                    'goods_name'  => $item['name'],
-                    'goods_image' => $item['image'],
-                    'order_id'    => $orderId,
-                    'goods_num'   => ($doubleId && $item['id'] == $doubleId) ? 2 : 1,
-                    'goods_price' => $item['price'],
-                    'package_num' => 1,
-                    'deploy'      => in_array($item['id'], $allow) ? $weight : '',
-                    'created_at'  => $date
-                ]);
+            foreach ($insertData as $item) {
+                $item['order_id'] = $orderId;
+
+                OrderDetail::insert($item);
             }
 
             DB::commit();
@@ -164,6 +171,11 @@ class OrdersController extends CommonController
 
         $order['status'] =  $this->getStatus($order['status']);
         $order['pay_type'] = $this->getPayType($order['pay_type']);
+        $temp = [];
+
+        if ($order['temperature']) {
+            $temp = unserialize($order['temperature']);
+        }
 
         $packages = [];
 
@@ -171,7 +183,7 @@ class OrdersController extends CommonController
             $packages[$item['package_num']][] = $item;
         }
 
-        return view('clerk.orders.show', compact('order', 'orderInfo', 'packages'));
+        return view('clerk.orders.show', compact('order', 'orderInfo', 'packages', 'temp'));
     }
 
     /**

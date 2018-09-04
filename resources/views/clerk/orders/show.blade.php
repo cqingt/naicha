@@ -74,7 +74,7 @@
             </thead>
             @endif
             <tbody>
-            <tr style="background: #393D49;color: #fff;"><td colspan="5">第{{$key}}口袋</td></tr>
+            <tr style="background: #393D49;color: #fff;"><td colspan="5">第{{$key}}杯 @if($temp && isset($temp[$key])) (温度： {{$temp[$key]}}) @endif</td></tr>
             @foreach($package as $goods)
             <tr>
                 <td>{{$goods->goods_name}}</td>
