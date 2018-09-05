@@ -35,6 +35,24 @@ class IndexController extends CommonController
         return view('clerk.layouts.index');
     }
 
+    /**
+     * 消息提醒
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listen(Request $request)
+    {
+        $user = $request->user();
+
+        $total = Order::where(['shop_id' => $user->shop_id, 'status' => 1])->count();
+
+        if ($total) {
+            return $this->success(['total' => $total]);
+        } else {
+            return $this->error();
+        }
+    }
+
     public function data(Request $request)
     {
         $start = $request->get('start_time');
@@ -103,10 +121,10 @@ class IndexController extends CommonController
     {
         $user = Auth::user();
         if ($total) {
-            return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2])->sum('price');
+            return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2, 3])->sum('price');
         }
 
-        return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2])->whereBetween('created_at', $condition)->sum('price');
+        return Order::where(['shop_id' => $user->shop_id, 'user_id' => $user->id])->whereIn('status', [1, 2, 3])->whereBetween('created_at', $condition)->sum('price');
     }
 
     // 待做的订单数

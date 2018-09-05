@@ -77,12 +77,13 @@ class OrdersController extends CommonController
 
         foreach ($data as $key => $item) {
             $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
-            $item['temperature'] && $temperature[$index] = $item['temperature']; // 设置温度
+            $temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
 
             $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
 
             foreach ($goodsInfo as $goods) {
                 $insertData[] = [
+                    'goods_id'    => $goods['id'],
                     'goods_name'  => $goods['name'],
                     'goods_image' => $goods['image'],
                     'goods_num'   => $goods['id'] == $item['double'] ? 2 : 1,
@@ -239,7 +240,59 @@ class OrdersController extends CommonController
      */
     public function edit($id)
     {
-        //
+        $orderInfo = Order::find($id)->toArray();
+        $orderDetail = OrderDetail::where('order_id', $id)
+            ->select(['id', 'goods_id', 'deploy', 'goods_num', 'package_num'])
+            ->get()
+            ->toArray();
+
+        if ($orderInfo['status'] != 1) {
+            throw new \Exception('订单状态异常');
+        }
+
+        $packages = [];
+
+        foreach ($orderDetail as $item) {
+            $packages[$item['package_num']][] = $item;
+        }
+
+        $orderInfo['details'] = $packages;
+
+        if ($orderInfo['temperature']) {
+            $orderInfo['temperature'] = unserialize($orderInfo['temperature']);
+        }
+
+        $cups = count($packages);
+        $orderInfo = json_encode($orderInfo);
+
+        // 各分类
+        $categories = Category::select(['id', 'volume', 'name'])->get();
+        $newCategory = [];
+        foreach ($categories as $category) {
+            $newCategory[$category->id] = $category;
+        }
+
+        $products = Goods::withTrashed()->orderBy('category_id')->get();
+
+        $data = [];
+
+        foreach ($products as $product) {
+            $data[$product->category_id]['volume'] = $newCategory[$product->category_id]['volume'];
+            $data[$product->category_id]['items'][] = $product;
+        }
+
+        // 2级品类分组 id
+        $categoryOne = [20, 21, 22, 23, 24, 25];
+        $categoryTwo = [26, 27, 28, 29];
+        $categoryThree = [30, 31, 32, 33];
+        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类
+
+        return view('clerk.orders.edit', compact(
+            [
+                'products', 'data', 'categoryOne', 'categoryTwo', 'categoryThree', 'categoryMilk'
+                ,'orderInfo', 'orderDetail', 'cups'
+            ])
+        );
     }
 
     /**
@@ -251,9 +304,7 @@ class OrdersController extends CommonController
      */
     public function update(Request $request, $id)
     {
-       // dump($id);
-
-        if (Order::find($id)->update(['status' => 3])) {
+        if (Order::find($id)->update(['status' => 3, 'operator' => $request->user()->id])) {
             return $this->success();
         } else {
             return $this->error();

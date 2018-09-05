@@ -1,5 +1,5 @@
 @extends('clerk.layouts.app')
-@section('title','创建订单')
+@section('title','修改订单')
 @section('styles')
     <style>
         .layui-layout-body {
@@ -75,8 +75,8 @@
             font-size: 16px;
         }
         .count-item .num{
-            font-size: 16px;
-            font-weight:600;
+            font-size: 18px;
+            font-weight:bolder;
         }
         .submit-bar{
 /*            margin-top:50px;
@@ -195,7 +195,8 @@
 
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
-        创建订单
+        修改订单
+        <a href="{{ url('clerk/orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <div class="layui-container">
@@ -217,7 +218,8 @@
                 <div class="header-child-0 layui-row layui-col-space30">
                     @foreach($data[1]['items'] as $key => $item)
                     <div class="layui-col-md2 layui-col-sm2">
-                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[1]['volume']}}">
+                        <div class="cmdlist-container"
+                             data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[1]['volume']}}">
                             <a href="javascript:;" class="layui-inline">
 
                                 @if($item['deleted_at'])
@@ -237,7 +239,8 @@
                 <div style="display: none;" class="header-child-1 layui-row layui-col-space30">
                     @foreach($data[2]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-milk="1" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[2]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-milk="1" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[2]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -255,7 +258,8 @@
                 <div style="display: none;" class="header-child-2 layui-row layui-col-space30">
                     @foreach($data[3]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[3]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[3]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
 
                                     @if($item['deleted_at'])
@@ -280,11 +284,11 @@
                 </div>
                 <h3 class="category"></h3>
                 <div class="header-choose-item header-choose-0">
-                    <div class="header-child-1 layui-row layui-col-space30">
+                    <div class="layui-row layui-col-space30">
                         @foreach($data[4]['items'] as $key => $item)
                             <div class="layui-col-md2 layui-col-sm2">
-                                <div class="cmdlist-container" @if(in_array($item['id'], $categoryMilk)) data-milk="1" @endif data-pk="{{$item['id']}}"
-                                     data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[4]['volume']}}">
+                                <div class="cmdlist-container " @if(in_array($item['id'], $categoryMilk)) data-milk="1" @endif
+                                data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[4]['volume']}}">
                                     <a href="javascript:;" class="layui-inline">
                                         @if($item['deleted_at'])
                                             <span class="goods deleted layui-circle">下架</span>
@@ -309,11 +313,12 @@
                     </div>
                     {{--<h3 class="category">果瓜类</h3>--}}
                     <div class="header-choose-1">
-                        <div class="header-child-1 layui-row layui-col-space30">
+                        <div class="layui-row layui-col-space30">
                             @foreach($data[5]['items'] as $key => $item)
                                 @if(in_array($item['id'], $categoryOne))
                                 <div class="layui-col-md2 layui-col-sm2">
-                                    <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
+                                    <div class="cmdlist-container "
+                                         data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[5]['volume']}}">
                                         <a href="javascript:;" class="layui-inline">
                                             @if($item['deleted_at'])
                                                 <span class="goods deleted layui-circle">下架</span>
@@ -341,7 +346,8 @@
                             @foreach($data[5]['items'] as $key => $item)
                                 @if(in_array($item['id'], $categoryTwo))
                                     <div class="layui-col-md2 layui-col-sm2">
-                                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
+                                        <div class="cmdlist-container "
+                                             data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[5]['volume']}}">
                                             <a href="javascript:;" class="layui-inline">
                                                 @if($item['deleted_at'])
                                                     <span class="goods deleted layui-circle">下架</span>
@@ -369,7 +375,8 @@
                             @foreach($data[5]['items'] as $key => $item)
                                 @if(in_array($item['id'], $categoryThree))
                                     <div class="layui-col-md2 layui-col-sm2">
-                                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
+                                        <div class="cmdlist-container "
+                                             data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[5]['volume']}}">
                                             <a href="javascript:;" class="layui-inline">
                                                 @if($item['deleted_at'])
                                                     <span class="goods deleted layui-circle">下架</span>
@@ -415,10 +422,11 @@
                     <fieldset><legend><a name="fieldset">二级可选</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">二级可选</h3>--}}
-                <div class="header-child-1 layui-row layui-col-space30">
+                <div class="layui-row layui-col-space30">
                     @foreach($data[6]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[6]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[6]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -440,10 +448,11 @@
                     <fieldset style="width:100%;"><legend><a name="fieldset">可选配料(25ml)</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">配料类</h3>--}}
-                <div class="header-child-1 layui-row layui-col-space30">
+                <div class="layui-row layui-col-space30">
                     @foreach($data[8]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[8]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[8]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -465,10 +474,11 @@
                     <fieldset style="width:100%;"><legend><a name="fieldset">奶盖(50ml)</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">奶盖</h3>--}}
-                <div class="header-child-1 layui-row layui-col-space30">
+                <div class="layui-row layui-col-space30">
                     @foreach($data[9]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[9]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[9]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -490,10 +500,11 @@
                     <fieldset style="width:100%;"><legend><a name="fieldset">奶盖撒料</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">奶盖撒料</h3>--}}
-                <div class="header-child-1 layui-row layui-col-space30">
+                <div class="layui-row layui-col-space30">
                     @foreach($data[10]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[10]['volume']}}">
+                            <div class="cmdlist-container "
+                                 data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="{{$data[10]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -518,7 +529,7 @@
 
                     @foreach($data[7]['items'] as $key => $item)
                         @if (! $item['deleted_at'])
-                            <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}">
+                            <div class="header-three-item disabled" data-pk="{{$item['id']}}" data-price="{{$item['price']}}">
                                 <label class="layui-form-label">
                                     <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
                                     <input type="hidden" name="goods_id[]">
@@ -542,12 +553,12 @@
                     </div>
                     {{--<h3 class="category">奶盖撒料</h3>--}}
                     <div class="layui-row layui-col-space30">
-                        <button class="layui-btn layui-btn-radius temp" type="button">热饮</button>
-                        <button class="layui-btn layui-btn-primary layui-btn-radius temp" type="button">冷饮</button>
+                        <button class="layui-btn layui-btn-radius temp" type="button" data-value="hot">热饮</button>
+                        <button class="layui-btn layui-btn-radius temp layui-btn-primary" type="button">冷饮</button>
                         <input type="hidden" name="temperature" value="热饮">
                         <div class="temperature" style="display: none">
                             <div class="layui-input-block select-item">
-                                <input type="radio" name="temperature" value="ice" title="正常冰" lay-filter="temperature" checked>
+                                <input type="radio" name="temperature" value="ice" title="正常冰" lay-filter="temperature">
                                 <input type="radio" name="temperature" value="less_ice" title="少冰" lay-filter="temperature">
                                 <input type="radio" name="temperature" value="none_ice" title="去冰" lay-filter="temperature">
                             </div>
@@ -557,17 +568,20 @@
 
             </div>
             <div class="submit-bar">
-                <div class="carts" style="display: none">
-                    <button class="layui-btn layui-btn-sm add-cup" type="button">
+                <div class="carts">
+                    {{--<button class="layui-btn layui-btn-sm add-cup" type="button">
                         <i class="layui-icon">&#xe654;</i>
-                    </button>
+                    </button>--}}
                     <div class="cups">
                         <button class="layui-btn layui-btn-sm" type="button">CUP-1</button>
+                        @for($i = 2; $i <= $cups; $i++)
+                            <button class="layui-btn layui-btn-primary layui-btn-sm" type="button">CUP-{{$i}}</button>
+                        @endfor
                     </div>
 
-                    <button class="layui-btn layui-btn-sm layui-btn-primary delete-cup" type="button">
+                    {{--<button class="layui-btn layui-btn-sm layui-btn-primary delete-cup" type="button">
                         <i class="layui-icon">&#xe640;</i>
-                    </button>
+                    </button>--}}
                 </div>
                 <div class="count">
                     <button class="layui-btn layui-btn-primary shop-cart" type="button">
@@ -583,11 +597,6 @@
                     <div class="count-item order-price">金额: <span class="num"> 0.00</span></div>
                     <div class="count-item order-total">订单总金额: <span class="num"> 0.00</span></div>
                 </div>
-{{--                <div class="layui-btn-group">
-                    <button class="layui-btn layui-btn-sm add-cup" type="button">
-                        <i class="layui-icon">&#xe654;</i>
-                    </button>
-                </div>--}}
                 <button class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认下单</button>
             </div>
         </form>
@@ -597,7 +606,17 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('assets/clerk/js/modules/orders.js') }}"></script>
+    <script src="{{ asset('assets/clerk/js/modules/orders_edit.js') }}"></script>
+    <script>
+        layui.use(['jquery'],function() {
+            window.sessionStorage.removeItem('edit_carts');
+            let edit_carts = {!! $orderInfo !!};
+            let array = [];
+            array.push(edit_carts);
+            window.sessionStorage.setItem('edit_carts', JSON.stringify(array));
+        });
+
+    </script>
 @endsection
 
 

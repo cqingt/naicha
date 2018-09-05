@@ -1,143 +1,68 @@
 layui.use(['table','form','jquery','laydate', 'element'], function(){
-    var table = layui.table
-        ,form = layui.form
-        ,$ = layui.jquery
-        ,laydate = layui.laydate
-        ,element = layui.element;
-
-    var _mod = 'orders';
-
-    table.render({
-        elem: '#orders_table'
-        ,url: '/clerk/' + _mod + '/list' //数据接口
-        ,limit: 10
-        ,page: true //开启分页
-        ,cols: [[ //表头
-            // {fixed: 'left',checkbox : true}
-            {field: 'id', title: 'ID', align:'center', width:'50'}
-            ,{field: 'order_sn', title: '订单号',  align:'center', width:'200'}
-            ,{field: 'member_name', title: '会员姓名', align:'center', width:'150'}
-            ,{field: 'status', title: '状态', align:'center', width:'90'}
-            ,{field: 'price', title: '价格', align:'center', width:'90'}
-            ,{field: 'pay_type', title: '支付方式', align:'center', width:'100'}
-            ,{field: 'payed_at', title: '支付时间', align:'center', width:'160'}
-            ,{title: '操作',align:'center', toolbar: '#bartools', width: '220', fixed: 'right'} //这里的toolbar值是模板元素的选择器
-        ]]
-        ,id: 'testReload'
-    });
-
-    table.on('tool(orders_table)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-        var data = obj.data; //获得当前行数据
-        var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-        var tr = obj.tr; //获得当前行 tr 的DOM对象
-
-        if (layEvent === 'del') { //删除
-            layer.confirm('确定删除行吗', function (index) {
-                layer.close(index);
-                //向服务端发送删除指令
-                $.ajax({
-                    type: 'DELETE',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '/admin/' + _mod + '/'+obj.data.id,
-                    success: function(data) {
-                        if(data.code==1){
-                            layer.alert(data.msg,{icon: 1});
-                            obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                        }else{
-                            layer.alert(data.msg,{icon: 2});
-                        }
-                    },
-                    error : function (msg) {
-                        console.log('error');
-                        layer.alert(data.msg,{icon: 2});
-                    }
-                });
-            });
-        } else if (layEvent === 'show') { // 展示
-
-            //do something
-            location.href= '/clerk/' + _mod + '/'+obj.data.id;
-
-        }  else if (layEvent === 'edit') { // 编辑
-            location.href= '/clerk/' + _mod + '/'+obj.data.id+'/edit';
-
-        } else if (layEvent === 'success') { // 完成订单
-
-            layer.confirm('订单确定完成吗', function (index) {
-                layer.close(index);
-                //向服务端发送删除指令
-                $.ajax({
-                    type: 'PUT',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '/clerk/' + _mod + '/' + obj.data.id,
-                    success: function(data) {
-                        if(data.code==1){
-                            layer.alert(data.msg,{icon: 1}, function () {
-                                location.reload();
-                            });
-                        }else{
-                            layer.alert(data.msg,{icon: 2});
-                        }
-                    },
-                    error : function (msg) {
-                        console.log('error');
-                        layer.alert(data.msg,{icon: 2});
-                    }
-                });
-            });
-        }
-    });
-
-    var $ = layui.$, active = {
-        reload: function(){
-            //执行重载
-            table.reload('testReload', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-                ,where: {
-                    order_sn: $('#order_sn').val(),
-                    shop_id: $('#shop_id').val(),
-                    status:  $('#status').val(),
-                    start_time: $('#start_time').val(),
-                    stop_time: $('#stop_time').val(),
-                    pay_type: $('#pay_type').val()
-                }
-            });
-        },
-        reset: function () {
-            $('#order_sn, #shop_id,#status,#start_time,#stop_time').val('');
-            layui.form.render('select');
-            //执行重载
-            table.reload('testReload', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-                ,where: {
-                    order_sn: '',
-                    shop_id: '',
-                    status: '',
-                    start_time: '',
-                    stop_time: '',
-                    pay_type: ''
-                }
-            });
-        }
-    };
+    var form = layui.form
+        ,$ = layui.jquery;
 
     // 保存整体html
     let container = '';
-    window.onload = function()
-    {
+    window.onload = function() {
         container = $('#container').html();
-        window.sessionStorage.clear();
+
+        let firstly = getPackageData(1);
+        for (var i in firstly) {
+            if (firstly[i].deploy) {
+                // 设置糖类
+                var sugar = $('.header-three-item[data-pk="'+ firstly[i]['goods_id'] +'"]');
+                sugar.removeClass('disabled');
+
+                $('input[value="' + firstly[i].deploy + '"]', sugar).attr('checked',true);
+                form.render();
+
+            } else {
+                $('div[data-pk="'+ firstly[i]['goods_id'] +'"]').addClass('active');
+            }
+        }
+
+        let orderInfo = getPackageData();
+        let temperature;
+
+        if (orderInfo.temperature) {
+            temperature = orderInfo.temperature[1]; console.log(temperature);
+            if (temperature !== 'hot') {
+                $('.header-end .temp').eq(0).addClass('layui-btn-primary');
+                $('.header-end .temp').eq(1).removeClass('layui-btn-primary');
+                $('.temperature').show();
+
+                $('input[value="'+temperature+'"]', $('.temperature')).attr('checked',true);
+                form.render();
+            }
+        }
+
+        init();
+        calculate();
     };
+
+    // 初始化选项
+    function init() {
+        // 分类选项
+        let ind = $('.header-child').find('.active').parents('.layui-row').index();
+        if (ind) {
+            $('.header').find('button').addClass('layui-btn-primary');
+            $('.header').find('button').eq(ind - 1).removeClass('layui-btn-primary');
+            $('.header-child .layui-row').css('display', 'none');
+            $('.header-child .header-child-' + (ind - 1)).css('display', 'block');
+        }
+    }
+
+    // 获取每杯信息, 默认获取订单信息
+    function getPackageData(packageNum = 0) {
+        let storageCart = window.sessionStorage.getItem('edit_carts');
+        let cartArr = JSON.parse(storageCart);
+        if (cartArr) {
+            let orderDetail = cartArr[0]['details'];
+
+            return packageNum ? orderDetail[packageNum] : cartArr[0];
+        }
+    }
 
     // 购物车
     let cup = 'CUP-1';
@@ -147,27 +72,12 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         'tab' : 0,
         'volume': 0,
         'price': '0.00',
-        'temperature': 'hot', // 温度选择
+        'temperature': '热饮', // 温度选择
         'sugar' : '', // 糖类选择
         'weight': '',  // 糖分分量
         'double' : '', // 一级品类双倍 的id
         'list': [], // 选中
     };
-
-    $('.demoTable .layui-btn').on('click', function(){
-        var type = $(this).data('type');
-        active[type] ? active[type].call(this) : '';
-    });
-
-    laydate.render({
-        elem: '#start_time'
-        , type: 'datetime'
-    });
-
-    laydate.render({
-        elem: '#stop_time'
-        , type: 'datetime'
-    });
 
     var _tab = 0;
 
@@ -183,10 +93,6 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         // 一级品类
         $('.header-child .layui-row').css('display', 'none');
         $('.header-child .header-child-' + _index).css('display', 'block');
-
-        // // 一级可选
-        // $('.header-choose-one .header-choose-item').css('display', 'none');
-        // $('.header-choose-one .header-choose-'+_tab).css('display', 'block');
     });
 
     // 一级选中
@@ -317,8 +223,6 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             $(this).removeClass('active');
            
         } else {
-            //$('.header-four .cmdlist-container').removeClass('active');
-
             if ($(this).find('img').length) {
                 $(this).addClass('active');
             } else {
@@ -594,7 +498,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             'tab' : 0,
             'volume': 0,
             'price': '0.00',
-            'temperature': 'hot', // 温度选择
+            'temperature': '热饮', // 温度选择
             'sugar' : '', // 糖类选择
             'weight': '',  // 糖分分量
             'double' : '', // 一级品类双倍 的id

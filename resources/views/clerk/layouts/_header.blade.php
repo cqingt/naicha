@@ -1,6 +1,6 @@
 <ul class="layui-nav layui-layout-right">
     <li class="layui-nav-item">
-        <a href="javascript:;">
+        <a href="javascript:;" id="avatar">
             <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
             {{ Auth::user()->name }}
         </a>

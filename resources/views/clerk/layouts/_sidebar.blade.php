@@ -11,6 +11,7 @@
 <li class="layui-nav-item">
     <button class="layui-btn  layui-btn-primary" id="S003" name="{{ url('admin/users/resetPwd') }}">修改密码</button>
 </li>
+{{--
 <li class="layui-nav-item">
     <button class="layui-btn  layui-btn-primary" id="S004" name="{{ url('clerk/messages') }}">消息通知</button>
-</li>
+</li>--}}

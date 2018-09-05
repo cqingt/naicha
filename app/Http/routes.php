@@ -85,6 +85,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
     Route::get('/','IndexController@index');
     Route::get('/index','IndexController@index');
+    Route::get('/index/listen','IndexController@listen');
     Route::get('/index/data','IndexController@data');
     Route::get('/orders','OrdersController@index');
     Route::get('/orders/create','OrdersController@create');

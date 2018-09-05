@@ -25,3 +25,6 @@
 .layui-container {
     width: 840px ! important;
 }
+.layui-layer .layui-layer-title{
+    background-color: #f1f0f0;
+}

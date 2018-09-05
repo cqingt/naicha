@@ -23,6 +23,53 @@ layui.use(['element','jquery','form', 'layedit'],function(){
         addTab(elem[0].innerText, _href, _id);
     });
 
+    // 消息提醒
+    setInterval(listenOrder, 4000);
+
+    function listenOrder(first = false) {
+        $.ajax({
+            type: "GET",
+            url: "/clerk/index/listen",
+            timeout: 60000,
+            async: true,
+            success: function(result) {
+                if (result.code === 1) {
+                    let total = result.data.total;
+                    if (first) {
+                        openTips(total);
+                    }
+                    $('.order_num').text(total);
+                }
+            }
+        });
+    }
+    listenOrder(true);
+
+    // 右下角弹窗
+    function openWindow(num) {
+        let type = 'rb';
+        layer.open({
+            type: 1
+            ,title: '新订单提醒'
+            ,closeBtn: 1
+            ,area: ['300px', '150px']
+            ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+            ,id: 'layerDemo'+type //防止重复弹出
+            ,content: '<div style="text-align: center;padding: 40px 0;">有 <span class="order_num" style="font-size:18px;font-weight: bolder"> ' + num + ' </span>个新订单等待处理</div>'
+            ,btn: false
+            ,skin: 'demo-class'
+            ,shade: 0 //不显示遮罩
+            ,yes: function(){
+                layer.closeAll();
+            }
+        });
+    }
+
+    function openTips(num) {
+        layer.tips('有 <span class="order_num" style="font-size:16px;font-weight: bolder"> ' + num + ' </span>个新订单等待处理', '#avatar',  {
+            tips: 1,time:0
+        });
+    }
 });
 
 /**
@@ -47,4 +94,5 @@ function setIframeHeight(iframe) {
             iframe.height = parseInt(height) + 100;
         }
     }
-};
+}
+
