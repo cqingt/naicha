@@ -87,6 +87,7 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
     Route::get('/index','IndexController@index');
     Route::get('/index/listen','IndexController@listen');
     Route::get('/index/data','IndexController@data');
+    Route::post('/orders/compile','OrdersController@compile');
     Route::get('/orders','OrdersController@index');
     Route::get('/orders/create','OrdersController@create');
     Route::get('/messages','MessagesController@index');

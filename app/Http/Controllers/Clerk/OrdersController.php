@@ -172,10 +172,14 @@ class OrdersController extends CommonController
 
         $order['status'] =  $this->getStatus($order['status']);
         $order['pay_type'] = $this->getPayType($order['pay_type']);
-        $temp = [];
+        $temps = [];
+        $tags = config('web.temperature'); // 温度选择
 
         if ($order['temperature']) {
-            $temp = unserialize($order['temperature']);
+            $temps = unserialize($order['temperature']);
+            foreach ($temps as &$temp) {
+                $temp = $tags[$temp];
+            }
         }
 
         $packages = [];
@@ -184,7 +188,7 @@ class OrdersController extends CommonController
             $packages[$item['package_num']][] = $item;
         }
 
-        return view('clerk.orders.show', compact('order', 'orderInfo', 'packages', 'temp'));
+        return view('clerk.orders.show', compact('order', 'orderInfo', 'packages', 'temps', 'tags'));
     }
 
     /**
@@ -233,16 +237,16 @@ class OrdersController extends CommonController
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 编辑订单
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\think\response\View
+     * @throws \Exception
      */
     public function edit($id)
     {
         $orderInfo = Order::find($id)->toArray();
         $orderDetail = OrderDetail::where('order_id', $id)
-            ->select(['id', 'goods_id', 'deploy', 'goods_num', 'package_num'])
+            ->select(['id', 'goods_id', 'deploy', 'goods_num', 'goods_price', 'package_num'])
             ->get()
             ->toArray();
 
@@ -309,6 +313,94 @@ class OrdersController extends CommonController
         } else {
             return $this->error();
         }
+    }
+
+    // 编辑订单
+    public function compile(Request $request)
+    {
+        $data    = $request->get('data');
+        $orderId = $request->get('order_id');
+        $date =  date('Y-m-d H:i:s');
+
+        $orderInfo = Order::find($orderId);
+
+        if (empty($orderInfo)){
+            return $this->error('订单不存在');
+        }
+
+        if (empty($data)) {
+            return $this->error('请选择商品下单');
+        }
+
+        $totalPrice = 0;
+        $orderPrice = 0; // 订单总价
+        $index = 1;
+        $temperature = []; // 订单，每杯温度
+        $insertData = [];
+
+        foreach ($data as $key => $item) {
+            $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
+            $temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
+
+            $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
+
+            foreach ($goodsInfo as $goods) {
+                $insertData[] = [
+                    'order_id'    => $orderId,
+                    'goods_id'    => $goods['id'],
+                    'goods_name'  => $goods['name'],
+                    'goods_image' => $goods['image'],
+                    'goods_num'   => $goods['id'] == $item['double'] ? 2 : 1,
+                    'goods_price' => $goods['price'],
+                    'package_num' => $index,
+                    'deploy'      => $item['sugar'] == $goods['id'] ? $item['weight'] : '',
+                    'created_at'  => $date
+                ];
+                $goodsPrice = bcmul($goods['price'], $goods['id'] == $item['double'] ? 2 : 1, 2);
+                $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
+            }
+
+            $index++;
+
+            $totalPrice = bcadd($totalPrice,  $item['price'], 2);
+        }
+
+        if (0 != bccomp($totalPrice, $orderPrice, 2)) {
+            echo $totalPrice, ',', $orderPrice;exit;
+            return $this->error('订单价格有误');
+        }
+
+        $difference = bcsub($totalPrice, $orderInfo['price'], 2); // 差额，负数表示平台需给用户付款，整数表示用户给平台付款
+
+        DB::beginTransaction();
+        try{
+            $orderResult = Order::where('id', $orderId)->update(
+                [
+                    'price'          => $orderPrice,
+                    'original_price' => $orderPrice,
+                    'difference'     => $difference,
+                    'temperature'    => $temperature ? serialize($temperature) : ''
+                ]
+            );
+
+            $detailResult = OrderDetail::where('order_id', $orderId)->delete();
+
+            if (! $orderResult || ! $detailResult ) {
+                throw new \Exception('订单修改失败');
+            }
+
+            foreach ($insertData as $item) {
+                OrderDetail::insert($item);
+            }
+
+            DB::commit();
+        } catch (\Exception $e){
+            DB::rollback();//事务回滚
+
+            return $this->error($e->getMessage());
+        }
+
+        return $this->success(['difference' => $difference]);
     }
 
     /**

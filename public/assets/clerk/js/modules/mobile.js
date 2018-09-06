@@ -23,10 +23,11 @@ layui.use(['element','jquery','form', 'layedit'],function(){
         addTab(elem[0].innerText, _href, _id);
     });
 
+    let first = true;
     // 消息提醒
     setInterval(listenOrder, 4000);
 
-    function listenOrder(first = false) {
+    function listenOrder() {
         $.ajax({
             type: "GET",
             url: "/clerk/index/listen",
@@ -37,8 +38,12 @@ layui.use(['element','jquery','form', 'layedit'],function(){
                     let total = result.data.total;
                     if (first) {
                         openTips(total);
+                        first = false;
                     }
                     $('.order_num').text(total);
+                } else {
+                    first = true;
+                    layer.closeAll();
                 }
             }
         });

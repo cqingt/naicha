@@ -43,8 +43,9 @@ class IndexController extends CommonController
     public function listen(Request $request)
     {
         $user = $request->user();
+        $between = [date('Y-m-d'), date('Y-m-d H:i:s')];
 
-        $total = Order::where(['shop_id' => $user->shop_id, 'status' => 1])->count();
+        $total = Order::where(['shop_id' => $user->shop_id, 'status' => 1])->whereBetween('created_at', $between)->count();
 
         if ($total) {
             return $this->success(['total' => $total]);
@@ -141,6 +142,6 @@ class IndexController extends CommonController
     {
         $user = Auth::user();
 
-        return Order::where(['shop_id' => $user->shop_id, 'operator' => $user->id, 'status' => 3])->whereBetween('created_at', $condition)->count();
+        return Order::where(['shop_id' => $user->shop_id, 'operator' => $user->id, 'status' => 3])->count();
     }
 }

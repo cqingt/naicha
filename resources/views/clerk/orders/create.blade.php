@@ -518,7 +518,7 @@
 
                     @foreach($data[7]['items'] as $key => $item)
                         @if (! $item['deleted_at'])
-                            <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}">
+                            <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="0">
                                 <label class="layui-form-label">
                                     <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
                                     <input type="hidden" name="goods_id[]">
@@ -583,12 +583,8 @@
                     <div class="count-item order-price">金额: <span class="num"> 0.00</span></div>
                     <div class="count-item order-total">订单总金额: <span class="num"> 0.00</span></div>
                 </div>
-{{--                <div class="layui-btn-group">
-                    <button class="layui-btn layui-btn-sm add-cup" type="button">
-                        <i class="layui-icon">&#xe654;</i>
-                    </button>
-                </div>--}}
-                <button class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认下单</button>
+
+                <button type="button" class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认下单</button>
             </div>
         </form>
 

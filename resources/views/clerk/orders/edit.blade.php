@@ -176,7 +176,7 @@
             display: inline-block;
         }
         .header-end{
-            margin-bottom: 120px;
+            margin-bottom: 170px;
         }
         .goods-item{
             margin-bottom: 30px;
@@ -200,7 +200,7 @@
     </blockquote>
 
     <div class="layui-container">
-        <form class="layui-form" action="{{ url('clerk/orders') }}" method="post">
+        <form class="layui-form" action="{{ url('clerk/orders/compile') }}" method="post">
         {{ csrf_field() }}
             <div id="container">
             <!-- 品类选择 -->
@@ -529,7 +529,7 @@
 
                     @foreach($data[7]['items'] as $key => $item)
                         @if (! $item['deleted_at'])
-                            <div class="header-three-item disabled" data-pk="{{$item['id']}}" data-price="{{$item['price']}}">
+                            <div class="header-three-item disabled" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="0">
                                 <label class="layui-form-label">
                                     <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
                                     <input type="hidden" name="goods_id[]">
@@ -590,8 +590,6 @@
                     </button>
 
                     <div class="count-item cups-num">杯数: <span class="num"> 1</span></div>
-                    {{--<div class="count-item goods-cal">卡路里: <span class="num"> 0</span>cal</div>--}}
-                    {{--<div class="count-item goods-volume">容量: <span class="num"> 0</span>ml</div>--}}
                     <div class="count-item current-cup">当前杯: <span class="num"> CUP-1</span></div>
                     <div class="count-item order-volume">容量: <span class="num"> 0</span>ml</div>
                     <div class="count-item order-price">金额: <span class="num"> 0.00</span></div>

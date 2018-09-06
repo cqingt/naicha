@@ -14,7 +14,7 @@ class AlterTableOrdersAddDifference extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            $table->string('difference')->default('')->comment('订单修改后差额')->after('remark');
+            $table->string('difference')->default('')->comment('订单修改后差额，负数：平台需给用户付款，正数：用户给平台付款')->after('remark');
         });
     }
 
