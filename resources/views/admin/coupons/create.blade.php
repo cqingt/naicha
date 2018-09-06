@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         新增优惠券
-        <a href="{{ url('admin/coupons') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('admin/coupons') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <form class="layui-form" action="{{ route('admin.coupons.store') }}" method="post">

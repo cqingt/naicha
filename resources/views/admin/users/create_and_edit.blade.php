@@ -5,7 +5,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         {{$user->id? '编辑用户':'添加用户'}}
-        <a href="{{ url('admin/users/index') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('admin/users/index') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
     @if($user->id)
         <form class="layui-form" action="{{  url('admin/users/update', $user->id) }}" method="POST">

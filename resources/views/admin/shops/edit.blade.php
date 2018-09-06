@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         编辑店铺
-        <a href="{{ url('admin/shops') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('admin/shops') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <form class="layui-form" action="{{ url('admin/shops', $shop->id) }}" method="post">

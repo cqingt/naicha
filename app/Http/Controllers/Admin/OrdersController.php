@@ -56,6 +56,15 @@ class OrdersController extends CommonController
 
         $order['status'] =  $this->getStatus($order['status']);
         $order['pay_type'] = $this->getPayType($order['pay_type']);
+        $temps = [];
+        $tags = config('web.temperature'); // 温度选择
+
+        if ($order['temperature']) {
+            $temps = unserialize($order['temperature']);
+            foreach ($temps as &$temp) {
+                $temp = $tags[$temp];
+            }
+        }
 
         $packages = [];
 
@@ -63,7 +72,7 @@ class OrdersController extends CommonController
             $packages[$item['package_num']][] = $item;
         }
 
-        return view('admin.orders.show', compact('order', 'orderInfo', 'packages'));
+        return view('admin.orders.show', compact('order', 'orderInfo', 'packages', 'temps'));
     }
 
     /**
@@ -96,7 +105,7 @@ class OrdersController extends CommonController
 
         foreach ($items as &$item) {
             $item['shop_name'] = $item->shop->name;
-            $item['member_name'] = $item->member->username;
+            $item['member_name'] = $item->member ? $item->member->username : '--';
             $item['status'] = $this->getStatus($item['status']);
             $item['pay_type'] = $this->getPayType($item['pay_type']);
         }

@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         订单详情
-        <a href="{{ url('admin/orders') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('admin/orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <div class="layui-container">
@@ -33,7 +33,7 @@
             <tbody>
             <tr>
                 <td>{{$order->order_sn}}</td>
-                <td>{{$order->member->username}}</td>
+                <td>{{$order->member->username or '--'}}</td>
                 <td>{{$order->status}}</td>
                 <td>{{$order->price}}</td>
                 <td>{{$order->pay_type}}</td>
@@ -68,7 +68,7 @@
             </thead>
             @endif
             <tbody>
-            <tr style="background: #393D49;color: #fff;"><td colspan="5">第{{$key}}口袋</td></tr>
+            <tr style="background: #393D49;color: #fff;"><td colspan="5">第{{$key}}杯 @if($temps && isset($temps[$key])) (温度： {{$temps[$key]}}) @endif</td></tr>
             @foreach($package as $goods)
             <tr>
                 <td>{{$goods->goods_name}}</td>

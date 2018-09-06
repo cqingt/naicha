@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         用户列表
-        <a href="{{ url('admin/users/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('admin/users/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
     </blockquote>
 
     <table id="users_table" lay-filter="users_table"></table>
