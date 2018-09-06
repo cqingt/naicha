@@ -97,6 +97,11 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
 
 });
 
+// API
+Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
+    Route::get('/','IndexController@index');
+});
+
 Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
