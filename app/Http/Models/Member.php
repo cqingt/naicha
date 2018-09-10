@@ -12,4 +12,9 @@ class Member extends Model
     {
         return $this->belongsTo('App\Http\Models\Shop');
     }
+
+    public function formula()
+    {
+        return $this->hasOne('App\Http\Models\Formula');
+    }
 }

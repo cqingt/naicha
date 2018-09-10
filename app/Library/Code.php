@@ -20,6 +20,7 @@ class Code{
         'SAVE_USER_ERROR'     => ['code' => '407', 'msg' => '保存用户信息失败'],
         'USER_NOT_LOGIN'      => ['code' => '408', 'msg' => '您还未登录'],
         'USER_REGISTER_ERROR' => ['code' => '409', 'msg' => '用户注册失败'],
+        'UNKNOWN_FORMULA_ID'  => ['code' => '410', 'msg' => '口味ID不存在'],
     ];
     /**
      * @param $key

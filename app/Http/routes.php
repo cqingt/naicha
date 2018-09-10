@@ -100,6 +100,14 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
 // API
 Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/','IndexController@index');
+
+    Route::get('/user/coupons', 'UserController@coupons');
+    Route::get('/user/tastes', 'UserController@tastes');
+    Route::get('/user/orders', 'UserController@orders');
+    Route::get('/user/joinTaste/{id}', 'UserController@joinTaste');
+    Route::get('/user/setIndex/{id}', 'UserController@setIndex');
+    Route::get('/user/index','UserController@index');
+
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');
