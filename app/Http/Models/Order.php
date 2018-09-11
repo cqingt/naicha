@@ -24,4 +24,9 @@ class Order extends Model
     {
         return $this->hasMany('App\Http\Models\OrderDetail');
     }
+
+    public function formulas()
+    {
+        return $this->hasMany('App\Http\Models\Formula');
+    }
 }

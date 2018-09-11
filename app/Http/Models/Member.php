@@ -15,6 +15,6 @@ class Member extends Model
 
     public function formula()
     {
-        return $this->hasOne('App\Http\Models\Formula');
+        return $this->belongsTo('App\Http\Models\Formula');
     }
 }

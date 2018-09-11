@@ -21,6 +21,8 @@ class Code{
         'USER_NOT_LOGIN'      => ['code' => '408', 'msg' => '您还未登录'],
         'USER_REGISTER_ERROR' => ['code' => '409', 'msg' => '用户注册失败'],
         'UNKNOWN_FORMULA_ID'  => ['code' => '410', 'msg' => '口味ID不存在'],
+        'FORMULA_HAS_LIKE'   => ['code' => '411', 'msg' => '已点赞过该配方'],
+
     ];
     /**
      * @param $key

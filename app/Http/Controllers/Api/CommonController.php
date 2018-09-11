@@ -8,9 +8,18 @@ use App\Library\Code;
 
 class CommonController extends Controller
 {
+    // 分页，每页数量
+    protected $_rows = 10;
+
+    protected $_page = 1;
+
+    protected $_offset = 0;
+
     public function __construct(Request $request)
     {
         $sessionId = $request->header('sessionId');
+        $this->_page = $request->get('page', 1);
+        $this->_offset = ($this->_page - 1) * $this->_rows;
     }
 
     /**
@@ -57,7 +66,7 @@ class CommonController extends Controller
 
     protected function _error($errorCode = 'UNKNOWN_ERROR', $errorMsg = '')
     {
-        return Code::get($errorCode, $errorCode);
+        return Code::get($errorCode, $errorMsg);
     }
 
     protected function http_get($url, $header = [], $response = 'json') {

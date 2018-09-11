@@ -20,31 +20,52 @@ class UserController extends CommonController
             $title = $userInfo->formula->title;
         }
 
-        return $this->_successful(['title' => $title]);
+        $formulaId = Member::where(['id' => $this->getUserId()])->pluck('formula_id');
+
+        return $this->_successful(['title' => $title, 'formula_id' => $formulaId]);
     }
 
     public function orders(Request $request)
     {
         $userId = $this->getUserId();
+        $total = Order::where('member_id', $userId)
+            ->where('status', '>', 0)
+            ->count();
 
         $orders = Order::where('member_id', $userId)
             ->where('status', '>', 0)
             ->orderBy('id', 'desc')
-            ->select(['id', 'order_sn', 'price',  'created_at'])
-            ->limit(10)
+            ->select(['id', 'order_sn', 'price',  'created_at', 'status'])
+            ->offset($this->_offset)
+            ->limit($this->_rows)
             ->get();
+
+        $status = config('web.order_status');
 
         foreach ($orders as $key => &$order) {
             $details = $order->details;
             $detail = $details[0];
 
+            $order['status'] = $status[$order['status']];
             $order['image'] = $detail['goods_image'];
             $order['title'] = $detail['goods_name'];
             $order['num'] =  count($details);
-            unset($orders[$key]['details']);
-        }
 
-        return $this->_successful($orders);
+            // 是否加入了口味库
+            if (count($order->formulas)) {
+                $order['has_taste'] = 1;
+            } else {
+                $order['has_taste'] = 0;
+            }
+
+            unset($orders[$key]['details']);
+            unset($orders[$key]['formulas']);
+        }
+        $isMore = count($orders) == $this->_rows ? 1 : 0;
+
+        $totalPage = ceil($total / $this->_rows);
+
+        return $this->_success($orders, $isMore, $total, $this->_page, $totalPage);
     }
 
     // 加入口味
@@ -79,16 +100,23 @@ class UserController extends CommonController
     }
 
     // 口味
-    public function tastes()
+    public function tastes($return = false)
     {
         $userId = $this->getUserId();
 
+        $total =  Formula::where('member_id', $userId)->count();
+
         $tastes = Formula::where('member_id', $userId)
             ->orderBy('id', 'desc')
-            ->limit(10)
+            ->offset($this->_offset)
+            ->limit($this->_rows)
             ->get();
 
-        return $this->_successful($tastes);
+        $isMore = count($tastes) == $this->_rows ? 1 : 0;
+
+        $totalPage = ceil($total / $this->_rows);
+
+        return $this->_success($tastes, $isMore, $total, $this->_page, $totalPage);
     }
 
     // 优惠券
@@ -107,7 +135,7 @@ class UserController extends CommonController
             $data[$key]['id'] = $memberCoupon['id'];
             $data[$key]['coupon_id'] = $coupon['id'];
             $data[$key]['title'] = $coupon['title'];
-            $data[$key]['deadline'] = $coupon['stop_time'];
+            $data[$key]['deadline'] = date('Y-m-d', strtotime($coupon['stop_time']));
         }
 
         return $this->_successful($data);
@@ -118,10 +146,17 @@ class UserController extends CommonController
     {
         $userId = $this->getUserId();
 
-        if (Formula::where(['member_id' => $id, 'user_id' => $userId])->exists()) {
-            Formula::where('member_id', $id)->delete();
+        if (Formula::where(['member_id' => $userId, 'id' => $id])->exists()) {
+            Formula::where('id', $id)->delete();
+            $title = '';
 
-            return $this->_successful();
+            if (Member::where(['id' => $this->getUserId(), 'formula_id' => $id])->exists()) {
+                Member::where(['id' => $this->getUserId(), 'formula_id' => $id])->update(['formula_id' => 0]);
+                $title = '暂无首推配方，请在口味库中设置';
+            }
+
+            // 删除后 口味也跟着删除
+            return $this->_successful(['title' => $title]);
         }
 
         return $this->_error('UNKNOWN_FORMULA_ID');
@@ -131,11 +166,12 @@ class UserController extends CommonController
     public function setIndex(Request $request, $id)
     {
         $userId = $this->getUserId();
+        $formula = Formula::where(['member_id' => $userId, 'id' => $id])->first();
 
-        if (Formula::where(['member_id' => $userId, 'id' => $id])->exists()) {
+        if ($formula) {
             Member::where('id', $userId)->update(['formula_id' => $id]);
 
-            return $this->_successful();
+            return $this->_successful(['title' => $formula['title']]);
         } else {
             return $this->_error('UNKNOWN_FORMULA_ID');
         }

@@ -24,5 +24,9 @@ return [
         'ice' => '正常冰',
         'less_ice' => '少冰',
         'none_ice' => '去冰',
+    ],
+    'weixin' => [
+        'app_id' => 'wx0844817c7a6d15cc',
+        'app_secret' => 'fe4b64e1f96f38463033927e038e97a1'
     ]
 ];

@@ -1,21 +1,48 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Models\Formula;
+use App\Http\Models\MemberLike;
+use App\Http\Models\Push;
 use Illuminate\Http\Request;
 
 
 class IndexController extends CommonController
 {
-    public function index()
+    // 点赞排行
+    public function index(Request $request)
     {
-        $data = ['code' => '200', 'msg' => 'success', 'data' => []];
+        $formulas = Formula::orderBy('likes', 'desc')->limit(30)->get();
 
-        return response()->json($data, 200);
+        foreach ($formulas as &$formula) {
+            $formula['username'] = $formula->member->username;
+        }
+        $pushes = Push::all();
+
+        foreach ($pushes as $key => &$push) {
+            $push['image'] = $request->root() . $push['image'];
+        }
+
+        return $this->_successful(['formulas' => $formulas, 'pushes' => $pushes]);
     }
 
-    public function pushes()
+    // 点赞
+    public function like(Request $request, $id)
     {
+        if (MemberLike::where(['member_id' => $this->getUserId(), 'formula_id' => $id])->exists()) {
+            return $this->_error('FORMULA_HAS_LIKE');
+        } else {
+            MemberLike::insert([
+                'member_id' => $this->getUserId(),
+                'formula_id' => $id,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
 
+            Formula::where('id', $id)->increment('likes', 1);
+            $likes = Formula::where('id', $id)->pluck('likes');
+
+            return $this->_successful(['likes' => $likes ]);
+        }
     }
 
     public function onLogin()
