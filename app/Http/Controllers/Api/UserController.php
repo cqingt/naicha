@@ -176,4 +176,18 @@ class UserController extends CommonController
             return $this->_error('UNKNOWN_FORMULA_ID');
         }
     }
+
+    // 用户信息
+    public function info(Request $request)
+    {
+        $openId = $request->get('openid');
+
+        if (empty($openId)) {
+            return $this->_error('PARAM_NOT_EMPTY');
+        }
+
+        $info = Member::where('openid', $openId)->get();
+
+        dump($info);exit;
+    }
 }

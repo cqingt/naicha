@@ -108,6 +108,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/user/orders', 'UserController@orders');
     Route::get('/user/joinTaste/{id}', 'UserController@joinTaste');
     Route::get('/user/setIndex/{id}', 'UserController@setIndex');
+    Route::get('/user/info', 'UserController@info');
     Route::get('/user/deleteTaste/{id}', 'UserController@deleteTaste');
     Route::get('/user/index','UserController@index');
 });
