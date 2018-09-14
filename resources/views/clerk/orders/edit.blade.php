@@ -595,7 +595,7 @@
                     <div class="count-item order-price">金额: <span class="num"> 0.00</span></div>
                     <div class="count-item order-total">订单总金额: <span class="num"> 0.00</span></div>
                 </div>
-                <button class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认下单</button>
+                <button class="layui-btn layui-btn-sm submit" lay-submit="" lay-filter="confirm">确认修改</button>
             </div>
         </form>
 

@@ -265,7 +265,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             $(this).removeClass('active');
            
         } else {
-            $('.header-two-choose .cmdlist-container').removeClass('active');
+            //$('.header-two-choose .cmdlist-container').removeClass('active');
 
             if ($(this).find('img').length) {
                 $(this).addClass('active');
