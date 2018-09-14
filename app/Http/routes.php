@@ -111,6 +111,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/user/info', 'UserController@info');
     Route::get('/user/deleteTaste/{id}', 'UserController@deleteTaste');
     Route::get('/user/index','UserController@index');
+    Route::post('/user/insert','UserController@insert');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

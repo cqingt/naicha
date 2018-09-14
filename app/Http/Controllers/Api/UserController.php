@@ -186,8 +186,44 @@ class UserController extends CommonController
             return $this->_error('PARAM_NOT_EMPTY');
         }
 
-        $info = Member::where('openid', $openId)->get();
+        $info = Member::where('openid', $openId)
+            ->select(['shop_id', 'openid', 'gender', 'country', 'province', 'city', 'username'])
+            ->first();
 
-        dump($info);exit;
+        if ($info) {
+            $info['session_key'] = $this->getMd5($info['openid']);
+        }
+
+        return $this->_successful($info);
+    }
+
+    // 新增用户
+    public function insert(Request $request)
+    {
+        $openId = $request->get('openid');
+        $nickName = $request->get('nickName');
+        $avatarUrl = $request->get('avatarUrl');
+
+        if (empty($openId) || empty($nickName)) {
+            return $this->_error('PARAM_NOT_EMPTY');
+        }
+
+        if (Member::where(['openid' => $openId])->exists()) {
+
+        } else {
+            Member::insert([
+                'shop_id' => $this->_shopId,
+                'username' => $nickName,
+                'avatar' => $avatarUrl,
+                'openid' => $openId,
+                'gender' => $request->get('gender'),
+                'country' => $request->get('country'),
+                'province' => $request->get('province'),
+                'city' => $request->get('city'),
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        return $this->_successful();
     }
 }

@@ -5,6 +5,8 @@ use App\Http\Models\Member;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Library\Code;
+use Illuminate\Support\Facades\Route;
+use think\Response;
 
 class CommonController extends Controller
 {
@@ -15,11 +17,40 @@ class CommonController extends Controller
 
     protected $_offset = 0;
 
+    protected $_shopId = 0; // 当前店铺
+
+    protected $_openid = '';
+
     public function __construct(Request $request)
     {
-        $sessionId = $request->header('sessionId');
+        $this->_openid = $request->get('openid');
+
+        $this->_shopId = $request->get('shopId');
+
         $this->_page = $request->get('page', 1);
+
         $this->_offset = ($this->_page - 1) * $this->_rows;
+
+        $action = $request->route()->getAction();
+
+        if (isset($action['controller'])) {
+            $controller = class_basename($action['controller']);
+        }
+
+        list($routeControllerName, $routeActionName) = explode('@', $controller);
+
+        // 非授权用户时，需要校验
+        if ($routeControllerName != 'user' && $routeActionName != 'insert') {
+
+            if ($this->getMd5($this->_openid) !== $request->get('session_key')) {
+                echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
+            }
+        }
+    }
+
+    protected function getMd5($openid)
+    {
+        return md5($openid . config('web.api_mix'));
     }
 
     /**

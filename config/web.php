@@ -28,5 +28,6 @@ return [
     'weixin' => [
         'app_id' => 'wx0844817c7a6d15cc',
         'app_secret' => 'fe4b64e1f96f38463033927e038e97a1'
-    ]
+    ],
+    'api_mix' => '$%*^&201@!#$', // api混淆参数
 ];
