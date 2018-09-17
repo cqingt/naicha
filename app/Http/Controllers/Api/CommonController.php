@@ -43,7 +43,7 @@ class CommonController extends Controller
         if ($routeControllerName != 'user' && $routeActionName != 'insert') {
 
             if ($this->getMd5($this->_openid) !== $request->get('session_key')) {
-                echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
+                //echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
             }
         }
     }

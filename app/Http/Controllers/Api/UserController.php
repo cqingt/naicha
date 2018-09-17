@@ -71,6 +71,10 @@ class UserController extends CommonController
     // 加入口味
     public function joinTaste(Request $request, $id)
     {
+        if ($id < 1) {
+            return $this->_error('PARAM_NOT_EMPTY');
+        }
+
         $order = Order::find($id);
         $details = $order->details;
         $currentTime = date('Y-m-d H:i:s');
@@ -144,6 +148,9 @@ class UserController extends CommonController
     // 删除口味
     public function deleteTaste(Request $request, $id)
     {
+        if ($id < 1) {
+            return $this->_error('PARAM_NOT_EMPTY');
+        }
         $userId = $this->getUserId();
 
         if (Formula::where(['member_id' => $userId, 'id' => $id])->exists()) {
@@ -165,6 +172,9 @@ class UserController extends CommonController
     // 设为首页
     public function setIndex(Request $request, $id)
     {
+        if ($id < 1) {
+            return $this->_error('PARAM_NOT_EMPTY');
+        }
         $userId = $this->getUserId();
         $formula = Formula::where(['member_id' => $userId, 'id' => $id])->first();
 

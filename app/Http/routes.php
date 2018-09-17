@@ -112,6 +112,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/user/deleteTaste/{id}', 'UserController@deleteTaste');
     Route::get('/user/index','UserController@index');
     Route::post('/user/insert','UserController@insert');
+
+    Route::get('/goods/index','GoodsController@index');
+    Route::get('/business/pay','BusinessController@pay');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');

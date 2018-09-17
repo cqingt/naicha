@@ -16,6 +16,7 @@ class IndexController extends CommonController
 
         foreach ($formulas as &$formula) {
             $formula['username'] = $formula->member->username;
+            $formula['avatar'] = $formula->member->avatar;
         }
         $pushes = Push::all();
 
