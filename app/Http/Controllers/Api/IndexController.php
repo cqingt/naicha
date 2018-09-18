@@ -5,6 +5,7 @@ use App\Http\Models\Formula;
 use App\Http\Models\MemberLike;
 use App\Http\Models\Push;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 
 class IndexController extends CommonController
@@ -13,18 +14,38 @@ class IndexController extends CommonController
     public function index(Request $request)
     {
         $formulas = Formula::orderBy('likes', 'desc')->limit(30)->get();
+        $mine = Formula::where(['member_id' => $this->getUserId()])->orderBy('likes', 'desc')->first();
+        $position = 51; //默认排名 51
+        $max = 1000;
 
-        foreach ($formulas as &$formula) {
+        foreach ($formulas as $key => &$formula) {
             $formula['username'] = $formula->member->username;
             $formula['avatar'] = $formula->member->avatar;
+            if ($formula['id'] == $mine['id']) {
+                $position = $key + 1;
+            }
+
+            if ($key == 0) {
+                $max = $formula['likes'];
+            }
         }
+
         $pushes = Push::all();
 
         foreach ($pushes as $key => &$push) {
             $push['image'] = $request->root() . $push['image'];
         }
 
-        return $this->_successful(['formulas' => $formulas, 'pushes' => $pushes]);
+        // 我的排名
+        if (! empty($mine)) {
+            $mine['position'] = $position;
+            $mine['max'] = $max;
+            $mine['percent'] = $max ? bcdiv($mine['likes'], $max, 2) * 100 : 100;
+            $mine['username'] = $mine->member->username;
+            $mine['avatar'] = $mine->member->avatar;
+        }
+
+        return $this->_successful(['formulas' => $formulas, 'pushes' => $pushes, 'mine' => $mine]);
     }
 
     // 点赞
@@ -43,6 +64,46 @@ class IndexController extends CommonController
             $likes = Formula::where('id', $id)->pluck('likes');
 
             return $this->_successful(['likes' => $likes ]);
+        }
+    }
+
+    // 从缓存中获取token
+    protected function getToken()
+    {
+        if (Cache::has('token')) {
+            $tokens = Cache::get('token');
+            $tokens = $tokens ? json_decode($tokens, true, JSON_UNESCAPED_UNICODE) : '';
+
+            if (empty($tokens)) {
+                return $this->requestToken();
+            } else {
+                return $tokens['access_token'];
+            }
+        } else {
+            return $this->requestToken();
+        }
+    }
+
+    /**
+     * 请求 token
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function requestToken()
+    {
+        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=_APPID_&secret=_APPSECRET_";
+
+        $requestUrl = str_replace(['_APPID_', '_APPSECRET_'], [config('web.weixin.app_id'), config('web.weixin.app_secret')], $url);
+
+        $result = $this->http_get($requestUrl);
+
+        if (! empty($result) && is_array($result)) {
+
+                Cache::put('token', json_encode($result), $result['expires_in'] / 60);
+
+                return $result['access_token'];
+        } else {
+            throw new \Exception('获取token失败');
         }
     }
 

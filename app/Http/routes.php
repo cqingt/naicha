@@ -100,6 +100,7 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
 // API
 Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/','IndexController@index');
+    Route::get('/index/token','IndexController@requestToken');
     Route::get('/index/index','IndexController@index');
     Route::get('/index/like/{id}','IndexController@like');
 
