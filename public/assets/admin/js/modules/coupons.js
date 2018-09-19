@@ -9,7 +9,7 @@ layui.use(['table','form','jquery', 'laydate'], function(){
 
     table.render({
         elem: '#coupons_table'
-        ,url: '/admin/' + _mod + '/list' //数据接口
+        ,url: '/admin/' + _mod + '/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头

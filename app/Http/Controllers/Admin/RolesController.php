@@ -75,7 +75,7 @@ class RolesController extends CommonController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function list(Request $request)
+    public function records(Request $request)
     {
         $perPage = $request->get('limit'); // 每页数量由首页控制
 

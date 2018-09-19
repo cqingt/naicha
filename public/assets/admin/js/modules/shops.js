@@ -7,7 +7,7 @@ layui.use(['table','form','jquery'], function(){
 
     table.render({
         elem: '#shops_table'
-        ,url: '/admin/' + _mod + '/list' //数据接口
+        ,url: '/admin/' + _mod + '/records' //数据接口
         ,limit: 10
         ,cellMinWidth: 80
         ,page: true //开启分页

@@ -5,7 +5,7 @@ layui.use(['table','element','form','jquery'], function(){
     var _mod = 'roles';
     table.render({
         elem: '#roles_table'
-        ,url: '/admin/roles/list' //数据接口
+        ,url: '/admin/roles/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头

@@ -45,35 +45,35 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
     Route::get('/roles/index','RolesController@index');
     Route::get('/roles/create','RolesController@create');
     Route::get('/roles/roles','RolesController@roles');
-    Route::get('/roles/list','RolesController@list');
+    Route::get('/roles/records','RolesController@records');
     Route::resource('roles','RolesController');
 
     //Route::resource('permissions','PermissionController');
     Route::get('/permissions/index','PermissionController@index');
 
     // 会员管理
-    Route::get('/members/list','MembersController@list');
+    Route::get('/members/records','MembersController@records');
     Route::resource('members','MembersController');
 
     // 订单列表
-    Route::get('/orders/list','OrdersController@list');
+    Route::get('/orders/records','OrdersController@records');
     Route::resource('orders','OrdersController');
 
     // 优惠券
-    Route::get('/coupons/list','CouponsController@list');
+    Route::get('/coupons/records','CouponsController@records');
     Route::post('/coupons/{id}/grant','CouponsController@grant');
     Route::resource('coupons','CouponsController');
 
     // 推送列表
-    Route::get('/pushes/list','PushesController@list');
+    Route::get('/pushes/records','PushesController@records');
     Route::resource('pushes','PushesController');
 
     // 商品列表
-    Route::get('/goods/list','GoodsController@list');
+    Route::get('/goods/records','GoodsController@records');
     Route::resource('goods','GoodsController');
 
     // 店铺
-    Route::get('/shops/list','ShopsController@list');
+    Route::get('/shops/records','ShopsController@records');
     Route::resource('shops','ShopsController');
 
     // 数据统计
@@ -92,7 +92,7 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
     Route::get('/orders/create','OrdersController@create');
     Route::get('/messages','MessagesController@index');
 
-    Route::get('/orders/list','OrdersController@list');
+    Route::get('/orders/records','OrdersController@records');
     Route::resource('orders','OrdersController');
 
 });
