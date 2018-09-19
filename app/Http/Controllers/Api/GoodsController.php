@@ -16,7 +16,7 @@ class GoodsController extends CommonController
             $newCategory[$category->id] = $category;
         }
 
-        $products = Goods::withTrashed()->orderBy('category_id')->get();
+        $products = Goods::orderBy('category_id')->get();
 
         $data = [];
 
@@ -34,8 +34,8 @@ class GoodsController extends CommonController
 
         return $this->_successful(
             [
-                'goods'   => $data,
-                'products' => $products,
+                'products'   => $data,
+//                'goods' => $products,
                 'categoryOne' => $categoryOne,
                 'categoryTwo' => $categoryTwo,
                 'categoryThree' => $categoryThree,
