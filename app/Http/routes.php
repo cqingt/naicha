@@ -114,6 +114,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/user/index','UserController@index');
     Route::post('/user/insert','UserController@insert');
 
+    // 创建订单
+    Route::get('/order/create','OrderController@create');
+
     Route::get('/goods/index','GoodsController@index');
     Route::get('/business/pay','BusinessController@pay');
 });
