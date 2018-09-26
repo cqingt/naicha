@@ -26,20 +26,33 @@ class GoodsController extends CommonController
         }
 
         // 2级品类分组 id
-        $categoryOne = [20, 21, 22, 23, 24, 25];
-        $categoryTwo = [26, 27, 28, 29];
-        $categoryThree = [30, 31, 32, 33];
+        $citrusCategory = [26, 27, 28, 29]; // 柑橘类
 
-        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类
+        $milkCategory = [7, 8, 9, 14, 15, 16, 17]; // 排斥柑橘类
 
         return $this->_successful(
             [
                 'products'   => $data,
-//                'goods' => $products,
-                'categoryOne' => $categoryOne,
-                'categoryTwo' => $categoryTwo,
-                'categoryThree' => $categoryThree,
-                'categoryMilk' => $categoryMilk
+                'citrus' => $citrusCategory,
+                'milk' => $milkCategory,
+                'defaultItem' => [
+                    'name' => '请选择',
+                    'price' => 0,
+                    'image' => 'http://thyrsi.com/t6/372/1537346236x-1566680772.png',
+                    'volume' => 0,
+                    'calorie' => 0,
+                    'pk' => 999,
+                    'show' => true
+                ],
+                'doubleItem' => [
+                    'name' => '一级品类双倍',
+                    'price' => '0.00',
+                    'image' => 'https://www.layui.com/admin/std/dist/layuiadmin/style/res/template/portrait.png',
+                    'volume' => 250,
+                    'calorie' => 0,
+                    'pk' => 999,
+                    'show' => true
+                ],
             ]
         );
     }
