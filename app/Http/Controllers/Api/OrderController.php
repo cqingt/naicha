@@ -18,36 +18,45 @@ class OrderController extends CommonController
     // 创建订单
     public function create(Request $request)
     {
-        $data = $request->all();
-        $temperature = $data['temperature'];
-        $sugar = $data['sugar'];
-        $weight = $data['weight'];
-        $doubleId = (int)$data['double'];
-        $goodsIds = json_decode(stripslashes($data['list']));
-        $temperatures = [];
+        $data = $request->get('data');
+
+        if (empty($data)) {
+            return $this->_error('UNKNOWN_ERROR', '请选择配料');
+        }
+
+        $date =  date('Y-m-d H:i:s');
+        $cartArr = json_decode($data, true);
         $index = 1;
         $insertData = [];
-        $date =  date('Y-m-d H:i:s');
+        $temperatures = [];
         $orderPrice = 0; // 订单总价
 
-        $sugar && array_push($goodsIds, $sugar); // 有选择糖类
-        $temperatures[$index] = $temperature ? : 'hot'; // 设置温度
+        foreach ($cartArr as $data) {
+            $temperature = $data['temperature'];
+            $sugar = $data['sugar'];
+            $weight = $data['weight'];
+            $doubleId = (int)$data['double'];
+            $goodsIds = $data['list'];
+            $sugar && array_push($goodsIds, $sugar); // 有选择糖类
+            $temperatures[$index] = $temperature ? : 'ice'; // 设置温度
 
-        $goodsInfo = Goods::whereIn('id', $goodsIds)->select(['id', 'name', 'price', 'image'])->get();
+            $goodsInfo = Goods::whereIn('id', $goodsIds)->select(['id', 'name', 'price', 'image'])->get();
 
-        foreach ($goodsInfo as $goods) {
-            $insertData[] = [
-                'goods_id'    => $goods['id'],
-                'goods_name'  => $goods['name'],
-                'goods_image' => $goods['image'],
-                'goods_num'   => $goods['id'] == $doubleId ? 2 : 1,
-                'goods_price' => $goods['price'],
-                'package_num' => $index,
-                'deploy'      => $sugar == $goods['id'] ? $weight : '',
-                'created_at'  => $date
-            ];
-            $goodsPrice = bcmul($goods['price'], $goods['id'] == $doubleId ? 2 : 1, 2);
-            $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
+            foreach ($goodsInfo as $goods) {
+                $insertData[] = [
+                    'goods_id'    => $goods['id'],
+                    'goods_name'  => $goods['name'],
+                    'goods_image' => $goods['image'],
+                    'goods_num'   => $goods['id'] == $doubleId ? 2 : 1,
+                    'goods_price' => $goods['price'],
+                    'package_num' => $index,
+                    'deploy'      => $sugar == $goods['id'] ? $weight : '',
+                    'created_at'  => $date
+                ];
+                $goodsPrice = bcmul($goods['price'], $goods['id'] == $doubleId ? 2 : 1, 2);
+                $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
+            }
+            $index++;
         }
 
         DB::beginTransaction();
