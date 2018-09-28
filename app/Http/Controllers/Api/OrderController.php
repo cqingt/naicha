@@ -7,6 +7,9 @@
  */
 namespace App\Http\Controllers\Api;
 
+use App\Http\Models\Member;
+use App\Http\Models\MemberCoupon;
+use App\Http\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Models\Goods;
 use App\Http\Models\Order;
@@ -105,94 +108,59 @@ class OrderController extends CommonController
         return $orderSn;
     }
 
-    public function store(Request $request)
+    /**
+     * 检测订单  返回店铺名，用户手机号，排队情况，优惠券列表
+     * @return array
+     */
+    public function checkOrder(Request $request)
     {
-        $data = $request->all();
-        $temperature = $data['temperature'];
-        $sugar = $data['sugar'];
-        $weight = $data['weight'];
-        $double = (int)$data['double'];
-        $goodsId = $data['list'];
-        $date =  date('Y-m-d H:i:s');
+        $shopName = Shop::where('id', $this->_shopId)->pluck('name');
+        $userInfo = Member::where('id', $this->getUserId())->select('telephone', 'gender')->first();
+        $now = time();
+        $datetime = date('Y-m-d H:i:s');
+        $orderPrice = $request->get('orderPrice');
 
-        if (empty($data)) {
-            return $this->error('请选择商品下单');
-        }
+        $position = Order::where(['shop_id' => $this->_shopId, 'status' => 1])->whereBetween('created_at', [strtotime('today'), $now])->count();
 
-        $totalPrice = 0;
-        $orderPrice = 0; // 订单总价
-        $index = 1;
-        $temperature = []; // 订单，每杯温度
-        $insertData = [];
+        $couponList = DB::table('member_coupons')
+            ->join('coupons', 'member_coupons.coupon_id', '=', 'coupons.id')
+            ->select(['coupons.id', 'coupons.title', 'coupons.match_price', 'coupons.reduced_price', 'coupons.stop_time'])
+            ->where('member_coupons.member_id', $this->getUserId())
+            ->where('member_coupons.used', '=', 0)
+            ->where(function ($query) use($orderPrice) {
+                $query->where('coupons.match_price', '<=', $orderPrice)
+                    ->orWhere('coupons.match_price', '=', 0);
+            })
+            ->where('coupons.stop_time', '>=', $datetime)
+            ->where('coupons.start_time', '<', $datetime)
+            ->orderBy('coupons.reduced_price', 'desc')
+            ->get();
 
-        foreach ($data as $key => $item) {
-            $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
-            $temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
-
-            $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
-
-            foreach ($goodsInfo as $goods) {
-                $insertData[] = [
-                    'goods_id'    => $goods['id'],
-                    'goods_name'  => $goods['name'],
-                    'goods_image' => $goods['image'],
-                    'goods_num'   => $goods['id'] == $item['double'] ? 2 : 1,
-                    'goods_price' => $goods['price'],
-                    'package_num' => $index,
-                    'deploy'      => $item['sugar'] == $goods['id'] ? $item['weight'] : '',
-                    'created_at'  => $date
-                ];
-                $goodsPrice = bcmul($goods['price'], $goods['id'] == $item['double'] ? 2 : 1, 2);
-                $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
+        if (! empty($couponList)) {
+            foreach ($couponList as $key => &$item) {
+                $item = (array)$item;
+                $item['deadline'] = date('Y-m-d', strtotime($item['stop_time']));
             }
-
-            $index++;
-
-            $totalPrice = bcadd($totalPrice,  $item['price'], 2);
         }
 
-        if (0 != bccomp($totalPrice, $orderPrice, 2)) {
-            //  echo $totalPrice, ',', $orderPrice;exit;
-            return $this->error('订单价格有误');
-        }
-        //dd($insertData);exit;
-
-        DB::beginTransaction();
-        try{
-
-            Order::insert([
-                'shop_id'        => $request->user()->shop_id,
-                'member_id'      => 0,
-                'order_sn'       => $this->getOrderSn(),
-                'price'          => $orderPrice,
-                'original_price' => $orderPrice,
-                'pay_type'       => 0,     // 店员下单
-                'status'         => 1,     // 已支付
-                'payed_at'       => $date,
-                'created_at'     => $date,
-                'user_id'        => $request->user()->id,
-                'temperature'    => $temperature ? serialize($temperature) : ''
-            ]);
-
-            $orderId = DB::getPdo()->lastInsertId();
-
-            if (! $orderId) {
-                throw new \Exception('订单新增失败');
+        $gender = '';
+        if ($userInfo) {
+            if ($userInfo['gender'] == 1) {
+                $gender = '先生';
+            } else if ($userInfo['gender'] == 2) {
+                $gender = '小姐';
             }
-
-            foreach ($insertData as $item) {
-                $item['order_id'] = $orderId;
-
-                OrderDetail::insert($item);
-            }
-
-            DB::commit();
-        } catch (\Exception $e){
-            DB::rollback();//事务回滚
-
-            return $this->error($e->getMessage());
         }
 
-        return $this->success('下单成功');
+        $data = [
+            'datetime' => date('Y-m-d H:i'),
+            'shopName' => $shopName,
+            'telephone' => $userInfo ? $userInfo['telephone'] : '',
+            'gender' => $gender,
+            'position' => $position,
+            'coupons' => $couponList
+        ];
+
+        return $this->_successful($data);
     }
 }
