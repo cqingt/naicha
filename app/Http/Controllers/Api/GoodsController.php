@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Models\Category;
 use App\Http\Models\Goods;
+use App\Http\Models\Formula;
+use App\Http\Models\Order;
 
 class GoodsController extends CommonController
 {

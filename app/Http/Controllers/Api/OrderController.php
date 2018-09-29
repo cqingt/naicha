@@ -7,12 +7,14 @@
  */
 namespace App\Http\Controllers\Api;
 
+use App\Http\Models\Coupon;
 use App\Http\Models\Member;
 use App\Http\Models\MemberCoupon;
 use App\Http\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Models\Goods;
 use App\Http\Models\Order;
+use App\Http\Models\Formula;
 use App\Http\Models\OrderDetail;
 use DB;
 
@@ -22,6 +24,7 @@ class OrderController extends CommonController
     public function create(Request $request)
     {
         $data = $request->get('data');
+        $couponId = $request->get('couponId');
 
         if (empty($data)) {
             return $this->_error('UNKNOWN_ERROR', '请选择配料');
@@ -33,6 +36,7 @@ class OrderController extends CommonController
         $insertData = [];
         $temperatures = [];
         $orderPrice = 0; // 订单总价
+        $memberId = $this->getUserId();
 
         foreach ($cartArr as $data) {
             $temperature = $data['temperature'];
@@ -64,13 +68,33 @@ class OrderController extends CommonController
 
         DB::beginTransaction();
         try{
+            $reducedPrice = 0;
+
+            if ($couponId) {
+                $reducedPrice = Coupon::where('id', $couponId)
+                    ->where('start_time', '<', $date)
+                    ->where('stop_time', '>=', $date)
+                    ->where(function ($query) use($orderPrice) {
+                        $query->where('match_price', '<=', $orderPrice)
+                            ->orWhere('match_price', '=', 0);
+                    })
+                    ->pluck('reduced_price');
+
+                if (empty($reducedPrice)) {
+                    throw new \Exception('优惠券不存在');
+                }
+
+                MemberCoupon::where(['member_id' => $memberId, 'coupon_id' => $couponId])->update(['used' => 1]);
+            }
 
             Order::insert([
                 'shop_id'        => $this->_shopId,
-                'member_id'      => $this->getUserId(),
+                'member_id'      => $memberId,
                 'order_sn'       => $this->getOrderSn(),
                 'price'          => $orderPrice,
                 'original_price' => $orderPrice,
+                'reduced_price'  => $reducedPrice,
+                'coupon_id'      => $couponId,
                 'pay_type'       => 1,
                 'status'         => 0,     // 待支付
                 'created_at'     => $date,
@@ -91,7 +115,7 @@ class OrderController extends CommonController
 
             DB::commit();
 
-            return $this->_successful();
+            return $this->_successful(['orderId' => $orderId]);
         } catch (\Exception $e){
             DB::rollback();//事务回滚
 
@@ -99,23 +123,15 @@ class OrderController extends CommonController
         }
     }
 
-    protected function getOrderSn()
-    {
-        do {
-            $orderSn = date('YmdHis') . rand(1000, 9999);
-        } while (Order::where('order_sn', $orderSn)->count());
-
-        return $orderSn;
-    }
-
     /**
      * 检测订单  返回店铺名，用户手机号，排队情况，优惠券列表
      * @return array
      */
-    public function checkOrder(Request $request)
+    public function check(Request $request)
     {
+        $memberId =  $this->getUserId();
         $shopName = Shop::where('id', $this->_shopId)->pluck('name');
-        $userInfo = Member::where('id', $this->getUserId())->select('telephone', 'gender')->first();
+        $userInfo = Member::where('id', $memberId)->select('telephone', 'gender')->first();
         $now = time();
         $datetime = date('Y-m-d H:i:s');
         $orderPrice = $request->get('orderPrice');
@@ -125,7 +141,7 @@ class OrderController extends CommonController
         $couponList = DB::table('member_coupons')
             ->join('coupons', 'member_coupons.coupon_id', '=', 'coupons.id')
             ->select(['coupons.id', 'coupons.title', 'coupons.match_price', 'coupons.reduced_price', 'coupons.stop_time'])
-            ->where('member_coupons.member_id', $this->getUserId())
+            ->where('member_coupons.member_id', $memberId)
             ->where('member_coupons.used', '=', 0)
             ->where(function ($query) use($orderPrice) {
                 $query->where('coupons.match_price', '<=', $orderPrice)
@@ -162,5 +178,97 @@ class OrderController extends CommonController
         ];
 
         return $this->_successful($data);
+    }
+
+    // 取消订单
+    public function cancel(Request $request)
+    {
+        $couponId = $request->get('couponId');
+        $orderId = $request->get('orderId');
+        $memberId = $this->getUserId();
+
+        if (empty($orderId)) {
+            return $this->_error('UNKNOWN_ERROR', '订单ID不能为空');
+        }
+
+        DB::beginTransaction();
+        try{
+            if ($couponId) {
+                MemberCoupon::where(['member_id' => $memberId, 'coupon_id' => $couponId])->update(['used' => 0]);
+            }
+
+            Order::where(['id' => $orderId, 'member_id' => $memberId, 'status' => 0])->update(['status' => 6 ]);
+
+            DB::commit();
+
+            return $this->_successful();
+        } catch (\Exception $e){
+            DB::rollback();//事务回滚
+
+            return $this->error($e->getMessage());
+        }
+    }
+
+    protected function getOrderSn()
+    {
+        do {
+            $orderSn = date('YmdHis') . rand(1000, 9999);
+        } while (Order::where('order_sn', $orderSn)->count());
+
+        return $orderSn;
+    }
+
+    /**
+     * 获取制作订单
+     */
+    public function index()
+    {
+        // 取最近一条,未完成的
+        $orderInfo = Order::where(['member_id' => 1, 'shop_id' => 1, 'status' => 1])
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $carts = [];
+        $recommends = [];
+        $orderInfo = [];
+        // 订单状态处理中的
+        if (! empty ($orderInfo)) {
+
+            $details = $orderInfo->details->toArray();
+
+            foreach ($details as $detail) {
+                $carts[$detail['package_num']][] = $detail;
+            }
+
+        } else {
+            // 获取推荐
+            $formulas = Formula::where('shop_id', 1)
+                ->orderBy('likes', 'desc')
+                ->limit(15)
+                ->get();
+
+            foreach ($formulas as $formula) {
+                $orderInfo = Order::find($formula['order_id']);
+                $orderDetail = $orderInfo->details->toArray();
+                $cart = [];
+
+                foreach ($orderDetail as $detail) {
+                    if ($formula['package_num'] == $detail['package_num']) {
+                        $cart[] = $detail;
+                    }
+                }
+                array_push($recommends, $cart);
+            }
+        }
+
+        return $this->_successful(['orders' => array_values($carts), 'recommends' => array_values($recommends)]);
+    }
+
+    /**
+     * 推荐配方
+     */
+    public function recommend(Request $request)
+    {
+
     }
 }

@@ -31,6 +31,10 @@ class CommonController extends Controller
 
         $this->_offset = ($this->_page - 1) * $this->_rows;
 
+        if (empty($this->_shopId)) {
+            // todo
+        }
+
         $action = $request->route()->getAction();
 
         if (isset($action['controller'])) {
