@@ -230,7 +230,7 @@ class OrderController extends CommonController
 
         $carts = [];
         $recommends = [];
-        $orderInfo = [];
+        $orderInfo = []; // todo delete
         // 订单状态处理中的
         if (! empty ($orderInfo)) {
 
@@ -249,14 +249,25 @@ class OrderController extends CommonController
 
             foreach ($formulas as $formula) {
                 $orderInfo = Order::find($formula['order_id']);
+                $temperature = $orderInfo['temperature'] ? unserialize($orderInfo['temperature']) : [];
+                $temps = config('web.temperature');
                 $orderDetail = $orderInfo->details->toArray();
                 $cart = [];
 
                 foreach ($orderDetail as $detail) {
                     if ($formula['package_num'] == $detail['package_num']) {
+                        if (! empty($detail['deploy'])) {
+                            $detail['goods_name'] =  $detail['goods_name'] . '(' . $detail['deploy'] . ')';
+                        }
                         $cart[] = $detail;
                     }
                 }
+
+                // 杯子的温度
+                if (isset($temperature[$formula['package_num']])) {
+                    $cart[] = ['goods_name' => $temps[$temperature[$formula['package_num']]], 'type' => $temperature[$formula['package_num']], 'id' => -1];
+                }
+
                 array_push($recommends, $cart);
             }
         }
