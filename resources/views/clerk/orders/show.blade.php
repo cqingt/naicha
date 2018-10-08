@@ -1,4 +1,4 @@
-@extends('clerk.layouts.app')
+    @extends('clerk.layouts.app')
 @section('title','订单详情')
 @section('styles')
     <style>

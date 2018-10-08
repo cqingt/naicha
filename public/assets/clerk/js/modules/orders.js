@@ -22,7 +22,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             ,{field: 'difference', title: '修改差价', align:'center', width:'120'}
             ,{field: 'pay_type', title: '支付方式', align:'center', width:'100'}
             ,{field: 'payed_at', title: '支付时间', align:'center', width:'160'}
-            ,{title: '操作',align:'center', toolbar: '#bartools', width: '280', fixed: 'right'} //这里的toolbar值是模板元素的选择器
+            ,{title: '操作',align:'center', toolbar: '#bartools', width: '80', fixed: 'right'} //这里的toolbar值是模板元素的选择器
         ]]
         ,id: 'testReload'
     });
@@ -118,6 +118,19 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     }
                 });
             });
+        } else if (layEvent === 'action') { // 弹窗
+
+            //页面层
+            layer.open({
+                title: '操作',
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['400px', '200px'], //宽高
+                content:  '<button class="layui-btn layui-btn" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>' +
+                '<button class="layui-btn layui-btn-primary layui-btn" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>' +
+                '<button class="layui-btn layui-btn-normal layui-btn" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>' +
+                '<button class="layui-btn layui-btn-danger layui-btn" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>'
+            })
         }
 
         window.sessionStorage.setItem('form-html', $('.demoTable').html());

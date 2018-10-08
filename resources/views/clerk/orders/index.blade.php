@@ -1,6 +1,20 @@
 @extends('clerk.layouts.app')
 @section('title','订单列表')
-
+@section('styles')
+    <style>
+    .layui-layer  .layui-layer-content{
+        height: 130px;
+        text-align: center;
+        margin-top: 44px;
+    }
+    .layui-layer .layui-layer-rim{
+        width: 360px;
+        height: 150px;
+        top: 211px;
+        left: 221px;
+    }
+    </style>
+@endsection
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         订单列表
@@ -60,12 +74,13 @@
     </div>
 
     <script type="text/html" id="bartools">
-        <button class="layui-btn layui-btn-xs" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>
-        @{{#  if(d.status_type == 1){ }}
-        <button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>
-        <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>
-        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>
-        @{{# } }}
+        <button class="layui-btn layui-btn-xs action" lay-event="action" data-pk="@{{ d.id}}" data-status="@{{d.status_type}}"><i class="layui-icon">&#xe63c;</i>  操作</button>
+        {{--<button class="layui-btn layui-btn-xs" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>--}}
+        {{--@{{#  if(d.status_type == 1){ }}--}}
+        {{--<button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>--}}
+        {{--<button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>--}}
+        {{--<button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>--}}
+        {{--@{{# } }}--}}
     </script>
 
 @endsection
