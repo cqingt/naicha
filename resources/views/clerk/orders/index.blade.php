@@ -20,7 +20,7 @@
                     <select name="status" lay-search="" id="status">
                         <option value="">所有</option>
                         <option value="0">待支付</option>
-                        <option value="1">已支付</option>
+                        <option value="1" @if($from == 'tips') selected @endif>已支付</option>
                         <option value="3">已完成</option>
                     </select>
                 </div>
@@ -38,14 +38,14 @@
             <div class="layui-inline">
                 <label class="layui-form-label">开始时间</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="start_time" id="start_time" autocomplete="off" class="layui-input">
+                    <input type="text" name="start_time" id="start_time" autocomplete="off" class="layui-input" value="{{$startTime}}">
                 </div>
             </div>
 
             <div class="layui-inline">
                 <label class="layui-form-label">结束时间</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="stop_time" id="stop_time" autocomplete="off" class="layui-input">
+                    <input type="text" name="stop_time" id="stop_time" autocomplete="off" class="layui-input" value="{{$stopTime}}">
                 </div>
             </div>
             <div class="layui-inline" style="margin-left: 5%;">
@@ -63,8 +63,8 @@
         <button class="layui-btn layui-btn-xs" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>
         @{{#  if(d.status_type == 1){ }}
         <button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>
-        
         <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>
+        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>
         @{{# } }}
     </script>
 

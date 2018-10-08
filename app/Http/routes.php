@@ -94,6 +94,7 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
 
     Route::get('/orders/records','OrdersController@records');
     Route::resource('orders','OrdersController');
+    Route::put('/orders/cancel/{id}','OrdersController@cancel');
 
 });
 

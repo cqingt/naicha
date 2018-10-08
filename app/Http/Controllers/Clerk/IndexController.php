@@ -79,6 +79,16 @@ class IndexController extends CommonController
         $amounts = $this->getAmount($dateBetween, true);
         $amount = $this->getAmount($dateBetween);
 
+        $timeArea = [];
+        for ($i = 0; $i < 24; $i ++) {
+            if ($i < 10) {
+                array_push($timeArea,  '0' . $i . ':00');
+            } else {
+                array_push($timeArea,  $i . ':00');
+            }
+        }
+        //dump($timeArea);exit;
+
         $assign = [
             'start', 'stop', 'dates', 'currentDate', 'todo', 'done', 'orders', 'order', 'amounts', 'amount', 'showTxt'
         ];

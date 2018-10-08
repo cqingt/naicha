@@ -22,7 +22,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             ,{field: 'difference', title: '修改差价', align:'center', width:'120'}
             ,{field: 'pay_type', title: '支付方式', align:'center', width:'100'}
             ,{field: 'payed_at', title: '支付时间', align:'center', width:'160'}
-            ,{title: '操作',align:'center', toolbar: '#bartools', width: '220', fixed: 'right'} //这里的toolbar值是模板元素的选择器
+            ,{title: '操作',align:'center', toolbar: '#bartools', width: '280', fixed: 'right'} //这里的toolbar值是模板元素的选择器
         ]]
         ,id: 'testReload'
     });
@@ -92,7 +92,35 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     }
                 });
             });
+        } else if (layEvent === 'cancel') { // 取消订单
+            layer.confirm('确定要取消订单吗', function (index) {
+                layer.close(index);
+                //向服务端发送删除指令
+                $.ajax({
+                    type: 'PUT',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/clerk/' + _mod + '/cancel/' + obj.data.id,
+                    success: function(data) {
+                        if(data.code==1){
+                            layer.alert(data.msg,{icon: 1}, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.alert(data.msg,{icon: 2});
+                        }
+                    },
+                    error : function (msg) {
+                        console.log('error');
+                        layer.alert(data.msg,{icon: 2});
+                    }
+                });
+            });
         }
+
+        window.sessionStorage.setItem('form-html', $('.demoTable').html());
     });
 
     var $ = layui.$, active = {
@@ -155,6 +183,20 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         container = $('#container').html();
         window.sessionStorage.clear();
     };
+
+    // 从提醒中跳转
+    $(function () {
+        var html = window.sessionStorage.getItem('form-html');
+
+        if (html) {
+            $('.demoTable').html(html);
+            window.sessionStorage.setItem('form-html', '');
+        }
+
+        if ($('#status').val() > 0) {
+            active['reload'].call(this);
+        }
+    });
 
     $('.demoTable .layui-btn').on('click', function(){
         var type = $(this).data('type');

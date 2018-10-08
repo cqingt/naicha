@@ -23,6 +23,10 @@ layui.use(['element','jquery','form', 'layedit'],function(){
         addTab(elem[0].innerText, _href, _id);
     });
 
+    $('body').on('click', '.layui-layer-tips', function () {
+        $('#iframe').attr('src', "/clerk/orders?from=tips");
+    });
+
     let first = true;
     // 消息提醒
     setInterval(listenOrder, 4000);

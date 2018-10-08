@@ -104,9 +104,49 @@
                 </div>
             </div>
         </div>
+
+
+        <div id="main" style="max-width: 1200px;min-width: 800px;height:400px;margin:50px;"></div>
     </div>
 @endsection
 
 @section('scripts')
     <script src="{{ asset('assets/admin/js/modules/data.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/echarts.simple.min.js') }}"></script>
+
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '每日各时段订单数据',
+                left:'center'
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top: '5%',
+                containLabel: true
+            },
+            tooltip: {},
+            legend: {
+                data:['销量']
+            },
+            xAxis: {
+                data: [{{$timeArea}}]
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'line',
+                data: [5, 20, 36, 10, 10, 20,8,9,10,32,21,25,33,50,49],
+                smooth: true
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
 @endsection

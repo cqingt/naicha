@@ -230,7 +230,7 @@ class OrderController extends CommonController
 
         $carts = [];
         $recommends = [];
-        $orderInfo = []; // todo delete
+        //$orderInfo = []; // todo delete
         // 订单状态处理中的
         if (! empty ($orderInfo)) {
 
