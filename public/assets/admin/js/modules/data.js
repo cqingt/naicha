@@ -16,4 +16,10 @@ layui.use(['table','form','jquery', 'laydate'], function() {
         elem: '#start_time'
         , type: 'datetime'
     });
+
+    // 开始时间
+    laydate.render({
+        elem: '#query_time'
+        , type: 'date'
+    });
 });

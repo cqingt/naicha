@@ -105,14 +105,22 @@
             </div>
         </div>
 
+        <div class="echats" style="margin-top:50px ; ">
+            <div class="layui-form-item" style="float: right;margin-right: 50px;display: none">
+                <label class="layui-form-label">日期选择</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="query_time" id="query_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div id="main" style="max-width: 1200px;min-width: 800px;height:400px;margin:0px 50px;"></div>
+        </div>
 
-        <div id="main" style="max-width: 1200px;min-width: 800px;height:400px;margin:50px;"></div>
     </div>
 @endsection
 
 @section('scripts')
     <script src="{{ asset('assets/admin/js/modules/data.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/echarts.simple.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/echarts.common.min.js') }}"></script>
 
     <script>
         var myChart = echarts.init(document.getElementById('main'));
@@ -120,30 +128,35 @@
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: '每日各时段订单数据',
-                left:'center'
+                text: '各时段订单数据统计',
+                left:'center',
+                // textAlign: 'center',
+            },
+            tooltip: {
+                trigger: 'axis'
             },
             grid: {
                 left: '3%',
                 right: '4%',
                 bottom: '3%',
-                top: '5%',
                 containLabel: true
             },
-            tooltip: {},
-            legend: {
-                data:['销量']
-            },
             xAxis: {
-                data: [{{$timeArea}}]
+                name: '时间',
+                data: [{!! $timeString !!}]
             },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'line',
-                data: [5, 20, 36, 10, 10, 20,8,9,10,32,21,25,33,50,49],
-                smooth: true
-            }]
+            yAxis: {
+                name: '订单量',
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '订单量',
+                    type: 'line',
+                    data: [{!! $orderString !!}],
+                    smooth: true
+                }
+            ]
         };
 
         // 使用刚指定的配置项和数据显示图表。

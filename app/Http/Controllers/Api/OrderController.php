@@ -225,6 +225,7 @@ class OrderController extends CommonController
     {
         // 取最近一条,未完成的
         $orderInfo = Order::where(['member_id' => 1, 'shop_id' => 1, 'status' => 1])
+            ->whereBetween('created_at', [date('Y-m-d'), date('Y-m-d H:i:s')])
             ->orderBy('id', 'desc')
             ->first();
 

@@ -22,7 +22,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             ,{field: 'difference', title: '修改差价', align:'center', width:'120'}
             ,{field: 'pay_type', title: '支付方式', align:'center', width:'100'}
             ,{field: 'payed_at', title: '支付时间', align:'center', width:'160'}
-            ,{title: '操作',align:'center', toolbar: '#bartools', width: '80', fixed: 'right'} //这里的toolbar值是模板元素的选择器
+            ,{title: '操作',align:'center', toolbar: '#bartools', width: '150', fixed: 'right'} //这里的toolbar值是模板元素的选择器
         ]]
         ,id: 'testReload'
     });
@@ -119,6 +119,17 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 });
             });
         } else if (layEvent === 'action') { // 弹窗
+            var pk = data.id;
+            var buttons;
+
+            if ( data.status_type == 1) {
+                buttons = '<button class="layui-btn actions" data-event="show" data-pk="'+pk+'"><i class="layui-icon">&#xe63c;</i>  详情</button>' +
+                    '<button class="layui-btn layui-btn-primary actions" data-event="edit" data-pk="'+pk+'"><i class="layui-icon">&#xe642;</i>修改</button>' +
+                    '<button class="layui-btn layui-btn-normal actions" data-event="success" data-pk="'+pk+'"><i class="layui-icon">&#xe605;</i>完成</button>' +
+                    '<button class="layui-btn layui-btn-danger actions" data-event="cancel" data-pk="'+pk+'"><i class="layui-icon">&#xe642;</i>取消</button>';
+            } else {
+                buttons = '<button class="layui-btn layui-btn" lay-event="show" data-pk="'+pk+'"><i class="layui-icon">&#xe63c;</i>  详情</button>';
+            }
 
             //页面层
             layer.open({
@@ -126,14 +137,79 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 type: 1,
                 skin: 'layui-layer-rim', //加上边框
                 area: ['400px', '200px'], //宽高
-                content:  '<button class="layui-btn layui-btn" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>' +
-                '<button class="layui-btn layui-btn-primary layui-btn" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>' +
-                '<button class="layui-btn layui-btn-normal layui-btn" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>' +
-                '<button class="layui-btn layui-btn-danger layui-btn" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>'
+                content:  buttons
             })
         }
 
         window.sessionStorage.setItem('form-html', $('.demoTable').html());
+    });
+
+    $('body').on('click', 'button.actions', function (obj) {
+        var layEvent = $(this).data('event');
+        var pk = $(this).data('pk');
+
+        if (layEvent === 'show') { // 展示
+
+            //do something
+            location.href= '/clerk/' + _mod + '/' + pk;
+
+        }  else if (layEvent === 'edit') { // 编辑
+            location.href= '/clerk/' + _mod + '/'+pk+'/edit';
+
+        } else if (layEvent === 'success') { // 完成订单
+
+            layer.confirm('订单确定完成吗', function (index) {
+                layer.close(index);
+                //向服务端发送删除指令
+                $.ajax({
+                    type: 'PUT',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/clerk/' + _mod + '/' + pk,
+                    success: function(data) {
+                        if(data.code==1){
+                            layer.alert(data.msg,{icon: 1}, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.alert(data.msg,{icon: 2});
+                        }
+                    },
+                    error : function (msg) {
+                        console.log('error');
+                        layer.alert(data.msg,{icon: 2});
+                    }
+                });
+            });
+        } else if (layEvent === 'cancel') { // 取消订单
+            layer.confirm('确定要取消订单吗', function (index) {
+                layer.close(index);
+                //向服务端发送删除指令
+                $.ajax({
+                    type: 'PUT',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/clerk/' + _mod + '/cancel/' + pk,
+                    success: function(data) {
+                        if(data.code==1){
+                            layer.alert(data.msg,{icon: 1}, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.alert(data.msg,{icon: 2});
+                        }
+                    },
+                    error : function (msg) {
+                        console.log('error');
+                        layer.alert(data.msg,{icon: 2});
+                    }
+                });
+            });
+        }
     });
 
     var $ = layui.$, active = {

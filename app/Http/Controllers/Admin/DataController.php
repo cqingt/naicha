@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\CommonController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use DB;
 
 class DataController extends CommonController
 {
@@ -63,8 +64,41 @@ class DataController extends CommonController
         $amounts = $this->getAmount($dateBetween, true);
         $amount = $this->getAmount($dateBetween);
 
+        $orderCount = [];
+        $result = DB::table('orders')
+            ->select(DB::raw('COUNT(*) as num, HOUR(created_at) as hours'))
+            ->whereIn('status', [1, 2, 3])
+            ->whereBetween('created_at', $dateBetween)
+            ->groupBy(DB::raw('HOUR(created_at)'))
+            ->get();
+
+        if (! empty($result)) {
+            foreach ($result as $item) {
+                $item = (array)$item;
+                $orderCount[$item['hours']] = $item['num'];
+            }
+        }
+
+        $timeArea = [];
+        for ($i = 0; $i < 24; $i ++) {
+            if ($i < 10) {
+                array_push($timeArea,  '0' . $i . ':00');
+            } else {
+                array_push($timeArea,  $i . ':00');
+            }
+
+            if (empty($orderCount) || false == array_key_exists($i, $orderCount)) {
+                $orderCount[$i] = 0;
+            }
+        }
+        ksort($orderCount);
+        $timeString = '"' . implode('","' , $timeArea) . '"';
+
+        $orderString = implode(',', $orderCount);
+
         $assign = [
-            'start', 'stop', 'dates', 'currentDate', 'shops', 'shop', 'members', 'member', 'orders', 'order', 'amounts', 'amount', 'showTxt'
+            'start', 'stop', 'dates', 'currentDate', 'shops', 'shop', 'members', 'member', 'orders', 'order',
+            'amounts', 'amount', 'showTxt', 'timeString', 'orderString'
         ];
 
         return view('admin.data.index', compact($assign));

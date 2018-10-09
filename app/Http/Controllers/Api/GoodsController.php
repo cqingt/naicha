@@ -40,7 +40,7 @@ class GoodsController extends CommonController
                 'defaultItem' => [
                     'name' => '请选择',
                     'price' => 0,
-                    'image' => 'http://thyrsi.com/t6/383/1538966456x1822611431.png',
+                    'image' => 'http://osg1aqywx.bkt.clouddn.com/timg30.png',
                     'volume' => 0,
                     'calorie' => 0,
                     'pk' => 999,
