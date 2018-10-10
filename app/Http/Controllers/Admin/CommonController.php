@@ -39,6 +39,9 @@ class CommonController extends Controller
 
         if (strcasecmp('Administrator', $role) == 0) {
             $allow = true;
+        } else {
+            $redirectPath = '/';
+            echo '<script>window.location.href="' . $redirectPath . '"</script>'; exit;
         }
 
         if (! $allow) {

@@ -98,6 +98,19 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
 
 });
 
+
+// 仓库管理
+Route::group(['prefix' => 'manager', 'namespace' => 'Manager', 'middleware' => 'auth'], function () {
+    Route::get('/','IndexController@index');
+
+    // 商品列表
+    Route::get('/goods/records','GoodsController@records');
+    Route::resource('goods','GoodsController');
+
+    Route::get('/users/resetPwd', 'UsersController@resetPwd');
+    Route::post('/users/reset', 'UsersController@postReset');
+});
+
 // API
 Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
     Route::get('/','IndexController@index');

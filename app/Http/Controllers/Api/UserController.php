@@ -33,7 +33,7 @@ class UserController extends CommonController
             ->count();
 
         $orders = Order::where('member_id', $userId)
-            ->where('status', '>', 0)
+            ->whereIn('status', [3])
             ->orderBy('id', 'desc')
             ->select(['id', 'order_sn', 'price',  'created_at', 'status'])
             ->offset($this->_offset)

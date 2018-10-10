@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('manager.layouts.app')
 @section('title','商品列表')
 @section('styles')
     <style>
@@ -16,7 +16,6 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         商品列表
-        {{--<a href="{{ url('admin/shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
     </blockquote>
 
     <div class="layui-form layui-card-header layuiadmin-card-header-auto">
@@ -64,5 +63,5 @@
     </script>
 @endsection
 @section('scripts')
-    <script src="{{ asset('assets/admin/js/modules/goods.js') }}"></script>
+    <script src="{{ asset('assets/manager/js/modules/goods.js') }}"></script>
 @endsection

@@ -38,7 +38,7 @@ class GoodsController extends CommonController
                 'citrus' => $citrusCategory,
                 'milk' => $milkCategory,
                 'defaultItem' => [
-                    'name' => '请选择',
+                    'name' => '滑动选择',
                     'price' => 0,
                     'image' => 'http://osg1aqywx.bkt.clouddn.com/timg30.png',
                     'volume' => 0,

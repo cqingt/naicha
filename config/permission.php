@@ -11,7 +11,7 @@ return [
     'Administrator' => [],
     'Manager' => [
         // 控制器-方法
-        'goods' => ['index', 'update', 'list']
+        'goods' => ['index', 'update', 'records']
     ],
     'Clerk' => [
         'users' => ['resetPwd', 'postReset']

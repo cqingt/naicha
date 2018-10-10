@@ -91,7 +91,7 @@ class OrderController extends CommonController
                 'shop_id'        => $this->_shopId,
                 'member_id'      => $memberId,
                 'order_sn'       => $this->getOrderSn(),
-                'price'          => $orderPrice,
+                'price'          => bcsub($orderPrice, $reducedPrice, 2),
                 'original_price' => $orderPrice,
                 'reduced_price'  => $reducedPrice,
                 'coupon_id'      => $couponId,

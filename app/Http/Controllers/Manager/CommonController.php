@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Clerk;
+namespace App\Http\Controllers\Manager;
 
 use App\Http\Models\Role;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class CommonController extends Controller
         $roleArray = Role::find($roleId, ['name']);
         $role = $roleArray ? $roleArray['name'] : '';
 
-        if (strcasecmp('clerk', $role) !== 0) {
+        if (strcasecmp('manager', $role) !== 0) {
             $redirectPath = '/';
             echo '<script>window.location.href="' . $redirectPath . '"</script>'; exit;
         }

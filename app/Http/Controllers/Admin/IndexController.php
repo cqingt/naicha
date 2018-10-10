@@ -6,7 +6,7 @@ use App\Http\Models\Config;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class IndexController extends Controller
+class IndexController extends CommonController
 {
 
     public function index()
