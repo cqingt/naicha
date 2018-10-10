@@ -16,7 +16,7 @@ layui.use(['table','form','jquery'], function(){
             ,{field: 'username', title: '用户名称', align:'center',width:'20%'}
             ,{field: 'shop_name', title: '注册店铺', align:'center',width:'15%'}
             ,{field: 'telephone', title: '手机号', align:'center',width:'10%'}
-            ,{field: 'avatar', title: '头像', align:'center',width:'12%', templet:'#imgTpl'}
+            // ,{field: 'avatar', title: '头像', align:'center',width:'12%', templet:'#imgTpl'}
             ,{field: 'age', title: '年龄', align:'center',width:'7%'}
             ,{field: 'gender', title: '性别', align:'center',width:'7%'}
             ,{field: 'created_at', title: '创建时间',align:'center', width: '12%'}

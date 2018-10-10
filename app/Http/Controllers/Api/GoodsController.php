@@ -18,11 +18,12 @@ class GoodsController extends CommonController
             $newCategory[$category->id] = $category;
         }
 
-        $products = Goods::orderBy('category_id')->get();
+        $products = Goods::withTrashed()->orderBy('category_id')->get();
 
         $data = [];
 
         foreach ($products as $product) {
+            $product['soldOut'] = $product['deleted_at'] ? true : false ;
             $data[$product['category_id']]['volume'] = $newCategory[$product['category_id']]['volume'];
             $data[$product['category_id']]['items'][] = $product;
         }
