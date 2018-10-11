@@ -45,7 +45,7 @@ function addTab(tabTitle,tabUrl,tabId){
     }else{
         element.tabAdd('tab-switch', {
             title: tabTitle
-            ,content: '<iframe src='+tabUrl+' width="100%" style="height: 800px;" frameborder="0" scrolling="auto" onload="setIframeHeight(this)"></iframe>' // 选项卡内容，支持传入html
+            ,content: '<iframe src='+tabUrl+' width="100%" style="min-height: 700px;overflow-y: scroll" frameborder="0" scrolling="auto" onload="setIframeHeight(this)"></iframe>' // 选项卡内容，支持传入html
             ,id: tabId //选项卡标题的lay-id属性值
         });
         element.tabChange('tab-switch', tabId); //切换到新增的tab上

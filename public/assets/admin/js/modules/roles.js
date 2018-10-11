@@ -14,7 +14,7 @@ layui.use(['table','element','form','jquery'], function(){
             ,{field: 'name', title: '角色名称', align:'center',width:'15%'}
             ,{field: 'description', title: '说明', align:'center',width:'35%'}
             // ,{field: 'permission', title: '权限名称', align:'center'}
-            ,{title: '操作', width:'10%', align:'center', toolbar: '#roles_tools'} //这里的toolbar值是模板元素的选择器
+            ,{title: '操作', width:'15%', align:'center', toolbar: '#roles_tools'} //这里的toolbar值是模板元素的选择器
         ]]
     });
     //监听工具条

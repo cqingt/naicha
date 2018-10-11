@@ -406,7 +406,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.msg('订单修改成功，差价为' + data.data.difference, {icon: 1, time: 2000}, function () {
-                        location.href = '/clerk/orders';
+                        location.href = '/orders';
                     });
 
                 }else{

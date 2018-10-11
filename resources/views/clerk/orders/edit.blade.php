@@ -196,11 +196,11 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         修改订单
-        <a href="{{ url('clerk/orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <div class="layui-container">
-        <form class="layui-form" action="{{ url('clerk/orders/compile') }}" method="post">
+        <form class="layui-form" action="{{ url('orders/compile') }}" method="post">
         {{ csrf_field() }}
             <div id="container">
             <!-- 品类选择 -->

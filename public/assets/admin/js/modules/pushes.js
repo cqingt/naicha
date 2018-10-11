@@ -75,7 +75,7 @@ layui.use(['table','form','jquery','upload'], function(){
 
     var uploadInst = upload.render({
         elem: '#image' //绑定元素
-        ,url: '/admin/upload/image' //上传接口
+        ,url: '/upload/image' //上传接口
         ,exts: 'jpg|png|gif'
         ,type : 'images'
         ,data:{'_token': $('meta[name="csrf-token"]').attr('content')}

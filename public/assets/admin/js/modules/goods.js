@@ -16,12 +16,12 @@ layui.use(['table','form','jquery'], function(){
             {field: 'id', title: 'ID', width: '5%', align:'center'}
             ,{field: 'category_name', title: '分类名称', align:'center',width:'8%'}
             ,{field: 'name', title: '商品名称', align:'center',width:'18%'}
-            ,{field: 'image', title: '商品图片', align:'center',width:'12%', templet:'#imgTpl'}
+            ,{field: 'image', title: '商品图片', align:'center',width:'10%', templet:'#imgTpl'}
             ,{field: 'price', title: '价格', align:'center',width:'7%'}
-            ,{field: 'deploy', title: '商品属性', align:'center',width:'20%'}
-            ,{field: 'status', title: '状态', align:'center',width:'5%'}
+            ,{field: 'deploy', title: '商品属性', align:'center',width:'16%'}
+            ,{field: 'status', title: '状态', align:'center',width:'7%'}
             // ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{field: 'updated_at', title: '更新时间',align:'center', width: '10%'}
+            ,{field: 'updated_at', title: '更新时间',align:'center', width: '15%'}
             ,{title: '操作', width:'15%', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]],
         id: 'testReload'

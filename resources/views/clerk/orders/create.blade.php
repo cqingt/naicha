@@ -199,7 +199,7 @@
     </blockquote>
 
     <div class="layui-container">
-        <form class="layui-form" action="{{ url('clerk/orders') }}" method="post">
+        <form class="layui-form" action="{{ url('orders') }}" method="post">
         {{ csrf_field() }}
             <div id="container">
             <!-- 品类选择 -->

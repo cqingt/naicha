@@ -7,7 +7,7 @@ layui.use(['table','form','jquery'], function(){
 
     table.render({
         elem: '#goods_table'
-        ,url: '/manager/' + _mod + '/records' //数据接口
+        ,url: '/' + _mod + '/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -17,10 +17,10 @@ layui.use(['table','form','jquery'], function(){
             ,{field: 'name', title: '商品名称', align:'center',width:'18%'}
             ,{field: 'image', title: '商品图片', align:'center',width:'12%', templet:'#imgTpl'}
             ,{field: 'price', title: '价格', align:'center',width:'7%'}
-            ,{field: 'deploy', title: '商品属性', align:'center',width:'20%'}
-            ,{field: 'status', title: '状态', align:'center',width:'5%'}
+            ,{field: 'deploy', title: '商品属性', align:'center',width:'15%'}
+            ,{field: 'status', title: '状态', align:'center',width:'7%'}
             // ,{field: 'created_at', title: '创建时间',align:'center', width: 165}
-            ,{field: 'updated_at', title: '更新时间',align:'center', width: '10%'}
+            ,{field: 'updated_at', title: '更新时间',align:'center', width: '13%'}
             ,{title: '操作', width:'15%', align:'center', toolbar: '#bartools'} //这里的toolbar值是模板元素的选择器
         ]],
         id: 'testReload'
@@ -44,7 +44,7 @@ layui.use(['table','form','jquery'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/manager/' + _mod + '/'+obj.data.id,
+                    url: '/' + _mod + '/'+obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -61,7 +61,7 @@ layui.use(['table','form','jquery'], function(){
             });
         } else if (layEvent === 'edit') { //编辑
             //do something
-            location.href= '/manager/' + _mod + '/'+obj.data.id+'/edit';
+            location.href= '/' + _mod + '/'+obj.data.id+'/edit';
 
             // //同步更新缓存对应的值
             // obj.update({
@@ -81,7 +81,7 @@ layui.use(['table','form','jquery'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/manager/' + _mod + '/'+ obj.data.id,
+                    url: '/' + _mod + '/'+ obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -114,7 +114,7 @@ layui.use(['table','form','jquery'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.msg(data.msg,{icon: 1}, function () {
-                        location.href = '/manager/' + _mod;
+                        location.href = '/' + _mod;
                     });
 
                 }else{

@@ -82,7 +82,7 @@ Route::group(['domain' => 'a1.laravel.com',  'namespace' => 'Admin', 'middleware
 });
 
 // 店员管理
-Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
+Route::group(['domain' => 'w1.laravel.com', 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
     Route::get('/','IndexController@index');
     Route::get('/index','IndexController@index');
     Route::get('/index/listen','IndexController@listen');
@@ -96,11 +96,14 @@ Route::group(['prefix' => 'clerk', 'namespace' => 'Clerk', 'middleware' => 'auth
     Route::resource('orders','OrdersController');
     Route::put('/orders/cancel/{id}','OrdersController@cancel');
 
+    // 重置密码
+    Route::get('/users/resetPwd', 'UsersController@resetPwd');
+    Route::post('/users/reset', 'UsersController@postReset');
 });
 
 
 // 仓库管理
-Route::group(['prefix' => 'manager', 'namespace' => 'Manager', 'middleware' => 'auth'], function () {
+Route::group(['domain' => 'w2.laravel.com', 'namespace' => 'Manager', 'middleware' => 'auth'], function () {
     Route::get('/','IndexController@index');
 
     // 商品列表

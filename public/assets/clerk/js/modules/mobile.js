@@ -24,7 +24,7 @@ layui.use(['element','jquery','form', 'layedit'],function(){
     });
 
     $('body').on('click', '.layui-layer-tips', function () {
-        $('#iframe').attr('src', "/clerk/orders?from=tips");
+        $('#iframe').attr('src', "/orders?from=tips");
     });
 
     let first = true;
@@ -34,7 +34,7 @@ layui.use(['element','jquery','form', 'layedit'],function(){
     function listenOrder() {
         $.ajax({
             type: "GET",
-            url: "/clerk/index/listen",
+            url: "/index/listen",
             timeout: 60000,
             async: true,
             success: function(result) {

@@ -1,4 +1,4 @@
-@extends('manager.layouts.app')
+@extends('admin.layouts.app')
 @section('title', '重置密码')
 
 @section('body')
@@ -39,5 +39,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('assets/manager/js/modules/users.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/modules/users.js') }}"></script>
 @endsection

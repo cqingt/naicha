@@ -5,7 +5,7 @@ layui.use(['table','form','jquery'], function(){
     //第一个实例
     table.render({
         elem: '#users_table'
-        ,url: '/manager/users/show' //数据接口
+        ,url: '/users/show' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -40,7 +40,7 @@ layui.use(['table','form','jquery'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/manager/users/'+obj.data.id,
+                    url: '/users/'+obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -62,7 +62,7 @@ layui.use(['table','form','jquery'], function(){
             });
         } else if (layEvent === 'edit') { //编辑
             //do something
-            location.href= '/manager/users/'+obj.data.id+'/edit';
+            location.href= '/users/'+obj.data.id+'/edit';
 
             // //同步更新缓存对应的值
             // obj.update({
@@ -103,7 +103,7 @@ layui.use(['table','form','jquery'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.alert(data.msg,{icon: 1});
-                    location.href = '/manager/users';
+                    location.href = '/users';
                 }else{
                     layer.alert(data.msg,{icon: 2});
                 }

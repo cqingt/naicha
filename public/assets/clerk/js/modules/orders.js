@@ -9,7 +9,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
 
     table.render({
         elem: '#orders_table'
-        ,url: '/clerk/' + _mod + '/records' //数据接口
+        ,url: '/' + _mod + '/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -60,10 +60,10 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         } else if (layEvent === 'show') { // 展示
 
             //do something
-            location.href= '/clerk/' + _mod + '/'+obj.data.id;
+            location.href= '/' + _mod + '/'+obj.data.id;
 
         }  else if (layEvent === 'edit') { // 编辑
-            location.href= '/clerk/' + _mod + '/'+obj.data.id+'/edit';
+            location.href= '/' + _mod + '/'+obj.data.id+'/edit';
 
         } else if (layEvent === 'success') { // 完成订单
 
@@ -76,7 +76,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/clerk/' + _mod + '/' + obj.data.id,
+                    url: '/' + _mod + '/' + obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1}, function () {
@@ -102,7 +102,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/clerk/' + _mod + '/cancel/' + obj.data.id,
+                    url: '/' + _mod + '/cancel/' + obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1}, function () {
@@ -151,10 +151,10 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         if (layEvent === 'show') { // 展示
 
             //do something
-            location.href= '/clerk/' + _mod + '/' + pk;
+            location.href= '/' + _mod + '/' + pk;
 
         }  else if (layEvent === 'edit') { // 编辑
-            location.href= '/clerk/' + _mod + '/'+pk+'/edit';
+            location.href= '/' + _mod + '/'+pk+'/edit';
 
         } else if (layEvent === 'success') { // 完成订单
 
@@ -167,7 +167,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/clerk/' + _mod + '/' + pk,
+                    url: '/' + _mod + '/' + pk,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1}, function () {
@@ -193,7 +193,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/clerk/' + _mod + '/cancel/' + pk,
+                    url: '/' + _mod + '/cancel/' + pk,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1}, function () {
@@ -556,7 +556,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.msg('创建订单成功', {icon: 1}, function () {
-                        //location.href = '/clerk/orders';
+                        //location.href = '/orders';
                         location.reload();
                     });
 

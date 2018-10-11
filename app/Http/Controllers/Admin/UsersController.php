@@ -65,6 +65,9 @@ class UsersController extends CommonController
 
         $result = User::create([
             'name'  =>  $request->name,
+            'real_name' => $request->real_name,
+            'telephone' => $request->telephone,
+            'shop_id' => $request->shop_id,
             'email' =>  $request->email ? : $request->name . '@email.com',
             'password' => bcrypt($request->password),
             'role_id' => $request->role_id
