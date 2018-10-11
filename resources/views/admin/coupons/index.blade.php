@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         优惠券列表
-        <a href="{{ url('admin/coupons/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('coupons/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
     </blockquote>
 
     <table id="coupons_table" lay-filter="coupons_table"></table>

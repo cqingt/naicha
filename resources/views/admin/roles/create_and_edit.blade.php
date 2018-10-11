@@ -5,13 +5,13 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         {{isset($roles->id)? '编辑角色':'添加角色'}}
-        <a href="{{ url('admin/roles') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('roles') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
     @if(isset($roles->id))
-        <form class="layui-form" action="{{ url('admin/roles', $roles->id) }}" method="POST">
+        <form class="layui-form" action="{{ url('roles', $roles->id) }}" method="POST">
             <input type="hidden" name="_method" value="PUT">
             @else
-                <form class="layui-form" action="{{ url('admin/roles') }}" method="POST">
+                <form class="layui-form" action="{{ url('roles') }}" method="POST">
                     @endif
                     {{ csrf_field() }}
                     <div class="layui-form-item">

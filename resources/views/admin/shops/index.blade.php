@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         店铺列表
-        <a href="{{ url('admin/shops/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('shops/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
     </blockquote>
 
     <table id="shops_table" lay-filter="shops_table"></table>

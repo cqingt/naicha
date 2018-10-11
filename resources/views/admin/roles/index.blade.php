@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         角色列表
-        <a href="{{ url('admin/roles/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('roles/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>
     </blockquote>
     <table id="roles_table" lay-filter="roles_table"></table>
     <script type="text/html" id="roles_tools">

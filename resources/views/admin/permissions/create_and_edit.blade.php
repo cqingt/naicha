@@ -5,13 +5,13 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         {{isset($permissions->id)? '编辑权限':'添加权限'}}
-        <a href="{{ url('admin/permissions/index') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('permissions/index') }}"class="layui-btn" style="margin-left: 30px;">返回列表</a>
     </blockquote>
     @if(isset($permissions->id))
-        <form class="layui-form" action="{{  url('admin/permissions/update', $permissions->id) }}" method="POST">
+        <form class="layui-form" action="{{  url('permissions/update', $permissions->id) }}" method="POST">
             <input type="hidden" name="_method" value="PUT">
             @else
-                <form class="layui-form" action="{{  url('admin/permissions/store') }}" method="POST">
+                <form class="layui-form" action="{{  url('permissions/store') }}" method="POST">
                     @endif
         {{ csrf_field() }}
         <div class="layui-form-item">

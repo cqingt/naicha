@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         权限列表
-        <a href="{{ url('admin/permissions/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('permissions/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>
     </blockquote>
     <table id="permissions_table" lay-filter="permissions_table"></table>
     <script type="text/html" id="permissions_tools">

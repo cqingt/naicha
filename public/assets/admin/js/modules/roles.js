@@ -5,7 +5,7 @@ layui.use(['table','element','form','jquery'], function(){
     var _mod = 'roles';
     table.render({
         elem: '#roles_table'
-        ,url: '/admin/roles/records' //数据接口
+        ,url: '/roles/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -33,7 +33,7 @@ layui.use(['table','element','form','jquery'], function(){
                 $.ajax({
                     type: 'DELETE',
                     dataType: 'json',
-                    url: '/admin/roles/'+obj.data.id,
+                    url: '/roles/'+obj.data.id,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -59,7 +59,7 @@ layui.use(['table','element','form','jquery'], function(){
         } else if (layEvent === 'edit') { //编辑
             //do something
             console.log(obj);
-            location.href= '/admin/roles/'+obj.data.id+'/edit';
+            location.href= '/roles/'+obj.data.id+'/edit';
 
             // //同步更新缓存对应的值
             // obj.update({
@@ -96,7 +96,7 @@ layui.use(['table','element','form','jquery'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.alert(data.msg,{icon: 1});
-                    location.href = '/admin/roles';
+                    location.href = '/roles';
                 }else{
                     layer.alert(data.msg,{icon: 2});
                 }

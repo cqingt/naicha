@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         订单详情
-        <a href="{{ url('admin/orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('orders') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
     <div class="layui-container">
@@ -84,7 +84,7 @@
 
 
         {{--<div class="layui-input-block">
-            <a href="{{ url('admin/orders') }}"class="layui-btn" style="margin-left: 30px;">返回</a>
+            <a href="{{ url('orders') }}"class="layui-btn" style="margin-left: 30px;">返回</a>
         </div>--}}
     </div>
 

@@ -6,7 +6,7 @@
         重置密码
     </blockquote>
 
-    <form class="layui-form" action="{{ url('admin/users/reset') }}">
+    <form class="layui-form" action="{{ url('users/reset') }}">
         {{ csrf_field() }}
 
         <div class="layui-form-item">

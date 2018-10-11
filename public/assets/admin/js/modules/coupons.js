@@ -6,10 +6,11 @@ layui.use(['table','form','jquery', 'laydate'], function(){
         ,upload = layui.upload;
 
     var _mod = 'coupons';
+    var prefix = '/';
 
     table.render({
         elem: '#coupons_table'
-        ,url: '/admin/' + _mod + '/records' //数据接口
+        ,url:  prefix + _mod + '/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -40,7 +41,7 @@ layui.use(['table','form','jquery', 'laydate'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/admin/' + _mod + '/'+obj.data.id,
+                    url: prefix + _mod + '/'+obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -56,7 +57,7 @@ layui.use(['table','form','jquery', 'laydate'], function(){
                 });
             });
         } else if (layEvent === 'edit') { //编辑
-            location.href= '/admin/' + _mod + '/'+obj.data.id+'/edit';
+            location.href= prefix + _mod + '/'+obj.data.id+'/edit';
 
         } else if (layEvent === 'grant') { // 发放优惠券
             layer.confirm('确定发放该优惠券吗', function (index) {
@@ -68,7 +69,7 @@ layui.use(['table','form','jquery', 'laydate'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/admin/' + _mod + '/'+obj.data.id + '/grant',
+                    url: prefix + _mod + '/'+obj.data.id + '/grant',
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -113,7 +114,7 @@ layui.use(['table','form','jquery', 'laydate'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.msg(data.msg,{icon: 1}, function () {
-                        location.href = '/admin/' + _mod;
+                        location.href = prefix + _mod;
                     });
 
                 }else{

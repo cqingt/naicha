@@ -4,10 +4,10 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         编辑优惠券
-        <a href="{{ url('admin/coupons') }}"class="layui-btn  layui-btn-sm"  style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('coupons') }}"class="layui-btn  layui-btn-sm"  style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
-    <form class="layui-form" action="{{ url('admin/coupons', $coupon->id) }}" method="post">
+    <form class="layui-form" action="{{ url('coupons', $coupon->id) }}" method="post">
         {{ csrf_field() }}
         <input type="hidden" name="_method" value="PUT">
         <div class="layui-form-item">

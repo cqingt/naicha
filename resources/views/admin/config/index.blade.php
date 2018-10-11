@@ -7,7 +7,7 @@
         网站配置
     </blockquote>
 
-    <form class="layui-form" action="{{  url('admin/config/store') }}">
+    <form class="layui-form" action="{{  url('config/store') }}">
         {{ csrf_field() }}
         <div class="layui-form-item">
             <label class="layui-form-label">网站名称</label>

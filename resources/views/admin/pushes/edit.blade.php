@@ -4,10 +4,10 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         编辑推送
-        <a href="{{ url('admin/pushes') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('pushes') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
-    <form class="layui-form" action="{{ url('admin/pushes', $push->id) }}" method="post">
+    <form class="layui-form" action="{{ url('pushes', $push->id) }}" method="post">
         {{ csrf_field() }}
         <input type="hidden" name="_method" value="PUT">
         <div class="layui-form-item">

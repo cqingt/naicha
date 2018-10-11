@@ -7,8 +7,8 @@
             white-space: normal;
         }
         .layui-table img {
-            max-width: 80px;
-            min-width: 60px;
+            max-width: 40px;
+            min-width: 40px;
         }
     </style>
 @endsection
@@ -59,7 +59,7 @@
     </script>
 
     <script type="text/html" id="imgTpl">
-        <img src="@{{ d.image }}">
+        <a href="@{{ d.image }}"><img src="@{{ d.image }}"></a>
     </script>
 @endsection
 @section('scripts')

@@ -4,10 +4,10 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         新增优惠券
-        <a href="{{ url('admin/coupons') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('coupons') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
-    <form class="layui-form" action="{{ route('admin.coupons.store') }}" method="post">
+    <form class="layui-form" action="{{ route('coupons.store') }}" method="post">
         {{ csrf_field() }}
         <div class="layui-form-item">
             <label class="layui-form-label">选择店铺</label>

@@ -7,8 +7,8 @@
             white-space: normal;
         }
         .layui-table img {
-            max-width: 80px;
-            min-width: 60px;
+            max-width: 40px;
+            min-width: 40px;
         }
     </style>
 @endsection
@@ -16,7 +16,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         商品列表
-        {{--<a href="{{ url('admin/shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
+        {{--<a href="{{ url('shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
     </blockquote>
 
     <div class="layui-form layui-card-header layuiadmin-card-header-auto">
@@ -60,7 +60,7 @@
     </script>
 
     <script type="text/html" id="imgTpl">
-        <img src="@{{ d.image }}">
+        <a href="@{{ d.image }}" target="_blank"><img src="@{{ d.image }}"></a>
     </script>
 @endsection
 @section('scripts')

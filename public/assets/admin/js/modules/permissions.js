@@ -2,10 +2,13 @@ layui.use(['table','element','form','jquery'], function(){
     var table = layui.table
         ,form = layui.form
         ,$ = layui.jquery;
+
+    var prefix = '/';
+
     //第一个实例
     table.render({
         elem: '#permissions_table'
-        ,url: '/admin/api/permissions' //数据接口
+        ,url: '/api/permissions' //数据接口
         ,limit: 5
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -53,7 +56,7 @@ layui.use(['table','element','form','jquery'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.alert(data.msg,{icon: 1});
-                    location.href = '/admin/permissions';
+                    location.href = '/permissions';
                 }else{
                     layer.alert(data.msg,{icon: 2});
                 }

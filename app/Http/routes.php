@@ -11,12 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
 // 后台管理
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth' ], function () {
+Route::group(['domain' => 'a1.laravel.com',  'namespace' => 'Admin', 'middleware' => 'auth' ], function () {
     //Route::get('/dashboard', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@home');
 

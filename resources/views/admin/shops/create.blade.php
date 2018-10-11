@@ -4,10 +4,10 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         新增店铺
-        <a href="{{ url('admin/shops') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
+        <a href="{{ url('shops') }}"class="layui-btn  layui-btn-sm" style="margin-left: 30px;">返回列表</a>
     </blockquote>
 
-    <form class="layui-form" action="{{ route('admin.shops.store') }}" method="post">
+    <form class="layui-form" action="{{ route('shops.store') }}" method="post">
         {{ csrf_field() }}
         <div class="layui-form-item">
             <label class="layui-form-label">店铺名称</label>

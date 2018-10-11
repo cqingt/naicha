@@ -11,7 +11,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         推送列表
-        <a href="{{ url('admin/pushes/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
+        <a href="{{ url('pushes/create') }}"class="layui-btn layui-btn-sm" style="margin-left: 30px;">添加</a>
     </blockquote>
 
     <table id="pushes_table" lay-filter="pushes_table"></table>

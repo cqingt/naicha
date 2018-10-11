@@ -4,10 +4,11 @@ layui.use(['table','form','jquery'], function(){
         ,$ = layui.jquery;
 
     var _mod = 'members';
+    var prefix = '/';
 
     table.render({
         elem: '#members_table'
-        ,url: '/admin/' + _mod + '/records' //数据接口
+        ,url: prefix + _mod + '/records' //数据接口
         ,limit: 10
         ,page: true //开启分页
         ,cols: [[ //表头
@@ -42,7 +43,7 @@ layui.use(['table','form','jquery'], function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/admin/' + _mod + '/'+obj.data.id,
+                    url: prefix + _mod + '/'+obj.data.id,
                     success: function(data) {
                         if(data.code==1){
                             layer.alert(data.msg,{icon: 1});
@@ -59,7 +60,7 @@ layui.use(['table','form','jquery'], function(){
             });
         } else if (layEvent === 'edit') { //编辑
             //do something
-            location.href= '/admin/' + _mod + '/'+obj.data.id+'/edit';
+            location.href= prefix + _mod + '/'+obj.data.id+'/edit';
         }
     });
 
@@ -78,7 +79,7 @@ layui.use(['table','form','jquery'], function(){
             success: function(data) {
                 if(data.code==1){
                     layer.msg(data.msg,{icon: 1}, function () {
-                        location.href = '/admin/' + _mod;
+                        location.href = prefix + _mod;
                     });
 
                 }else{

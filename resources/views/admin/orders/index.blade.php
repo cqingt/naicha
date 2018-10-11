@@ -4,7 +4,7 @@
 @section('body')
     <blockquote class="layui-elem-quote layui-text">
         订单列表
-        {{--<a href="{{ url('admin/shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
+        {{--<a href="{{ url('shops/create') }}"class="layui-btn" style="margin-left: 30px;">添加</a>--}}
     </blockquote>
 
     <div class="layui-form layui-card-header layuiadmin-card-header-auto" style="height: auto;">
