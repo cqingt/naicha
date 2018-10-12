@@ -10,13 +10,13 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
+$domain = env('APP_DOMAIN');
 //Route::get('/', function () {
 //    return view('welcome');
 //});
 
 // 后台管理
-Route::group(['domain' => 'a1.laravel.com',  'namespace' => 'Admin', 'middleware' => 'auth' ], function () {
+Route::group(['domain' => 'a1.' . $domain,  'namespace' => 'Admin', 'middleware' => 'auth' ], function () {
     //Route::get('/dashboard', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@home');
 
@@ -82,7 +82,7 @@ Route::group(['domain' => 'a1.laravel.com',  'namespace' => 'Admin', 'middleware
 });
 
 // 店员管理
-Route::group(['domain' => 'w1.laravel.com', 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
+Route::group(['domain' => 'w1.' . $domain, 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
     Route::get('/','IndexController@index');
     Route::get('/index','IndexController@index');
     Route::get('/index/listen','IndexController@listen');
@@ -103,7 +103,7 @@ Route::group(['domain' => 'w1.laravel.com', 'namespace' => 'Clerk', 'middleware'
 
 
 // 仓库管理
-Route::group(['domain' => 'w2.laravel.com', 'namespace' => 'Manager', 'middleware' => 'auth'], function () {
+Route::group(['domain' => 'w2.' . $domain, 'namespace' => 'Manager', 'middleware' => 'auth'], function () {
     Route::get('/','IndexController@index');
 
     // 商品列表

@@ -31,4 +31,11 @@ return [
         'app_secret' => 'fe4b64e1f96f38463033927e038e97a1'
     ],
     'api_mix' => '$%*^&201@!#$', // api混淆参数
+
+    // 角色对应域名
+    'domain' => [
+        'a1' => 'Administrator',
+        'w1' => 'Clerk',
+        'w2' => 'Manager'
+    ]
 ];

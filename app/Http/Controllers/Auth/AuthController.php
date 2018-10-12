@@ -8,12 +8,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Exception\HttpResponseException;
+use DB;
 
 class AuthController extends Controller
 {
     protected $username = 'name'; // 用户登录指定字段
 
-    protected $redirectPath = 'admin/dashboard'; // 登录跳转地址
+    protected $redirectPath = 'dashboard'; // 登录跳转地址
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -53,6 +55,42 @@ class AuthController extends Controller
     }
 
     /**
+     * 登录账户校验
+     * @param Request $request
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @return array
+     */
+    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []){
+        $username = $request->get($this->username);
+        if (! empty(trim($username))) {
+            $roleName = DB::table('users')
+                ->join('roles', 'users.role_id', '=', 'roles.id')
+                ->where('users.name', '=', $username)
+                ->pluck('roles.name');
+            $domain = $request->getHost();
+
+            $subDomain = substr($domain, 0, strpos($domain, '.'));
+
+            $domains = config('web.domain');
+
+            if (isset($domains[$subDomain])) {
+                $role = $domains[$subDomain];
+
+                if (strcasecmp($roleName, $role) !== 0) {
+                    throw new HttpResponseException($this->buildFailedValidationResponse(
+                        $request, [$this->username => '非此平台账号，禁止登录']
+                    ));
+                }
+            }
+        }
+
+
+        return parent::validate($request, $rules, $messages, $customAttributes);
+    }
+
+    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -75,14 +113,16 @@ class AuthController extends Controller
      */
     public function authenticated(Request $request, $user)
     {
-        $roleId = $user->role_id;
-        $roleArray = Role::find($roleId, ['name']);
-        $role = $roleArray ? $roleArray['name'] : '';
+//        $roleId = $user->role_id;
+//        $roleArray = Role::find($roleId, ['name']);
+//        $role = $roleArray ? $roleArray['name'] : '';
+//
+//        if (strcasecmp('clerk', $role) === 0) {
+//            $this->redirectPath = '/clerk/index';
+//        } else if (strcasecmp('manager', $role) === 0) {
+//            $this->redirectPath = '';
+//        }
 
-        if (strcasecmp('clerk', $role) === 0) {
-            $this->redirectPath = '/clerk/index';
-        }
-        //echo $role;echo $this->redirectPath();exit;
         return redirect()->intended($this->redirectPath());
     }
 }
