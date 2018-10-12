@@ -115,7 +115,7 @@ Route::group(['domain' => 'w2.' . $domain, 'namespace' => 'Manager', 'middleware
 });
 
 // API
-Route::group(['prefix' => 'api', 'namespace' => 'Api'], function () {
+Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/','IndexController@index');
     Route::get('/index/token','IndexController@requestToken');
     Route::get('/index/index','IndexController@index');

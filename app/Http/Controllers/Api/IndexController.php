@@ -31,10 +31,9 @@ class IndexController extends CommonController
         }
 
         $pushes = Push::all();
-
-        foreach ($pushes as $key => &$push) {
-            $push['image'] = $request->root() . $push['image'];
-        }
+//        foreach ($pushes as $key => &$push) {
+//            $push['image'] = $request->root() . $push['image'];
+//        }
 
         // 我的排名
         if (! empty($mine)) {

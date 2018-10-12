@@ -60,7 +60,7 @@ class PushesController extends CommonController
         $result = Push::create([
             'title'   =>  $request->title,
             'shop_id' => $request->shop_id,
-            'image'   =>  $request->image,
+            'image'   => $request->root() . $request->image,
             'position' => $request->position
         ]);
 
@@ -149,7 +149,7 @@ class PushesController extends CommonController
         $result = Push::find($id)->update([
             'title'   =>  $request->title,
             'shop_id' => $request->shop_id,
-            'image'   =>  $request->image,
+            'image'   => $request->root() . $request->image,
             'position' => $request->position
         ]);
 
