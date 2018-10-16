@@ -559,8 +559,16 @@ class WxPayApi
 			curl_setopt($ch,CURLOPT_PROXYPORT, $proxyPort);
 		}
 		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,TRUE);
-		curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);//严格校验
+
+        if(stripos($url,"https://")!==FALSE){
+            curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        }else{
+            curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,TRUE);
+            curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);//严格校验
+        }
+
 		curl_setopt($ch,CURLOPT_USERAGENT, $ua); 
 		//设置header
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
@@ -588,8 +596,8 @@ class WxPayApi
 		if($data){
 			curl_close($ch);
 			return $data;
-		} else { 
-			$error = curl_errno($ch);
+		} else {
+            $error = curl_errno($ch);
 			curl_close($ch);
 			throw new WxPayException("curl出错，错误码:$error");
 		}

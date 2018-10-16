@@ -139,6 +139,7 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
 
     Route::get('/goods/index','GoodsController@index');
     Route::get('/business/pay','BusinessController@pay');
+    Route::get('/business/weixinPay','BusinessController@weixinPay');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');
