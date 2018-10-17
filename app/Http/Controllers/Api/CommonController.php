@@ -5,8 +5,7 @@ use App\Http\Models\Member;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Library\Code;
-use Illuminate\Support\Facades\Route;
-use think\Response;
+use Illuminate\Http\Exception\HttpResponseException;
 
 class CommonController extends Controller
 {
@@ -47,7 +46,7 @@ class CommonController extends Controller
         if ($routeControllerName != 'user' && $routeActionName != 'insert') {
 
             if ($this->getMd5($this->_openid) !== $request->get('session_key')) {
-                //echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
+                echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
             }
         }
     }

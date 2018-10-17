@@ -12,66 +12,31 @@ namespace App\Http\Controllers\Api;
 use App\Http\Models\Order;
 use App\Http\Models\OrderDetail;
 use Illuminate\Http\Request;
-use function EasyWeChat\Kernel\Support\generate_sign;
 
 class BusinessController extends CommonController
 {
-    /**
-     * 订单状态查询
-     * @return array
-     */
-    public function orderStatus()
-    {
-        $orderInfo = [];
-        // 未支付，查询支付平台
-        if ($orderInfo['status'] == 0) {
-            $callback = new \PayNotifyCallBack();
-            // 查询订单状态，更新订单状态，用户账户余额，账户变化日志
-            $result = $callback->queryOrder('', $orderInfo['order_sn']);
-            if ($result) {
-                return ['status' => Constant::PAY_STATUS_SUCCESS];
-            }
-        }
-    }
-
     // 平台订单支付状态查询
-    protected function orderQuery($payType, $orderSn)
+    public function orderQuery(Request $request)
     {
-        Loader::import('wxpay/lib/PayNotifyCallBack', EXTEND_PATH);
-        $callback = new \PayNotifyCallBack();
-        // 查询订单状态，更新订单状态，用户账户余额，账户变化日志
-        $result = $callback->queryOrder('', $orderSn);
-        return $result;
-    }
+        $orderId = $request->get('orderId');
 
-    /**
-     * 预支付
-     * @param $UnifiedOrderResult
-     * @return mixed
-     */
-    protected function makeWxPayParams($UnifiedOrderResult)
-    {
-        if (!array_key_exists("appid", $UnifiedOrderResult)
-            || !array_key_exists("prepay_id", $UnifiedOrderResult)
-            || empty($UnifiedOrderResult['prepay_id'])) {
-            throw new \WxPayException("参数错误");
+        if (empty($orderId)) {
+            return $this->_error('PARAM_NOT_EMPTY');
         }
-        $api = new \WxPayAppPay();
-        $api->SetValue('appid', $UnifiedOrderResult["appid"]);
-        $api->SetValue('package', "Sign=WXPay");
-        $api->SetValue('prepayid', $UnifiedOrderResult['prepay_id']);
-        $api->SetValue('partnerid', \WxPayConfig::MCHID);
-        $api->SetValue('noncestr', \WxPayApi::getNonceStr());
-        $api->SetValue('timestamp', (string)time());
-        $api->SetValue('sign', $api->MakeSign());
-        return $api->GetValues();
-    }
 
-    // 微信回调
-    public function callback()
-    {
-        $notify = new \PayNotifyCallBack();
-        $notify->Handle(false);
+        $orderInfo = Order::where(['id' => $orderId, 'member_id' => $this->getUserId()])->first()->toArray();
+
+        if (empty($orderInfo)) {
+            return $this->_error('UNKNOWN_ERROR', '订单不存在');
+        }
+
+        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\PayNotifyCallBack.php';
+
+        $callback = new \PayNotifyCallBack();
+
+        $result = $callback->queryOrder('', $orderInfo['order_sn']);
+
+        return $this->_successful($result);
     }
 
     /**
@@ -80,7 +45,7 @@ class BusinessController extends CommonController
      */
     public function callbackUrl(Request $request)
     {
-        return $request->root() . '/business/callback';
+        return $request->root() . '/callback/index';
     }
 
     //微信支付
