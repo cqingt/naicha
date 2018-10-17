@@ -1,4 +1,6 @@
 <?php
+namespace App\Library\weixinPay\lib;
+
 /**
  * 微信SDK 需要自定义Config 文件 继承interface
  *

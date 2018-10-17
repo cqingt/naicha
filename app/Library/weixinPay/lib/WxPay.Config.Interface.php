@@ -1,4 +1,6 @@
 <?php
+namespace App\Library\weixinPay\lib;
+
 /**
 * 	配置账号信息
 */

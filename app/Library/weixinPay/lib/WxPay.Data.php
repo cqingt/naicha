@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Library\weixinPay\lib;
+
 /**
 * 2015-06-29 修复签名问题
 **/

@@ -12,6 +12,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Models\Order;
 use App\Http\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Library\weixinPay\lib\PayNotifyCallBack;
+use App\Library\weixinPay\lib\WxPayUnifiedOrder;
+use App\Library\weixinPay\lib\WxPayApi;
+use App\Library\weixinPay\lib\WxPayConfig;
 
 class BusinessController extends CommonController
 {
@@ -30,9 +34,7 @@ class BusinessController extends CommonController
             return $this->_error('UNKNOWN_ERROR', '订单不存在');
         }
 
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\PayNotifyCallBack.php';
-
-        $callback = new \PayNotifyCallBack();
+        $callback = new PayNotifyCallBack();
 
         $result = $callback->queryOrder('', $orderInfo['order_sn']);
 
@@ -51,11 +53,7 @@ class BusinessController extends CommonController
     //微信支付
     public function weixinPay(Request $request)
     {
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\Wxpay.Api.php';
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\Wxpay.Data.php';
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\Wxpay.Config.php';
-
-        $unifiedOrder = new \WxPayUnifiedOrder();
+        $unifiedOrder = new WxPayUnifiedOrder();
         $orderId = $request->get('orderId'); // 订单号
 
         if (empty($orderId)) {
@@ -74,7 +72,7 @@ class BusinessController extends CommonController
         $unifiedOrder->SetAppid($wxConfig['app_id']);
         $unifiedOrder->SetBody($orderDetail['goods_name']);
         $unifiedOrder->SetMch_id($wxConfig['mch_id']);
-        $unifiedOrder->SetNonce_str(\WxPayApi::getNonceStr());
+        $unifiedOrder->SetNonce_str(WxPayApi::getNonceStr());
         $unifiedOrder->SetNotify_url($this->callbackUrl($request));
         $unifiedOrder->SetOpenid($this->_openid);
         $unifiedOrder->SetSpbill_create_ip($request->ip());
@@ -82,10 +80,10 @@ class BusinessController extends CommonController
         $unifiedOrder->SetTotal_fee(bcmul($orderInfo['price'], 100, 2));
         $unifiedOrder->SetTrade_type('JSAPI');
 
-        $weixinConfig = new \WxPayConfig();
+        $weixinConfig = new WxPayConfig();
         $sign = $unifiedOrder->SetSign($weixinConfig);
 
-        $result = \WxPayApi::unifiedOrder($weixinConfig, $unifiedOrder);
+        $result = WxPayApi::unifiedOrder($weixinConfig, $unifiedOrder);
 
         if ($result['return_code'] == 'SUCCESS' && $result['return_code'] == 'SUCCESS') {
             $time = time();

@@ -10,16 +10,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Library\weixinPay\lib\PayNotifyCallBack;
+use App\Library\weixinPay\lib\WxPayConfig;
 
 class CallbackController extends Controller
 {
     public function index()
     {
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\PayNotifyCallBack.php';
-        require_once base_path() . '\\app\\Library\\weixinPay\\lib\\WxPay.Config.php';
 
-        $notify = new \PayNotifyCallBack();
-        $config = new \WxPayConfig();
+        $notify = new PayNotifyCallBack();
+
+        $config = new WxPayConfig();
 
         $notify->Handle($config, false);
     }

@@ -1,9 +1,9 @@
 <?php
+namespace App\Library\weixinPay\lib;
 
 require_once "WxPay.Api.php";
 require_once 'WxPay.Notify.php';
 require_once 'WxPay.Config.php';
-require_once '../log.php';
 
 class PayNotifyCallBack extends WxPayNotify
 {
