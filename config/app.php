@@ -145,6 +145,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class, // 权限控制
+
+        Overtrue\LaravelWechat\ServiceProvider::class, // 微信支付
     ],
 
     /*
@@ -192,7 +194,7 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-
+        'EasyWeChat' => Overtrue\LaravelWechat\Facade::class, // 微信支付
     ],
 
 ];

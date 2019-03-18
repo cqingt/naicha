@@ -5,7 +5,9 @@
         .layui-layout-body {
             overflow-y: scroll;
         }
-
+        .layui-container{
+            overflow-y: auto;
+        }
         .header-child {
             margin: 20px 0;
         }
@@ -39,10 +41,10 @@
         }
 
         .cmdlist-container.active {
-            border: 1px solid #a2a0a0;
+            /*border: 1px solid #a2a0a0;*/
             background: #e1e1e9;
             border-radius: 10px;
-            padding: 5px;
+            /*padding: 5px;*/
         }
 
         h3.category {
@@ -87,14 +89,14 @@
             background: #fff;
             height: 46px;
             vertical-align: bottom;
-            width: 90%;
+            /*width: 90%;*/
             line-height: 46px;
             border-top: 1px solid #999;
             padding: 5px;
         }
         .submit-bar .submit{
             margin-top: 8px;
-            float: right;
+            /*float: right;*/
         }
         .header-three {
             margin-bottom:120px;
@@ -190,6 +192,14 @@
         .header-end .layui-input-block{
             margin-left:0
         }
+        .no-image{
+            width: 80px;
+            line-height: 80px;
+            text-align: center;
+            height: 80px;
+            border: 1px solid #333;
+            border-radius: 80px;
+        }
     </style>
 @endsection
 
@@ -203,21 +213,21 @@
         {{ csrf_field() }}
             <div id="container">
             <!-- 品类选择 -->
-            <div class="header" style="text-align: center">
-                <button class="layui-btn layui-btn-radius" type="button">茶底</button>
-                <button class="layui-btn layui-btn-primary layui-btn-radius" type="button">牛奶</button>
-                <button class="layui-btn layui-btn-primary layui-btn-radius" type="button">其他</button>
-            </div>
+            {{--<div class="header" style="text-align: center">--}}
+                {{--<button class="layui-btn layui-btn-radius" type="button">茶底</button>--}}
+                {{--<button class="layui-btn layui-btn-primary layui-btn-radius" type="button">牛奶</button>--}}
+                {{--<button class="layui-btn layui-btn-primary layui-btn-radius" type="button">其他</button>--}}
+            {{--</div>--}}
 
             <!-- 一级品类 -->
             <div class="goods-item header-child">
                 <div class="site-title">
-                    <fieldset><legend><a name="fieldset">一级品类(250ml)</a></legend></fieldset>
+                    <fieldset><legend><a name="fieldset">基底</a></legend></fieldset>
                 </div>
                 <div class="header-child-0 layui-row layui-col-space30">
                     @foreach($data[1]['items'] as $key => $item)
                     <div class="layui-col-md2 layui-col-sm2">
-                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[1]['volume']}}">
+                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[1]['volume']}}" data-reject="{{$item['reject_id']}}">
                             <a href="javascript:;" class="layui-inline">
 
                                 @if($item['deleted_at'])
@@ -233,58 +243,20 @@
                     </div>
                     @endforeach
                 </div>
-
-                <div style="display: none;" class="header-child-1 layui-row layui-col-space30">
-                    @foreach($data[2]['items'] as $key => $item)
-                        <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-milk="1" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[2]['volume']}}">
-                                <a href="javascript:;" class="layui-inline">
-                                    @if($item['deleted_at'])
-                                        <span class="goods deleted layui-circle">下架</span>
-                                    @else
-                                        <img class="goods layui-circle" src="{{$item['image']}}">
-                                    @endif
-                                    <span>{{$item['name']}}</span>
-                                    <input type="hidden" name="goods_id[]">
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div style="display: none;" class="header-child-2 layui-row layui-col-space30">
-                    @foreach($data[3]['items'] as $key => $item)
-                        <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[3]['volume']}}">
-                                <a href="javascript:;" class="layui-inline">
-
-                                    @if($item['deleted_at'])
-                                        <span class="goods deleted layui-circle">下架</span>
-                                    @else
-                                        <img class="goods layui-circle" src="{{$item['image']}}">
-                                    @endif
-
-                                    <span>{{$item['name']}}</span>
-                                    <input type="hidden" name="goods_id[]">
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
             </div>
 
-            <!-- 一级可选 -->
+            <!-- 口感 -->
             <div class="goods-item header-choose-one">
                 <div class="site-title">
-                    <fieldset><legend><a name="fieldset">可选配料(50ml)</a></legend></fieldset>
+                    <fieldset><legend><a name="fieldset">口感</a></legend></fieldset>
                 </div>
                 <h3 class="category"></h3>
                 <div class="header-choose-item header-choose-0">
                     <div class="header-child-1 layui-row layui-col-space30">
-                        @foreach($data[4]['items'] as $key => $item)
+                        @foreach($data[2]['items'] as $key => $item)
                             <div class="layui-col-md2 layui-col-sm2">
-                                <div class="cmdlist-container" @if(in_array($item['id'], $categoryMilk)) data-milk="1" @endif data-pk="{{$item['id']}}"
-                                     data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[4]['volume']}}">
+                                <div class="cmdlist-container" data-pk="{{$item['id']}}"
+                                     data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[2]['volume']}}" data-reject="{{$item['reject_id']}}">
                                     <a href="javascript:;" class="layui-inline">
                                         @if($item['deleted_at'])
                                             <span class="goods deleted layui-circle">下架</span>
@@ -301,19 +273,18 @@
                 </div>
             </div>
 
-            <!-- 二级品类 -->
+            <!-- 风味 -->
             <div class="goods-item header-two">
                 <div class="header-two-item">
                     <div class="site-title">
-                        <fieldset><legend><a name="fieldset">二级品类 - 果瓜类(150ml)</a></legend></fieldset>
+                        <fieldset><legend><a name="fieldset">风味</a></legend></fieldset>
                     </div>
                     {{--<h3 class="category">果瓜类</h3>--}}
                     <div class="header-choose-1">
                         <div class="header-child-1 layui-row layui-col-space30">
-                            @foreach($data[5]['items'] as $key => $item)
-                                @if(in_array($item['id'], $categoryOne))
+                            @foreach($data[3]['items'] as $key => $item)
                                 <div class="layui-col-md2 layui-col-sm2">
-                                    <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
+                                    <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[3]['volume']}}" data-reject="{{$item['reject_id']}}">
                                         <a href="javascript:;" class="layui-inline">
                                             @if($item['deleted_at'])
                                                 <span class="goods deleted layui-circle">下架</span>
@@ -325,100 +296,22 @@
                                         </a>
                                     </div>
                                 </div>
-                                @endif
                             @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <div class="header-two-item">
-                    <div class="site-title">
-                        <fieldset><legend><a name="fieldset">二级品类 - 柑橘类(150ml)</a></legend></fieldset>
-                    </div>
-                    {{--<h3 class="category">柑橘类</h3>--}}
-                    <div class="header-choose-2">
-                        <div class="layui-row layui-col-space30">
-                            @foreach($data[5]['items'] as $key => $item)
-                                @if(in_array($item['id'], $categoryTwo))
-                                    <div class="layui-col-md2 layui-col-sm2">
-                                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
-                                            <a href="javascript:;" class="layui-inline">
-                                                @if($item['deleted_at'])
-                                                    <span class="goods deleted layui-circle">下架</span>
-                                                @else
-                                                    <img class="goods layui-circle" src="{{$item['image']}}">
-                                                @endif
-                                                <span>{{$item['name']}}</span>
-                                                <input type="hidden" name="goods_id[]">
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <div class="header-two-item">
-                    <div class="site-title">
-                        <fieldset><legend><a name="fieldset">二级品类 - 谷物类(150ml)</a></legend></fieldset>
-                    </div>
-                    {{--<h3 class="category">谷物类</h3>--}}
-                    <div class="header-choose-2">
-                        <div class="layui-row layui-col-space30">
-                            @foreach($data[5]['items'] as $key => $item)
-                                @if(in_array($item['id'], $categoryThree))
-                                    <div class="layui-col-md2 layui-col-sm2">
-                                        <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
-                                            <a href="javascript:;" class="layui-inline">
-                                                @if($item['deleted_at'])
-                                                    <span class="goods deleted layui-circle">下架</span>
-                                                @else
-                                                    <img class="goods layui-circle" src="{{$item['image']}}">
-                                                @endif
-                                                <span>{{$item['name']}}</span>
-                                                <input type="hidden" name="goods_id[]">
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <div class="header-two-item">
-                    <div class="site-title">
-                        <fieldset><legend><a name="fieldset">二级品类 - 其他(250ml)</a></legend></fieldset>
-                    </div>
-                    {{--<h3 class="category">其他</h3>--}}
-                    <div class="header-choose-2">
-                        <div class="layui-row layui-col-space30">
-                            <div class="layui-col-md2 layui-col-sm2">
-                                <div class="cmdlist-container double" data-pk="-1" data-price="" data-calorie="" data-volume="250">
-                                    <a href="javascript:;">
-                                        <img class="goods layui-circle"
-                                             src="https://www.layui.com/admin/std/dist/layuiadmin/style/res/template/portrait.png">
-                                        <span>一级品类双倍</span>
-                                        <input type="hidden" name="double" value="">
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 二级可选 -->
+            <!-- 配料 -->
             <div class="goods-item header-two-choose">
                 <div class="site-title">
-                    <fieldset><legend><a name="fieldset">二级可选</a></legend></fieldset>
+                    <fieldset><legend><a name="fieldset">配料</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">二级可选</h3>--}}
                 <div class="header-child-1 layui-row layui-col-space30">
-                    @foreach($data[6]['items'] as $key => $item)
+                    @foreach($data[4]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[6]['volume']}}">
+                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[4]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
@@ -434,24 +327,27 @@
                 </div>
             </div>
 
-            <!-- 四级品类 -->
-            <div class="goods-item header-four">
+            <div class="goods-item header-five">
                 <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">可选配料(25ml)</a></legend></fieldset>
+                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖</a></legend></fieldset>
                 </div>
-                {{--<h3 class="category">配料类</h3>--}}
+                {{--<h3 class="category">奶盖</h3>--}}
                 <div class="header-child-1 layui-row layui-col-space30">
-                    @foreach($data[8]['items'] as $key => $item)
+                    @foreach($data[5]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[8]['volume']}}">
+                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[5]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
-                                    @else
+                                    @elseif($item['image'])
                                         <img class="goods layui-circle" src="{{$item['image']}}">
+                                    @else
+                                        <div class="no-image">
+                                            <span>{{$item['name']}}</span>
+                                        </div>
                                     @endif
-                                    <span>{{$item['name']}}</span>
-                                    <input type="hidden" name="goods_id[]">
+                                        <span>{{$item['name']}}</span>
+                                        <input type="hidden" name="goods_id[]">
                                 </a>
                             </div>
                         </div>
@@ -460,23 +356,28 @@
             </div>
 
             <!-- 五级品类 -->
-            <div class="goods-item header-five">
+            <div class="goods-item header-last">
                 <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖(50ml)</a></legend></fieldset>
+                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖小料</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">奶盖</h3>--}}
                 <div class="header-child-1 layui-row layui-col-space30">
-                    @foreach($data[9]['items'] as $key => $item)
+                    @foreach($data[6]['items'] as $key => $item)
                         <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[9]['volume']}}">
+                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[6]['volume']}}">
                                 <a href="javascript:;" class="layui-inline">
                                     @if($item['deleted_at'])
                                         <span class="goods deleted layui-circle">下架</span>
-                                    @else
+                                    @elseif($item['image'])
                                         <img class="goods layui-circle" src="{{$item['image']}}">
+                                        @else
+                                        <div class="no-image">
+                                            <span>{{$item['name']}}</span>
+                                        </div>
                                     @endif
-                                    <span>{{$item['name']}}</span>
-                                    <input type="hidden" name="goods_id[]">
+                                        <span>{{$item['name']}}</span>
+                                        <input type="hidden" name="goods_id[]">
+
                                 </a>
                             </div>
                         </div>
@@ -484,76 +385,53 @@
                 </div>
             </div>
 
-            <!-- 撒料 -->
-            <div class="goods-item header-last">
+            {{--糖类可选--}}
+            <div class="site-title">
+                <fieldset style="width:100%;"><legend><a name="fieldset">糖类可选</a></legend></fieldset>
+            </div>
+            <!-- 三级品类 -->
+            <div class="goods-item header-three">
+
+                @foreach($data[7]['items'] as $key => $item)
+                    @if (! $item['deleted_at'])
+                        <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="0">
+                            <label class="layui-form-label">
+                                <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
+                                <input type="hidden" name="goods_id[]">
+                            </label>
+
+                            <div class="layui-input-block select-item">
+                                <input type="radio" name="weight" value="正常糖" title="正常糖" lay-filter="filter">
+                                <input type="radio" name="weight" value="7分糖" title="7分糖" lay-filter="filter">
+                                <input type="radio" name="weight" value="5分糖" title="5分糖" lay-filter="filter">
+                                <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+
+            <div class="header-end">
                 <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">奶盖撒料</a></legend></fieldset>
+                    <fieldset style="width:100%;"><legend><a name="fieldset">温度选择</a></legend></fieldset>
                 </div>
                 {{--<h3 class="category">奶盖撒料</h3>--}}
-                <div class="header-child-1 layui-row layui-col-space30">
-                    @foreach($data[10]['items'] as $key => $item)
-                        <div class="layui-col-md2 layui-col-sm2">
-                            <div class="cmdlist-container" data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-calorie="{{$item['calorie']}}" data-volume="{{$data[10]['volume']}}">
-                                <a href="javascript:;" class="layui-inline">
-                                    @if($item['deleted_at'])
-                                        <span class="goods deleted layui-circle">下架</span>
-                                    @else
-                                        <img class="goods layui-circle" src="{{$item['image']}}">
-                                    @endif
-                                    <span>{{$item['name']}}</span>
-                                    <input type="hidden" name="goods_id[]">
-                                </a>
-                            </div>
+                <div class="layui-row layui-col-space30">
+                    {{--<button class="layui-btn layui-btn-radius temp" type="button">热饮</button>--}}
+                    {{--<button class="layui-btn layui-btn-primary layui-btn-radius temp" type="button">冷饮</button>--}}
+                    {{--<input type="hidden" name="temperature" value="热饮">--}}
+                    <div class="temperature">
+                        <div class="layui-input-block select-item">
+                            @foreach($data[8]['items'] as $key => $item)
+                                <input type="radio" name="temperature" value="{{$item['id']}}" title="{{$item['name']}}" lay-filter="temperature" checked>
+                            @endforeach
+                            {{--<input type="radio" name="temperature" value="ice" title="正常冰" lay-filter="temperature" checked>--}}
+                            {{--<input type="radio" name="temperature" value="less_ice" title="少冰" lay-filter="temperature">--}}
+                            {{--<input type="radio" name="temperature" value="none_ice" title="去冰" lay-filter="temperature">--}}
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
-
-                {{--<hr>--}}
-                <div class="site-title">
-                    <fieldset style="width:100%;"><legend><a name="fieldset">糖类可选</a></legend></fieldset>
-                </div>
-                <!-- 三级品类 -->
-                <div class="goods-item header-three">
-
-                    @foreach($data[7]['items'] as $key => $item)
-                        @if (! $item['deleted_at'])
-                            <div class="header-three-item disabled " data-pk="{{$item['id']}}" data-price="{{$item['price']}}" data-volume="0">
-                                <label class="layui-form-label">
-                                    <button class="layui-btn layui-btn-primary layui-btn-radius change-item" type="button">{{$item['name']}}</button>
-                                    <input type="hidden" name="goods_id[]">
-                                </label>
-
-                                <div class="layui-input-block select-item">
-                                    <input type="radio" name="weight" value="多糖" title="多糖" lay-filter="filter">
-                                    <input type="radio" name="weight" value="正常" title="正常" lay-filter="filter">
-                                    <input type="radio" name="weight" value="少糖" title="少糖" lay-filter="filter">
-                                    <input type="radio" name="weight" value="半糖" title="半糖" lay-filter="filter">
-                                    <input type="radio" name="weight" value="无糖" title="无糖" lay-filter="filter">
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-
-                <div class="header-end">
-                    <div class="site-title">
-                        <fieldset style="width:100%;"><legend><a name="fieldset">温度选择</a></legend></fieldset>
-                    </div>
-                    {{--<h3 class="category">奶盖撒料</h3>--}}
-                    <div class="layui-row layui-col-space30">
-                        <button class="layui-btn layui-btn-radius temp" type="button">热饮</button>
-                        <button class="layui-btn layui-btn-primary layui-btn-radius temp" type="button">冷饮</button>
-                        <input type="hidden" name="temperature" value="热饮">
-                        <div class="temperature" style="display: none">
-                            <div class="layui-input-block select-item">
-                                <input type="radio" name="temperature" value="ice" title="正常冰" lay-filter="temperature" checked>
-                                <input type="radio" name="temperature" value="less_ice" title="少冰" lay-filter="temperature">
-                                <input type="radio" name="temperature" value="none_ice" title="去冰" lay-filter="temperature">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
             <div class="submit-bar">

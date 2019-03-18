@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PinYer - 后台登录</title>
+    <title>尝研管理系统-登录</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -31,7 +31,7 @@
     {!! csrf_field() !!}
     <div class="layui-layout layui-layout-login">
         <h1>
-            <strong>PinYer 后台管理系统</strong>
+            <strong>尝研后台管理系统</strong>
             <!--<em>为你所爱，是你想要</em>-->
         </h1>
         @if (count($errors) > 0)
@@ -56,7 +56,7 @@
         </div>
         <div class="layui-login-text">
 
-            <p>PinYer后台管理系统<a href="#" title=""> welcome you</a></p>
+            <p>尝研后台管理系统欢迎您</p>
         </div>
     </div>
 </form>

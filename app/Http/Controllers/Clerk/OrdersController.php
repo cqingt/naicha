@@ -55,12 +55,12 @@ class OrdersController extends CommonController
         }
 
         // 2级品类分组 id
-        $categoryOne = [20, 21, 22, 23, 24, 25];
+        /*$categoryOne = [20, 21, 22, 23, 24, 25];
         $categoryTwo = [26, 27, 28, 29];
         $categoryThree = [30, 31, 32, 33];
-        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类
-
-        return view('clerk.orders.create', compact(['products', 'data', 'categoryOne', 'categoryTwo', 'categoryThree', 'categoryMilk']));
+        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类*/
+//print_r($data);exit;
+        return view('clerk.orders.create', compact(['products', 'data']));
     }
 
     /**
@@ -86,9 +86,10 @@ class OrdersController extends CommonController
 
         foreach ($data as $key => $item) {
             $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
-            $temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
-
+            //$temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
+            $item['temperature'] && array_push($item['list'], $item['temperature']); // 设置温度
             $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
+            $temperature[$index] = $item['temperature'] ? : '55'; // 设置温度
 
             foreach ($goodsInfo as $goods) {
                 $insertData[] = [
@@ -111,10 +112,9 @@ class OrdersController extends CommonController
         }
 
         if (0 != bccomp($totalPrice, $orderPrice, 2)) {
-            echo $totalPrice, ',', $orderPrice;exit;
-            return $this->error('订单价格有误');
+            echo $totalPrice, ',', $orderPrice;
+            return $this->error('订单价格不符');
         }
-        //dd($insertData);exit;
 
         DB::beginTransaction();
         try{
@@ -184,12 +184,12 @@ class OrdersController extends CommonController
         $temps = [];
         $tags = config('web.temperature'); // 温度选择
 
-        if ($order['temperature']) {
-            $temps = unserialize($order['temperature']);
-            foreach ($temps as &$temp) {
-                $temp = $tags[$temp];
-            }
-        }
+//        if ($order['temperature']) {
+//            $temps = unserialize($order['temperature']);
+//            foreach ($temps as &$temp) {
+//                $temp = $tags[$temp];
+//            }
+//        }
 
         $packages = [];
 
@@ -277,6 +277,10 @@ class OrdersController extends CommonController
 
         foreach ($orderDetail as $item) {
             $packages[$item['package_num']][] = $item;
+
+            if (in_array($item['goods_id'], [52,53,54,55])) {
+                $orderInfo['temperature'];
+            }
         }
 
         $orderInfo['details'] = $packages;
@@ -304,16 +308,10 @@ class OrdersController extends CommonController
             $data[$product->category_id]['items'][] = $product;
         }
 
-        // 2级品类分组 id
-        $categoryOne = [20, 21, 22, 23, 24, 25];
-        $categoryTwo = [26, 27, 28, 29];
-        $categoryThree = [30, 31, 32, 33];
-        $categoryMilk = [7, 8, 9, 16, 17]; // 排斥柑橘类
 
         return view('clerk.orders.edit', compact(
             [
-                'products', 'data', 'categoryOne', 'categoryTwo', 'categoryThree', 'categoryMilk'
-                ,'orderInfo', 'orderDetail', 'cups'
+                'products', 'data', 'orderInfo', 'orderDetail', 'cups'
             ])
         );
     }
@@ -358,9 +356,10 @@ class OrdersController extends CommonController
         $insertData = [];
 
         foreach ($data as $key => $item) {
-            $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
-            $temperature[$index] = $item['temperature'] ? : 'hot'; // 设置温度
 
+            $item['sugar'] && array_push($item['list'], $item['sugar']); // 有选择糖类
+            $temperature[$index] = $item['temperature'] ? : '55'; // 设置温度
+            $item['temperature'] && array_push($item['list'], $item['temperature']); // 设置温度
             $goodsInfo = Goods::whereIn('id', $item['list'])->select(['id', 'name', 'price', 'image'])->get();
 
             foreach ($goodsInfo as $goods) {
@@ -369,7 +368,7 @@ class OrdersController extends CommonController
                     'goods_id'    => $goods['id'],
                     'goods_name'  => $goods['name'],
                     'goods_image' => $goods['image'],
-                    'goods_num'   => $goods['id'] == $item['double'] ? 2 : 1,
+                    'goods_num'   => 1,
                     'goods_price' => $goods['price'],
                     'package_num' => $index,
                     'deploy'      => $item['sugar'] == $goods['id'] ? $item['weight'] : '',
@@ -385,8 +384,8 @@ class OrdersController extends CommonController
         }
 
         if (0 != bccomp($totalPrice, $orderPrice, 2)) {
-            echo $totalPrice, ',', $orderPrice;exit;
-            return $this->error('订单价格有误');
+            echo '价格有误：' . $totalPrice, ',', $orderPrice;
+            return $this->error('订单价格不符');
         }
 
         $difference = bcsub($totalPrice, $orderInfo['price'], 2); // 差额，负数表示平台需给用户付款，整数表示用户给平台付款

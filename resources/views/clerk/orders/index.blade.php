@@ -76,11 +76,6 @@
     <script type="text/html" id="bartools">
         <button class="layui-btn layui-btn-xs layui-btn-primary" lay-event="show"><i class="layui-icon">&#xe63c;</i>  详情</button>
         <button class="layui-btn layui-btn-xs action" lay-event="action" data-pk="@{{ d.id}}" data-status="@{{d.status_type}}"><i class="layui-icon">&#xe63c;</i>  操作</button>
-        {{--@{{#  if(d.status_type == 1){ }}--}}
-        {{--<button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</button>--}}
-        {{--<button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="success"><i class="layui-icon">&#xe605;</i>完成</button>--}}
-        {{--<button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel"><i class="layui-icon">&#xe642;</i>取消</button>--}}
-        {{--@{{# } }}--}}
     </script>
 
 @endsection

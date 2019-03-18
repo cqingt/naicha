@@ -23,10 +23,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
 
                 cart.price = FloatAdd(cart.price, price);
 
-                if (orderInfo['details'][io][id]['goods_num'] === 2) {
-                    cart.double = orderInfo['details'][io][id]['goods_id'];
-                    cart.list.push(orderInfo['details'][io][id]['goods_id']);
-                } else if (orderInfo['details'][io][id]['deploy']) {
+                if (orderInfo['details'][io][id]['deploy']) {
                     cart.weight = orderInfo['details'][io][id]['deploy'];
                     cart.sugar = orderInfo['details'][io][id]['goods_id'];
                 } else {
@@ -58,6 +55,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         cartInit();
 
         for (var i in firstly) {
+            console.log(firstly[i]['goods_id']);
             if (firstly[i].deploy) {
                 console.log(firstly[i].deploy);
 
@@ -66,36 +64,16 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 sugar.removeClass('disabled');
 
                 $('input[value="' + firstly[i].deploy + '"]', sugar).attr('checked',true);
-                form.render();
+                //form.render();
                 cart.weight = firstly[i].deploy;
                 cart.list.push(firstly[i]['goods_id']); // 糖类选择ID 加入
+            } else if (firstly[i]['goods_id'] > 51) {
+                $('input[value="' + firstly[i]['goods_id'] + '"]', $('.temperature')).attr('checked',true);
             } else {
                 $('div[data-pk="'+ firstly[i]['goods_id'] +'"]').addClass('active');
-
-                // 双倍设置
-                if (firstly[i]['goods_num'] > 1) {
-                    console.log(firstly[i]);
-                    $('.double').attr('data-pk', firstly[i]['goods_id']);
-                    $('.double').attr('data-price', firstly[i]['goods_price']);
-                    $('.double').addClass('active');
-                }
             }
         }
-
-        // 设置温度
-        if (orderInfo.temperature) {
-            temperature = orderInfo.temperature[cup];
-            cart.temperature = temperature;
-
-            if (temperature !== 'hot') {
-                $('.header-end .temp').eq(0).addClass('layui-btn-primary');
-                $('.header-end .temp').eq(1).removeClass('layui-btn-primary');
-                $('.temperature').show();
-
-                $('input[value="'+temperature+'"]', $('.temperature')).attr('checked',true);
-                form.render();
-            }
-        }
+        form.render();
 
         init();
         calculate();
@@ -106,7 +84,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             'tab' : 0,
             'volume': 0,
             'price': '0.00',
-            'temperature': 'hot', // 温度选择
+            'temperature': '', // 温度选择
             'sugar' : '', // 糖类选择
             'weight': '',  // 糖分分量
             'double' : '', // 一级品类双倍 的id
@@ -118,16 +96,16 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
     function init() {
 
         // 分类选项
-        let ind = $('.header-child').find('.active').parents('.layui-row').index();
-        if (ind) {
-            $('.header').find('button').addClass('layui-btn-primary');
-            $('.header').find('button').eq(ind - 1).removeClass('layui-btn-primary');
-            $('.header-child .layui-row').css('display', 'none');
-            $('.header-child .header-child-' + (ind - 1)).css('display', 'block');
-        }
-        // 设置双倍 属性
-        $('.double').data('pk', $('.header-child').find('.active').data('pk'));
-        $('.double').data('price', $('.header-child').find('.active').data('price'));
+        // let ind = $('.header-child').find('.active').parents('.layui-row').index();
+        // if (ind) {
+        //     $('.header').find('button').addClass('layui-btn-primary');
+        //     $('.header').find('button').eq(ind - 1).removeClass('layui-btn-primary');
+        //     $('.header-child .layui-row').css('display', 'none');
+        //     $('.header-child .header-child-' + (ind - 1)).css('display', 'block');
+        // }
+        // // 设置双倍 属性
+        // $('.double').data('pk', $('.header-child').find('.active').data('pk'));
+        // $('.double').data('price', $('.header-child').find('.active').data('price'));
     }
 
     // 获取每杯信息, 默认获取订单信息
@@ -141,31 +119,39 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         }
     }
 
-    // 选项
-    $('#container').on('click', '.header button', function () {
-        var _index = $(this).index();
+    // 是否允许选中
+    function getAllow(obj) {
+        let current = getCup(cup);
+        let reject = obj.data('reject');
+        var allow = true;
 
-        _tab = _index;
+        if (reject.length) {
+            var rejectId = reject.split(',');
 
-        $('.header button').addClass('layui-btn-primary');
-        $(this).removeClass('layui-btn-primary');
+            if (current != undefined) {
+                for (let i = 0, l = current.list.length; i < l; i++) {
+                    let id = current.list[i];
+                    if (rejectId.indexOf(id.toString()) != -1) {
+                        allow = false;
+                    }
+                }
+            }
+        }
 
-        // 一级品类
-        $('.header-child .layui-row').css('display', 'none');
-        $('.header-child .header-child-' + _index).css('display', 'block');
-    });
+        return allow;
+    }
 
-    // 一级选中
+    // 基底
     $('#container').on('click', '.header-child .cmdlist-container', function () {
 
         // 取消选中
         if ( $(this).hasClass("active") ) {
             $(this).removeClass('active');
 
-            // 柑橘类不选中
-            $('.header-two-item').eq(1).find('.cmdlist-container').removeClass('active');
-            $('.header-two-item').eq(1).show();
         } else {
+            if (! getAllow($(this))) {
+                return layer.msg('奶制品与柑橘类或果醋冲突');
+            }
 
             // 选中
             $('.header-child .cmdlist-container').removeClass('active');
@@ -177,17 +163,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 return;
             }
 
-            // 设置一级品类双倍参数
-            $('.double').data('price', $(this).data('price'));
-            $('.double').data('pk', $(this).data('pk'));
-
-            // 奶类排斥
-            if ($(this).data('milk')) {
-                $('.header-two-item').eq(1).hide();
-                $('.header-two-item').eq(1).find('.cmdlist-container').removeClass('active');
-            } else {
-                $('.header-two-item').eq(1).show();
-            }
+            $('.header-two-item').eq(1).show();
 
             // 获取tab值
             $('.header').find('button').each(function (i, item) {
@@ -200,18 +176,17 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         calculate();
     });
 
-    // 一级可选
+    // 口感
     $('#container').on('click', '.header-choose-one .cmdlist-container', function () {
         if ( $(this).hasClass("active") ) {
             $(this).removeClass('active');
 
-            // 柑橘类不选中
-            if ($(this).data('milk')) {
-                $('.header-two-item').eq(1).find('.cmdlist-container').removeClass('active');
-            }
             $('.header-two-item').eq(1).show();
 
         } else {
+            if (! getAllow($(this))) {
+                return layer.msg('奶制品与柑橘类或果醋冲突');
+            }
 
             $('.header-choose-one .cmdlist-container').removeClass('active');
             if ($(this).find('img').length) {
@@ -220,31 +195,20 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
                 return;
             }
 
-            // 奶类排斥
-            if ($(this).data('milk')) {
-                $('.header-two-item').eq(1).hide();
-                $('.header-two-item').eq(1).find('.cmdlist-container').removeClass('active');
-            } else {
-                $('.header-two-item').eq(1).show();
-            }
+            $('.header-two-item').eq(1).show();
         }
 
         calculate();
     });
 
-    // 二级
+    // 风味
     $('#container').on('click', '.header-two .cmdlist-container', function () {
         if ( $(this).hasClass("active") ) {
             $(this).removeClass('active');
            
         } else {
-            if ($(this).hasClass('double')) {
-                if (! $('.header-child').find('.active').length) {
-                    layer.msg('请先选择一级品类');
-                    return;
-                } else {
-                    $(this).find('input').val($('.header-child').find('.active input').val()); // 设置商品ID
-                }
+            if (! getAllow($(this))) {
+                return layer.msg('奶制品与柑橘类或果醋冲突');
             }
 
             $('.header-two .cmdlist-container').removeClass('active');
@@ -259,30 +223,13 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         calculate();
     });
 
-    // 二级可选
+    // 配料
     $('#container').on('click', '.header-two-choose .cmdlist-container', function () {
         if ( $(this).hasClass("active") ) {
             $(this).removeClass('active');
            
         } else {
-            //$('.header-two-choose .cmdlist-container').removeClass('active');
 
-            if ($(this).find('img').length) {
-                $(this).addClass('active');
-            } else {
-                return;
-            }
-        }
-
-        calculate();
-    });
-
-    // 四级
-    $('#container').on('click', '.header-four .cmdlist-container', function () {
-        if ( $(this).hasClass("active") ) {
-            $(this).removeClass('active');
-           
-        } else {
             if ($(this).find('img').length) {
                 $(this).addClass('active');
             } else {
@@ -300,12 +247,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-five .cmdlist-container').removeClass('active');
-
-            if ($(this).find('img').length) {
-                $(this).addClass('active');
-            } else {
-                return;
-            }
+            $(this).addClass('active');
         }
 
         calculate();
@@ -318,12 +260,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
            
         } else {
             $('.header-last .cmdlist-container').removeClass('active');
-
-            if ($(this).find('img').length) {
-                $(this).addClass('active');
-            } else {
-                return;
-            }
+            $(this).addClass('active');
         }
 
         calculate();
@@ -367,15 +304,6 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
 
         let storageCart = window.sessionStorage.getItem('carts');
         let cartArr = JSON.parse(storageCart);
-        if (cartArr) {
-            for(var i in cartArr[0]) {
-                if (cartArr[0][i].volume > 500) {
-                    layer.msg(i + '超出了500ml, 无法下单');
-                    $('button.submit').removeAttr('disabled');
-                    return false;
-                }
-            }
-        }
 
         if (! $('#container').find('.active').length) {
             layer.msg(cup + '未选择任何商品');
@@ -384,13 +312,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         }
 
         if (! $('.header-child').find('.active').length) {
-            layer.msg('一级品类必选');
-            $('button.submit').removeAttr('disabled');
-            return false;
-        }
-
-        if (! $('.header-two').find('.active').length) {
-            layer.msg('二级品类必选');
+            layer.msg('基底必选');
             $('button.submit').removeAttr('disabled');
             return false;
         }
@@ -449,7 +371,7 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
             volume = parseInt(volume) + parseInt($(item).data('volume'));
 
             price = FloatAdd(price, $(item).data('price'));
-
+            console.log(price);
             let pk = $(item).data('pk');
 
             // 一级品类双倍
@@ -462,12 +384,15 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
         });
 
         // 糖类单选
-        $('input[name="weight"]', $('.header-three-item:not(.disabled)')).each(function (i, item) {
+        $('input[name="weight"]', $('.header-three-item:not(disabled)')).each(function (i, item) {
             // 编辑时 checked
+
             if ($(item).attr('check') == 1 || $(item).attr('checked') == 'checked') {
+
                 let parent = $(item).parents('.header-three-item');
                 cart.sugar = parent.data('pk');
                 price = FloatAdd(price, parent.data('price'));
+                return false;
             }
         });
 
@@ -674,19 +599,11 @@ layui.use(['table','form','jquery','laydate', 'element'], function(){
     });
 
     // 温度选择
-    $('#container').on('click', '.header-end .temp', function () {
-        $('button.temp').addClass('layui-btn-primary');
-        $(this).removeClass('layui-btn-primary');
-        let _index = $(this).index();
+    $('#container').on('click', '.temperature input', function () {
+        cart.temperature = $(this).data('value'); // 温度选择
 
-        if (_index) {
-            $('.temperature').show();
-            cart.temperature = $('.temperature').find('input').eq(0).val(); // 温度选择
-        } else {
-            $('.temperature').hide();
-            cart.temperature = $(this).data('value'); // 温度选择
-        }
         setCups(cup, cart);
+        calculate();
     });
 
     // 温度选择

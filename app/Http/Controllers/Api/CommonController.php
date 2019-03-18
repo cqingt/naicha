@@ -5,7 +5,9 @@ use App\Http\Models\Member;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Library\Code;
+use Cache;
 use Illuminate\Http\Exception\HttpResponseException;
+use Log;
 
 class CommonController extends Controller
 {
@@ -37,17 +39,30 @@ class CommonController extends Controller
         $action = $request->route()->getAction();
 
         if (isset($action['controller'])) {
-            $controller = class_basename($action['controller']);
-        }
 
-        list($routeControllerName, $routeActionName) = explode('@', $controller);
+            //$controller = $action['controller'];
+            list($routeControllerName, $routeActionName) = explode('@', $action['controller']);
+            $routeControllerName = substr($routeControllerName, strrpos($routeControllerName , "\\") + 1);
+            $routeControllerName = strtolower(str_replace('Controller', '', $routeControllerName));
+            Log::info('class: '. $routeControllerName . ' action: ' . $routeActionName);
+            // 非授权用户时，需要校验
+            if (($routeControllerName == 'index' && $routeActionName=='getQrcode')
+                ||($routeControllerName == 'index' && $routeActionName=='getOpenId')
+                || ($routeControllerName == 'user' && $routeActionName=='insert')) {
+                // 不做校验
+            } else {
+                $this->getUserId();
+                //$this->_openid = $request->get('openid');// Cache::get($request->get('session_key'));
 
-        // 非授权用户时，需要校验
-        if ($routeControllerName != 'user' && $routeActionName != 'insert') {
-
-            if ($this->getMd5($this->_openid) !== $request->get('session_key')) {
-                echo json_encode(['code' => 400, 'msg' => '非法请求的接口']); exit;
+//                if (Cache::get(md5($this->_openid)) !== $request->get('session_key')) {
+//                    echo json_encode(['code' => 399, 'msg' => '非法请求的接口', 'key' => Cache::get(md5($this->_openid)), 'key2' => $request->get('session_key')]); exit;
+//                }
             }
+
+            //$this->_openid = Cache::get($request->get('session_key'));
+
+            // 重新设置，不过期
+            //Cache::put(md5($this->_openid), $request->get('session_key'), 120);
         }
     }
 
@@ -135,15 +150,50 @@ class CommonController extends Controller
         }
     }
 
+    function http_post($url, $data = [], $json = true, $response = 'json'){
+        if(function_exists('curl_init')) {
+            $urlArr = parse_url($url);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+
+            if($json){
+                $data = json_encode($data);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
+            }
+
+            if (strnatcasecmp($urlArr['scheme'], 'https') == 0) {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在
+            }
+
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            $output = curl_exec($ch);
+
+            if(curl_errno($ch)){
+                return curl_error($ch);
+            }
+
+            $info = curl_getinfo($ch);
+            curl_close($ch);
+
+            if (is_array($info) && $info['http_code'] == 200) {
+                return $response == 'json' ? json_decode($output, true, JSON_UNESCAPED_UNICODE) : $output;
+            } else {
+                exit('请求失败（code）：' . $info['http_code']);
+            }
+        } else {
+            throw new Exception('请开启CURL扩展');
+        }
+    }
+
     protected function getUserId()
     {
-        return 1;
-        $session = request('session_key');
-        $sessionValue = session($session);
-
-        if ($session && stripos($sessionValue, '|')) {
-            $openId = explode('|',$sessionValue)[1];
-            return Member::where('open_id', $openId)->pluck('id');
+        if ($this->_openid) {
+            return Member::where(['openid' => $this->_openid])->pluck('id');
         } else {
             echo json_encode(
                 [

@@ -39,5 +39,32 @@ return [
         'a1' => 'Administrator',
         'w1' => 'Clerk',
         'w2' => 'Manager'
+    ],
+
+    // submail 短信发送
+    'sms_app_id' => '32768',
+    'sms_app_key' => 'b9ad8a540c1723d7ed48a6353610e89d',
+    'sms_send_url' => 'https://api.mysubmail.com/message/xsend.json',
+    'sms_verify_code' => '58iuv2', // 验证码模板ID
+    'sms_expired_time' => 15, // 15分钟有效
+
+    // 银豹收银接口
+    'yb_app_id' => '8C246093469D92427AF811EBB6D81364',
+    'yb_app_key' => '516277760616528182',
+    'yb_app_url' => 'https://area17-win.pospal.cn:443/',
+
+    // 允许登录的手机号
+    'allow_login' => [
+        '15359982679',
+        '15260983827',
+        '18649777725',
+        '13799952103'
+    ],
+
+    // 组合优惠券
+    'coupon_group' => [
+        ['id' => 5, 'name'=> '免单1杯', 'num' => 2],
+        ['id' => 6, 'name'=> '买1送1', 'num' => 2],
+        ['id' => 7, 'name'=> '买2送1', 'num' => 2],
     ]
 ];

@@ -9,6 +9,10 @@
         body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
         body .demo-class .layui-layer-btn a{background:#333;}
         body .demo-class .layui-layer-btn .layui-layer-btn1{background:#999;}
+        .layui-body{
+            -webkit-overflow-scrolling: touch;
+            overflow-y: scroll;
+        }
     </style>
 @endsection
 @section('body')

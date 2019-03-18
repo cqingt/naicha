@@ -37,31 +37,41 @@ class OrderController extends CommonController
         $temperatures = [];
         $orderPrice = 0; // 订单总价
         $memberId = $this->getUserId();
-
+        //echo '<pre>';print_r($cartArr);exit;
         foreach ($cartArr as $data) {
-            $temperature = $data['temperature'];
-            $sugar = $data['sugar'];
-            $weight = $data['weight'];
-            $doubleId = (int)$data['double'];
-            $goodsIds = $data['list'];
-            $sugar && array_push($goodsIds, $sugar); // 有选择糖类
-            $temperatures[$index] = $temperature ? : 'ice'; // 设置温度
+            $deploy = '';
+            $goodsIds = [];
 
-            $goodsInfo = Goods::whereIn('id', $goodsIds)->select(['id', 'name', 'price', 'image'])->get();
+            foreach ($data as $cart) {
+                if ($cart['flag'] == 'sugar') {
+                    $deploy = $cart['deploy'];
+                }
+
+                array_push($goodsIds, $cart['id']);
+            }
+
+            $temperatures[$index] = 'normal'; // 设置温度
+
+            $goodsInfo = Goods::whereIn('id', $goodsIds)->select(['id', 'name', 'price', 'image','category_id'])->get();
 
             foreach ($goodsInfo as $goods) {
+                if ($goods['category_id'] == 6) {
+                    $orderDeploy = $deploy;
+                } else {
+                    $orderDeploy = '';
+                }
                 $insertData[] = [
                     'goods_id'    => $goods['id'],
                     'goods_name'  => $goods['name'],
                     'goods_image' => $goods['image'],
-                    'goods_num'   => $goods['id'] == $doubleId ? 2 : 1,
+                    'goods_num'   => 1,
                     'goods_price' => $goods['price'],
                     'package_num' => $index,
-                    'deploy'      => $sugar == $goods['id'] ? $weight : '',
+                    'deploy'      => $orderDeploy,
                     'created_at'  => $date
                 ];
-                $goodsPrice = bcmul($goods['price'], $goods['id'] == $doubleId ? 2 : 1, 2);
-                $orderPrice = bcadd($orderPrice, $goodsPrice, 2);
+
+                $orderPrice = bcadd($orderPrice, $goods['price'], 2);
             }
             $index++;
         }
@@ -96,7 +106,7 @@ class OrderController extends CommonController
                 'reduced_price'  => $reducedPrice,
                 'coupon_id'      => $couponId,
                 'pay_type'       => 1,
-                'status'         => 0,     // 待支付
+                'status'         => 1,     // 待支付
                 'created_at'     => $date,
                 'temperature'    => $temperatures ? serialize($temperatures) : ''
             ]);
@@ -224,15 +234,13 @@ class OrderController extends CommonController
     public function index()
     {
         // 取最近一条,未完成的
-        $orderInfo = Order::where(['member_id' => 1, 'shop_id' => 1, 'status' => 1])
+        $orderInfo = Order::where(['member_id' => $this->getUserId(), 'shop_id' => 1])
+            ->where('status', '>', 0)
             ->whereBetween('created_at', [date('Y-m-d'), date('Y-m-d H:i:s')])
             ->orderBy('id', 'desc')
             ->first();
 
         $carts = [];
-        $recommends = [];
-        //$orderInfo = []; // todo delete
-        // 订单状态处理中的
         if (! empty ($orderInfo)) {
 
             $details = $orderInfo->details->toArray();
@@ -240,40 +248,9 @@ class OrderController extends CommonController
             foreach ($details as $detail) {
                 $carts[$detail['package_num']][] = $detail;
             }
-
-        } else {
-            // 获取推荐
-            $formulas = Formula::where('shop_id', 1)
-                ->orderBy('likes', 'desc')
-                ->limit(15)
-                ->get();
-
-            foreach ($formulas as $formula) {
-                $orderInfo = Order::find($formula['order_id']);
-                $temperature = $orderInfo['temperature'] ? unserialize($orderInfo['temperature']) : [];
-                $temps = config('web.temperature');
-                $orderDetail = $orderInfo->details->toArray();
-                $cart = [];
-
-                foreach ($orderDetail as $detail) {
-                    if ($formula['package_num'] == $detail['package_num']) {
-                        if (! empty($detail['deploy'])) {
-                            $detail['goods_name'] =  $detail['goods_name'] . '(' . $detail['deploy'] . ')';
-                        }
-                        $cart[] = $detail;
-                    }
-                }
-
-                // 杯子的温度
-                if (isset($temperature[$formula['package_num']])) {
-                    $cart[] = ['goods_name' => $temps[$temperature[$formula['package_num']]], 'type' => $temperature[$formula['package_num']], 'id' => -1];
-                }
-
-                array_push($recommends, $cart);
-            }
         }
 
-        return $this->_successful(['orders' => array_values($carts), 'recommends' => array_values($recommends)]);
+        return $this->_successful(['orders' => $carts ? array_values($carts) : [], 'orderStatus' => $orderInfo['status']]);
     }
 
     /**

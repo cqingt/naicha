@@ -33,7 +33,7 @@ class BusinessController extends CommonController
         if (empty($orderInfo)) {
             return $this->_error('UNKNOWN_ERROR', '订单不存在');
         }
-
+        return $this->_successful();
         $callback = new PayNotifyCallBack();
 
         $result = $callback->queryOrder('', $orderInfo['order_sn']);

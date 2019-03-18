@@ -57,14 +57,14 @@ class OrdersController extends CommonController
         $order['status'] =  $this->getStatus($order['status']);
         $order['pay_type'] = $this->getPayType($order['pay_type']);
         $temps = [];
-        $tags = config('web.temperature'); // 温度选择
+//        $tags = config('web.temperature'); // 温度选择
 
-        if ($order['temperature']) {
-            $temps = unserialize($order['temperature']);
-            foreach ($temps as &$temp) {
-                $temp = $tags[$temp];
-            }
-        }
+//        if ($order['temperature']) {
+//            $temps = unserialize($order['temperature']);
+//            foreach ($temps as &$temp) {
+//                $temp = $tags[$temp];
+//            }
+//        }
 
         $packages = [];
 

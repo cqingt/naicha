@@ -5,8 +5,8 @@ use App\Http\Models\Formula;
 use App\Http\Models\MemberLike;
 use App\Http\Models\Push;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-
+//use Illuminate\Support\Facades\Cache;
+use Cache;
 
 class IndexController extends CommonController
 {
@@ -21,7 +21,7 @@ class IndexController extends CommonController
         foreach ($formulas as $key => &$formula) {
             $formula['username'] = $formula->member->username;
             $formula['avatar'] = $formula->member->avatar;
-            if ($formula['id'] == $mine['id']) {
+            if ($mine && $formula['id'] == $mine['id']) {
                 $position = $key + 1;
             }
 
@@ -44,19 +44,34 @@ class IndexController extends CommonController
             $mine['avatar'] = $mine->member->avatar;
         }
 
-        return $this->_successful(['formulas' => $formulas, 'pushes' => $pushes, 'mine' => $mine]);
+        return $this->_successful(['formulas' => $formulas ? : [], 'pushes' => $pushes ? : [], 'mine' => $mine ? : []]);
     }
 
     // 点赞
     public function like(Request $request, $id)
     {
-        if (MemberLike::where(['member_id' => $this->getUserId(), 'formula_id' => $id])->exists()) {
-            return $this->_error('FORMULA_HAS_LIKE');
+        $date = date('Y-m-d');
+        $memberId = $this->getUserId();
+
+        if (MemberLike::where(['member_id' => $memberId, 'formula_id' => $id, 'date_at' => $date])->exists()) {
+            if (MemberLike::where(['member_id' => $memberId, 'formula_id' => $id, 'date_at' => $date])->pluck('times') >= 6) {
+                return $this->_error('FORMULA_HAS_LIKE', '该配方点赞已达到限制，明天再来吧');
+            } else {
+                MemberLike::where(['member_id' => $this->getUserId(), 'formula_id' => $id])->increment('times', 1);
+
+                Formula::where('id', $id)->increment('likes', 1);
+                $likes = Formula::where('id', $id)->pluck('likes');
+
+                return $this->_successful(['likes' => $likes ]);
+            }
+
         } else {
             MemberLike::insert([
-                'member_id' => $this->getUserId(),
+                'member_id' => $memberId,
                 'formula_id' => $id,
-                'created_at' => date('Y-m-d H:i:s')
+                'times' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'date_at' => $date
             ]);
 
             Formula::where('id', $id)->increment('likes', 1);
@@ -64,6 +79,18 @@ class IndexController extends CommonController
 
             return $this->_successful(['likes' => $likes ]);
         }
+    }
+
+    // 获取二维码
+    public function getQrcode()
+    {
+        $url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=';
+        $url .= $this->getToken();
+
+        $params = ['path' => 'pages/index/index'];
+
+        $result = $this->http_post($url, $params);
+        print_r($result);exit;
     }
 
     // 从缓存中获取token
@@ -104,6 +131,42 @@ class IndexController extends CommonController
         } else {
             throw new \Exception('获取token失败');
         }
+    }
+
+    public function getSession(Request $request)
+    {
+        $openid =  $request->input('openid');
+        $sessionkey = $request->input('sessionkey');
+
+        if (empty($openid) || empty($sessionkey)) {
+            return $this->_error('UNKNOWN_CODE', 'openid或sessionkey不能为空');
+        }
+
+        $value = md5($openid . config('web.api_mix') . $sessionkey);
+
+        //Session()->set(md5($openid), $value);
+        Cache::put(md5($openid), $value, 4000); // 小于3天，因为tx的session_key有效期是3天
+
+        Cache::put($value, $openid, 4000); // 存储，用于查询 接口请求后的用户信息
+
+        return $this->_successful(['sessionKey' => $value]);
+    }
+
+    public function getOpenId(Request $request)
+    {
+        $code = $request->get('code');
+
+        if (empty($code)) {
+            return $this->_error('UNKNOWN_CODE', 'code 不能为空');
+        }
+
+        $url = 'https://api.weixin.qq.com/sns/jscode2session?appid=wx0844817c7a6d15cc&secret=fe4b64e1f96f38463033927e038e97a1&js_code=' . $code . '&grant_type=authorization_code';
+        $weixin = file_get_contents($url);
+        $jsondecode = json_decode($weixin); //对JSON格式的字符串进行编码
+
+        $array = get_object_vars($jsondecode);//转换成数组
+        //return $array['openid'];//输出openid
+        return $this->_successful(['openid' => $array['openid']]);
     }
 
     public function onLogin()

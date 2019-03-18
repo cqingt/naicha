@@ -6,13 +6,14 @@ use App\Http\Models\Category;
 use App\Http\Models\Goods;
 use App\Http\Models\Formula;
 use App\Http\Models\Order;
+use DB;
 
 class GoodsController extends CommonController
 {
     // 商品
     public function index(Request $request)
     {
-        $categories = Category::select(['id', 'volume', 'name'])->get();
+        $categories = Category::select(['id', 'volume', 'name', 'flag'])->get();
         $newCategory = [];
         foreach ($categories as $category) {
             $newCategory[$category->id] = $category;
@@ -41,7 +42,7 @@ class GoodsController extends CommonController
                 'defaultItem' => [
                     'name' => '滑动选择',
                     'price' => 0,
-                    'image' => 'http://osg1aqywx.bkt.clouddn.com/timg30.png',
+                    'image' => 'http://cqingt.oss-cn-shenzhen.aliyuncs.com/image/timg3.jpg',
                     'volume' => 0,
                     'calorie' => 0,
                     'pk' => 999,
@@ -60,4 +61,24 @@ class GoodsController extends CommonController
         );
     }
 
+    // 新的产品
+    public function items(Request $request)
+    {
+        $goodses = DB::table('goods')
+            ->join('categories', 'goods.category_id', '=', 'categories.id')
+            ->select(['categories.name','categories.flag','categories.volume','goods.id','goods.name','goods.image','goods.price','goods.reject_id','goods.deploy', 'goods.calorie'])
+            ->where('goods.online', 1)
+            ->orderBy('goods.id', 'asc')
+            ->get();
+
+        $goodsArr = [];
+
+        foreach ($goodses as $goods) {
+            $goodsArr[$goods->flag][] = (array)$goods;
+        }
+
+        return $this->_successful(['goods' => $goodsArr]);
+        //echo '<pre>';
+        //print_r($goodsArr);
+    }
 }

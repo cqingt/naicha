@@ -83,7 +83,11 @@ Route::group(['domain' => 'a1.' . $domain,  'namespace' => 'Admin', 'middleware'
 
 // 店员管理
 Route::group(['domain' => 'w1.' . $domain, 'namespace' => 'Clerk', 'middleware' => 'auth'], function () {
-    Route::get('/','IndexController@index');
+//    Route::get('/','IndexController@index');
+    Route::get('/', function () {
+        return redirect()->route('home');
+    });
+    Route::get('/dashboard', 'IndexController@index')->name('home');
     Route::get('/index','IndexController@index');
     Route::get('/index/listen','IndexController@listen');
     Route::get('/index/data','IndexController@data');
@@ -118,8 +122,11 @@ Route::group(['domain' => 'w2.' . $domain, 'namespace' => 'Manager', 'middleware
 Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/','IndexController@index');
     Route::get('/index/token','IndexController@requestToken');
+    Route::get('/index/qrcode','IndexController@getQrcode');
     Route::get('/index/index','IndexController@index');
     Route::get('/index/like/{id}','IndexController@like');
+    Route::post('/index/getSession','IndexController@getSession');
+    Route::get('/index/openid','IndexController@getOpenId');
 
     Route::get('/user/coupons', 'UserController@coupons');
     Route::get('/user/tastes', 'UserController@tastes');
@@ -130,6 +137,11 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/user/deleteTaste/{id}', 'UserController@deleteTaste');
     Route::get('/user/index','UserController@index');
     Route::post('/user/insert','UserController@insert');
+    Route::post('/user/message','UserController@postMessage');
+    Route::get('/user/message','UserController@messageList');
+    Route::post('/user/uploadImg','UserController@uploadImg');
+    Route::post('/user/send','UserController@sendSms');
+    Route::post('/user/bind','UserController@bindPhone');
 
     // 创建订单
     Route::post('/order/create','OrderController@create');
@@ -137,11 +149,22 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/order/cancel','OrderController@cancel');
     Route::get('/order/index','OrderController@index');
 
+    Route::get('/goods/items','GoodsController@items');
     Route::get('/goods/index','GoodsController@index');
     Route::get('/business/pay','BusinessController@pay');
+    Route::get('/business/orderQuery','BusinessController@orderQuery');
     Route::get('/business/weixinPay','BusinessController@weixinPay');
 
     Route::get('/callback/index','CallbackController@index');
+
+    Route::get('/crontab/index','CrontabController@getByHour');
+
+    Route::get('/html/index','HtmlController@index');
+    Route::get('/html/login','HtmlController@login');
+    Route::get('/html/send','HtmlController@sendSms');
+    Route::post('/html/submit','HtmlController@ajaxLogin');
+    Route::post('/html/verifyCoupon','HtmlController@verifyCoupon');
+    Route::post('/html/sendCoupon','HtmlController@sendCoupon');
 });
 
 Route::get('auth/login', 'Auth\AuthController@getLogin');
