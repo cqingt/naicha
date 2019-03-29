@@ -352,15 +352,20 @@ class UserController extends CommonController
         $filename = $request->file('imgPath')->getClientOriginalName();
         $mineType = substr($filename, strrpos($filename, '.'));
 
-        $filePath = 'message/' . date('Ymd') . uniqid() . $mineType;
+        $name = date('Ymd') . uniqid() . $mineType;
+        $filePath = 'message/' . $name;
 
         $result = Storage::put(
             $filePath,
             file_get_contents($request->file('imgPath')->getRealPath())
         );
 
+        // 图片压缩
+        $this->image_png_size_add('uploads/' . $filePath, 'uploads/' . $filePath);
+
+        $newFilePath = $this->fptUpload('uploads/' . $filePath, $name);
         if ($result) {
-            return $this->_successful(['filePath' => 'uploads/' . $filePath]);
+            return $this->_successful(['filePath' => 'uploads/' . $filePath, 'newPath' => $newFilePath]);
         } else {
             return $this->_error('PARAM_NOT_EMPTY', '文件上传失败');
         }

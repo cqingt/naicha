@@ -24,7 +24,7 @@ class OrderController extends CommonController
     public function create(Request $request)
     {
         $data = $request->get('data');
-        $couponId = $request->get('couponId');
+        $couponId = $request->get('couponId'); // member_coupon.id
 
         if (empty($data)) {
             return $this->_error('UNKNOWN_ERROR', '请选择配料');
@@ -55,7 +55,7 @@ class OrderController extends CommonController
             $goodsInfo = Goods::whereIn('id', $goodsIds)->select(['id', 'name', 'price', 'image','category_id'])->get();
 
             foreach ($goodsInfo as $goods) {
-                if ($goods['category_id'] == 6) {
+                if ($goods['category_id'] == 7) {
                     $orderDeploy = $deploy;
                 } else {
                     $orderDeploy = '';
@@ -68,7 +68,8 @@ class OrderController extends CommonController
                     'goods_price' => $goods['price'],
                     'package_num' => $index,
                     'deploy'      => $orderDeploy,
-                    'created_at'  => $date
+                    'created_at'  => $date,
+                    'updated_at'  => $date
                 ];
 
                 $orderPrice = bcadd($orderPrice, $goods['price'], 2);
@@ -81,7 +82,9 @@ class OrderController extends CommonController
             $reducedPrice = 0;
 
             if ($couponId) {
-                $reducedPrice = Coupon::where('id', $couponId)
+                $cId = MemberCoupon::where('id', $couponId)->pluck('coupon_id');
+
+                $reducedPrice = Coupon::where('id', $cId)
                     ->where('start_time', '<', $date)
                     ->where('stop_time', '>=', $date)
                     ->where(function ($query) use($orderPrice) {
@@ -94,19 +97,19 @@ class OrderController extends CommonController
                     throw new \Exception('优惠券不存在');
                 }
 
-                MemberCoupon::where(['member_id' => $memberId, 'coupon_id' => $couponId])->update(['used' => 1]);
+                MemberCoupon::where(['member_id' => $memberId, 'id' => $couponId])->update(['used' => 1]);
             }
 
             Order::insert([
                 'shop_id'        => $this->_shopId,
                 'member_id'      => $memberId,
                 'order_sn'       => $this->getOrderSn(),
-                'price'          => bcsub($orderPrice, $reducedPrice, 2),
+                'price'          => 0.01,// bcsub($orderPrice, $reducedPrice, 2),
                 'original_price' => $orderPrice,
                 'reduced_price'  => $reducedPrice,
                 'coupon_id'      => $couponId,
                 'pay_type'       => 1,
-                'status'         => 1,     // 待支付
+                'status'         => 0,     // 待支付
                 'created_at'     => $date,
                 'temperature'    => $temperatures ? serialize($temperatures) : ''
             ]);
@@ -150,12 +153,12 @@ class OrderController extends CommonController
 
         $couponList = DB::table('member_coupons')
             ->join('coupons', 'member_coupons.coupon_id', '=', 'coupons.id')
-            ->select(['coupons.id', 'coupons.title', 'coupons.match_price', 'coupons.reduced_price', 'coupons.stop_time'])
+            ->select(['coupons.id', 'coupons.title', 'coupons.match_price', 'coupons.reduced_price', 'coupons.stop_time', 'member_coupons.id as member_coupon_id'])
             ->where('member_coupons.member_id', $memberId)
             ->where('member_coupons.used', '=', 0)
             ->where(function ($query) use($orderPrice) {
                 $query->where('coupons.match_price', '<=', $orderPrice)
-                    ->orWhere('coupons.match_price', '=', 0);
+                    ->orWhere('coupons.match_price', '>', 0);
             })
             ->where('coupons.stop_time', '>=', $datetime)
             ->where('coupons.start_time', '<', $datetime)
@@ -187,6 +190,14 @@ class OrderController extends CommonController
             'coupons' => $couponList
         ];
 
+        // 排队数
+        $waiting = Order::where('status', '=', 1)
+            ->where('member_id', '!=', $this->getUserId())
+            ->whereBetween('created_at', [date('Y-m-d'), date('Y-m-d H:i:s')])
+            ->count();
+
+        $data['waitingNum'] = $waiting;
+
         return $this->_successful($data);
     }
 
@@ -204,7 +215,7 @@ class OrderController extends CommonController
         DB::beginTransaction();
         try{
             if ($couponId) {
-                MemberCoupon::where(['member_id' => $memberId, 'coupon_id' => $couponId])->update(['used' => 0]);
+                MemberCoupon::where(['member_id' => $memberId, 'id' => $couponId])->update(['used' => 0]);
             }
 
             Order::where(['id' => $orderId, 'member_id' => $memberId, 'status' => 0])->update(['status' => 6 ]);
@@ -234,7 +245,7 @@ class OrderController extends CommonController
     public function index()
     {
         // 取最近一条,未完成的
-        $orderInfo = Order::where(['member_id' => $this->getUserId(), 'shop_id' => 1])
+        $orderInfo = Order::where(['member_id' => $this->getUserId()])
             ->where('status', '>', 0)
             ->whereBetween('created_at', [date('Y-m-d'), date('Y-m-d H:i:s')])
             ->orderBy('id', 'desc')
@@ -250,7 +261,13 @@ class OrderController extends CommonController
             }
         }
 
-        return $this->_successful(['orders' => $carts ? array_values($carts) : [], 'orderStatus' => $orderInfo['status']]);
+        // 排队中的订单
+        $waiting = Order::where('status', '=', 1)
+            ->where('member_id', '!=', $this->getUserId())
+            ->whereBetween('created_at', [date('Y-m-d'), date('Y-m-d H:i:s')])
+            ->count();
+
+        return $this->_successful(['orders' => $carts ? array_values($carts) : [], 'orderStatus' => $orderInfo['status'], 'waiting' => $waiting ]);
     }
 
     /**

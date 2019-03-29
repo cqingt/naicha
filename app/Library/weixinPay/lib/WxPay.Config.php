@@ -32,7 +32,7 @@ class WxPayConfig extends WxPayConfigInterface
 
     public function GetMerchantId()
     {
-        return '1900009851';
+        return '1525167011';
     }
 
     //=======【支付相关配置：支付成功回调地址/签名方式】===================================
@@ -46,7 +46,8 @@ class WxPayConfig extends WxPayConfigInterface
 
     public function GetSignType()
     {
-        return "HMAC-SHA256";
+        return 'MD5';
+        //return "HMAC-SHA256";
     }
 
     //=======【curl代理设置】===================================
@@ -88,7 +89,7 @@ class WxPayConfig extends WxPayConfigInterface
      */
     public function GetKey()
     {
-        return '8934e7d15453e97507ef794cf7b0519d';
+        return 'd48f8fadf80dAc656c746574e60890DC';
     }
 
     public function GetAppSecret()

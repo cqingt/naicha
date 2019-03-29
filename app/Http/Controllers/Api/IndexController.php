@@ -1,36 +1,45 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Models\Member;
 use App\Http\Models\Formula;
 use App\Http\Models\MemberLike;
 use App\Http\Models\Push;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Cache;
 use Cache;
+use DB;
 
 class IndexController extends CommonController
 {
     // 点赞排行
     public function index(Request $request)
     {
-        $formulas = Formula::orderBy('likes', 'desc')->limit(30)->get();
-        $mine = Formula::where(['member_id' => $this->getUserId()])->orderBy('likes', 'desc')->first();
-        $position = 51; //默认排名 51
-        $max = 1000;
+        //$formulas = Formula::orderBy('likes', 'desc')->limit(30)->get();
+        //$mine = Formula::where(['member_id' => $this->getUserId()])->orderBy('likes', 'desc')->first();
+        $position = 0; //默认排名 51
+        $max = 1;
+        $userId = $this->getUserId();
 
-        foreach ($formulas as $key => &$formula) {
-            $formula['username'] = $formula->member->username;
-            $formula['avatar'] = $formula->member->avatar;
-            if ($mine && $formula['id'] == $mine['id']) {
+        $formulas = DB::table('members')
+            ->join('formulas', 'members.formula_id', '=', 'formulas.id')
+            ->select(['formulas.id','formulas.likes', 'formulas.title', 'members.username', 'members.avatar', 'members.id as userId'])
+            ->orderBy('formulas.likes', 'desc')
+            ->get();
+        $mine = [];
+        foreach ($formulas as $key => $formula) {
+
+            if ($userId == $formula->userId) {
+                $mine = (array)$formula;
                 $position = $key + 1;
             }
 
             if ($key == 0) {
-                $max = $formula['likes'];
+                $max = $formula->likes;
             }
         }
 
-        $pushes = Push::all();
+        $pushes = [];// Push::all();
 //        foreach ($pushes as $key => &$push) {
 //            $push['image'] = $request->root() . $push['image'];
 //        }
@@ -40,30 +49,34 @@ class IndexController extends CommonController
             $mine['position'] = $position;
             $mine['max'] = $max;
             $mine['percent'] = $max ? bcdiv($mine['likes'], $max, 2) * 100 : 100;
-            $mine['username'] = $mine->member->username;
-            $mine['avatar'] = $mine->member->avatar;
         }
 
         return $this->_successful(['formulas' => $formulas ? : [], 'pushes' => $pushes ? : [], 'mine' => $mine ? : []]);
     }
 
-    // 点赞
+    // 点赞,一个用户一天限制6次
     public function like(Request $request, $id)
     {
         $date = date('Y-m-d');
         $memberId = $this->getUserId();
 
+        $times = DB::table('member_likes')->where(['member_id' => $memberId, 'date_at' => $date])->sum('times');
+
+        if ($times >= 6) {
+            return $this->_error('FORMULA_HAS_LIKE', '一天最多点赞6次');
+        }
+
         if (MemberLike::where(['member_id' => $memberId, 'formula_id' => $id, 'date_at' => $date])->exists()) {
-            if (MemberLike::where(['member_id' => $memberId, 'formula_id' => $id, 'date_at' => $date])->pluck('times') >= 6) {
-                return $this->_error('FORMULA_HAS_LIKE', '该配方点赞已达到限制，明天再来吧');
-            } else {
+//            if (MemberLike::where(['member_id' => $memberId, 'formula_id' => $id, 'date_at' => $date])->pluck('times') >= 6) {
+//                return $this->_error('FORMULA_HAS_LIKE', '该配方点赞已达到限制，明天再来吧');
+//            } else {
                 MemberLike::where(['member_id' => $this->getUserId(), 'formula_id' => $id])->increment('times', 1);
 
                 Formula::where('id', $id)->increment('likes', 1);
                 $likes = Formula::where('id', $id)->pluck('likes');
 
                 return $this->_successful(['likes' => $likes ]);
-            }
+//            }
 
         } else {
             MemberLike::insert([
@@ -211,5 +224,44 @@ class IndexController extends CommonController
             return $value;
         }
         return md5($value);
+    }
+
+    /**
+     * 获取分享的信息
+     */
+    public function getShareInfo(Request $request)
+    {
+        $shareId =  $request->input('shareId');
+
+        if (empty($shareId)) {
+            return $this->_error('UNKNOWN_CODE', '参数不能为空');
+        }
+
+        $shareInfo = DB::table('formulas')
+            ->join('members', 'formulas.member_id', '=', 'members.id')
+            ->select(['members.avatar', 'formulas.id', 'members.username', 'formulas.likes', 'formulas.title'])
+            ->where('formulas.id', $shareId)
+            ->get();
+
+        if (! empty($shareInfo)) {
+            $shareInfo = (array)$shareInfo[0];
+            $shareInfo['title'] = explode('+', $shareInfo['title']);
+        }
+
+        $userNum = $userInfo = DB::table('member_likes')
+            ->join('members', 'member_likes.member_id', '=', 'members.id')
+            ->select(['members.avatar', 'members.id', 'members.username'])
+            ->where('member_likes.formula_id', $shareId)
+            ->count();
+
+        $userInfo = DB::table('member_likes')
+            ->join('members', 'member_likes.member_id', '=', 'members.id')
+            ->select(['members.avatar', 'members.id', 'members.username'])
+            ->where('member_likes.formula_id', $shareId)
+            ->orderBy('member_likes.id')
+            ->limit(8)
+            ->get();
+
+        return $this->_successful(['shareInfo' => $shareInfo, 'userInfo' => $userInfo, 'userNum' => $userNum]);
     }
 }

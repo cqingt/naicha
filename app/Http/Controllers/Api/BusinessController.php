@@ -9,6 +9,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Models\Order;
 use App\Http\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -16,8 +17,9 @@ use App\Library\weixinPay\lib\PayNotifyCallBack;
 use App\Library\weixinPay\lib\WxPayUnifiedOrder;
 use App\Library\weixinPay\lib\WxPayApi;
 use App\Library\weixinPay\lib\WxPayConfig;
+use DB;
 
-class BusinessController extends CommonController
+class BusinessController extends Controller
 {
     // 平台订单支付状态查询
     public function orderQuery(Request $request)
@@ -25,20 +27,28 @@ class BusinessController extends CommonController
         $orderId = $request->get('orderId');
 
         if (empty($orderId)) {
-            return $this->_error('PARAM_NOT_EMPTY');
+            return $this->_error('参数不能为空');
         }
 
-        $orderInfo = Order::where(['id' => $orderId, 'member_id' => $this->getUserId()])->first()->toArray();
+        $orderInfo = Order::where(['id' => $orderId])->first()->toArray();
 
         if (empty($orderInfo)) {
-            return $this->_error('UNKNOWN_ERROR', '订单不存在');
+            return $this->_error('订单不存在');
         }
-        return $this->_successful();
+
+        if ($orderInfo['status'] == 1) {
+            return $this->_successful();
+        }
+
         $callback = new PayNotifyCallBack();
 
         $result = $callback->queryOrder('', $orderInfo['order_sn']);
 
-        return $this->_successful($result);
+        if ($result) {
+            return $this->_successful();
+        } else {
+            return $this->_error('订单未支付');
+        }
     }
 
     /**
@@ -47,7 +57,7 @@ class BusinessController extends CommonController
      */
     public function callbackUrl(Request $request)
     {
-        return $request->root() . '/callback/index';
+        return $request->root() . '/business/callback';
     }
 
     //微信支付
@@ -55,50 +65,101 @@ class BusinessController extends CommonController
     {
         $unifiedOrder = new WxPayUnifiedOrder();
         $orderId = $request->get('orderId'); // 订单号
+        $openId = $request->get('openid'); // 订单号
 
-        if (empty($orderId)) {
-            return $this->_error('PARAM_NOT_EMPTY');
+        if (empty($orderId) || empty($openId)) {
+            return $this->_error('参数不能为空');
         }
 
-        $orderInfo = Order::where(['id' => $orderId, 'status' => 0, 'member_id' => $this->getUserId()])->first()->toArray();
+        $orderInfo = Order::where(['id' => $orderId])->get()->toArray();
 
         if (empty($orderInfo)) {
-            return $this->_error('UNKNOWN_ERROR', '订单不存在');
+            return $this->_error('订单不存在');
+        }
+
+        $orderInfo = $orderInfo[0];
+
+        if  ($orderInfo['status'] != 0) {
+            return $this->_error('订单已支付');
         }
 
         $orderDetail = OrderDetail::where('order_id', $orderId)->first();
+        $weixinConfig = new WxPayConfig();
 
-        $wxConfig = config('web.weixin');
-        $unifiedOrder->SetAppid($wxConfig['app_id']);
+        $unifiedOrder->SetAppid($weixinConfig->GetAppId());
         $unifiedOrder->SetBody($orderDetail['goods_name']);
-        $unifiedOrder->SetMch_id($wxConfig['mch_id']);
+        $unifiedOrder->SetMch_id($weixinConfig->GetMerchantId());
         $unifiedOrder->SetNonce_str(WxPayApi::getNonceStr());
         $unifiedOrder->SetNotify_url($this->callbackUrl($request));
-        $unifiedOrder->SetOpenid($this->_openid);
+        $unifiedOrder->SetOpenid($openId);
         $unifiedOrder->SetSpbill_create_ip($request->ip());
         $unifiedOrder->SetOut_trade_no($orderInfo['order_sn']);
-        $unifiedOrder->SetTotal_fee(bcmul($orderInfo['price'], 100, 2));
+        $unifiedOrder->SetTotal_fee(bcmul(0.01, 100, 0)); // $orderInfo['price']*100
         $unifiedOrder->SetTrade_type('JSAPI');
-
-        $weixinConfig = new WxPayConfig();
-        $sign = $unifiedOrder->SetSign($weixinConfig);
 
         $result = WxPayApi::unifiedOrder($weixinConfig, $unifiedOrder);
 
-        if ($result['return_code'] == 'SUCCESS' && $result['return_code'] == 'SUCCESS') {
+        if ($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS') {
             $time = time();
 
-            $data['timeStamp'] = "$time";//时间戳
-            $data['nonceStr'] = $unifiedOrder->GetNonce_str();//随机字符串
+            $data['timeStamp'] = (string)$time;//时间戳
+            $data['nonceStr'] = $result['nonce_str'];//随机字符串
             $data['signType'] = 'MD5';                        //签名算法，暂支持 MD5
-            $data['package'] = 'prepay_id=' . $result['PREPAY_ID'];
-            $data['paySign'] = $sign;
-            $data['out_trade_no'] = $unifiedOrder->GetOut_trade_no();
+            $data['package'] = 'prepay_id=' . $result['prepay_id'];
+
+            // 小程序前端调起支付的paySign 需要再加密
+            $signParam = [
+                'appId' => $result['appid'],
+                'nonceStr' => $result['nonce_str'],
+                'package' => $data['package'],
+                'signType' => 'MD5',
+                'timeStamp' => $data['timeStamp'],
+                'key' => $weixinConfig->GetKey()
+            ];
+
+            $md5Str = '';
+            foreach ($signParam as $key => $item) {
+                if (! empty($md5Str)) {
+                    $md5Str .= '&';
+                }
+                $md5Str .= "{$key}=" . $item;
+            }
+
+            $data['paySign'] = strtoupper(md5($md5Str));
+
+            //$data['appId'] = $weixinConfig->GetAppId();
+            //$data['out_trade_no'] = $unifiedOrder->GetOut_trade_no();
 
             return $this->_successful($data);
         } else {
-            return $this->_error('UNKNOWN_ERROR', $result['return_msg']);
+            return $this->_error(isset($result['err_code_des']) ? $result['err_code_des'] : $result['return_msg']);
         }
+    }
+
+    public function callback()
+    {
+        $notify = new PayNotifyCallBack();
+
+        $config = new WxPayConfig();
+
+        $notify->Handle($config, false);
+    }
+
+    protected function _successful($data = [], $code = 200)
+    {
+        return [
+            'code' => $code,
+            'msg' => 'success',
+            'data' => $data
+        ];
+    }
+
+    protected function _error($errorMsg = '', $code = 401)
+    {
+        return [
+            'code' => $code,
+            'msg' => $errorMsg,
+        ];
     }
 
 }

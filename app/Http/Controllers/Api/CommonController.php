@@ -205,4 +205,116 @@ class CommonController extends Controller
             exit;
         }
     }
+
+    /**
+     * @param $imgsrc
+     * @param $imgdst
+     */
+    protected function image_png_size_add($imgsrc, $imgdst)
+    {
+        list($width, $height, $type) = getimagesize($imgsrc);
+        if ($height >= 1920) {
+            $new_width = $width * 0.5;
+            $new_height = $height * 0.5;
+        } elseif ($height >= 1280) {
+            $new_width = $width * 0.75;
+            $new_height = $height * 0.75;
+        } else {
+            $new_width = $width;
+            $new_height = $height;
+        }
+
+        switch ($type) {
+            case 1:
+                $giftype = $this->check_gifcartoon($imgsrc);
+                if ($giftype) {
+                    header('Content-Type:image/gif');
+                    $image_wp = imagecreatetruecolor($new_width, $new_height);
+                    $image = imagecreatefromgif($imgsrc);
+                    imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                    imagejpeg($image_wp, $imgdst, 75);
+                    imagedestroy($image_wp);
+                }
+                break;
+            case 2:
+                header('Content-Type:image/jpeg');
+                $image_wp = imagecreatetruecolor($new_width, $new_height);
+                $image = imagecreatefromjpeg($imgsrc);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                imagejpeg($image_wp, $imgdst, 75);
+                imagedestroy($image_wp);
+                break;
+            case 3:
+                header('Content-Type:image/png');
+                $image_wp = imagecreatetruecolor($new_width, $new_height);
+                $image = imagecreatefrompng($imgsrc);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                imagejpeg($image_wp, $imgdst, 75);
+                imagedestroy($image_wp);
+                break;
+        }
+    }
+
+    /**
+     * desription 判断是否gif动画
+     * @param sting $image_file图片路径
+     * @return boolean t 是 f 否
+     */
+
+
+    /**
+     * @param $image_file
+     * @return bool
+     */
+    protected function check_gifcartoon($image_file)
+    {
+        $fp = fopen($image_file, 'rb');
+        $image_head = fread($fp, 1024);
+        fclose($fp);
+        return preg_match("/" . chr(0x21) . chr(0xff) . chr(0x0b) . 'NETSCAPE2.0' . "/", $image_head) ? false : true;
+    }
+
+    protected function fptUpload($source_file, $filename)
+    {
+        $config = config('filesystems.disks');
+
+        $ftp_server = $config['ftp']['host'];
+
+        // 建立基础连接
+        $conn_id = ftp_connect($ftp_server);
+
+        // 使用用户名和口令登录
+        $login_result = ftp_login($conn_id, $config['ftp']['username'], $config['ftp']['password']);
+
+        // 检查是否成功
+        if ((!$conn_id) || (!$login_result)) {
+            echo "FTP connection has failed!";
+            exit;
+        }
+
+        ftp_pasv($conn_id, true);// 打开被动模式传输
+
+        $dir = '/messages/' . date('Ymd/') ;
+
+        if (! file_exists($dir)) {
+            @ftp_mkdir($conn_id, $dir);
+        }
+
+        ftp_chdir($conn_id, $dir);
+        ftp_chmod($conn_id, 777, $dir);
+
+        // 上传文件
+        $upload = ftp_put($conn_id, $filename, $source_file, FTP_BINARY);
+
+        // 关闭 FTP 流
+        ftp_close($conn_id);
+
+        // 检查上传结果
+        if (! $upload) {
+            return false;
+        } else {
+            return $dir . '/' . $filename;
+        }
+    }
+
 }

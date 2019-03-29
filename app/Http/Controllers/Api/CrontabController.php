@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Models\Member;
 use App\Http\Models\Order;
 use App\Http\Models\Goods;
+use App\Http\Models\Formula;
 use App\Http\Models\CrontabLog;
 use App\Http\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -64,8 +65,15 @@ class CrontabController extends Controller
 
         // 查询一天订单
         if (isset($_GET['type']) && $_GET['type'] == 'day') {
-            $this->startTime = date('Y-m-d 00:00:00');
-            $this->endTime   = date('Y-m-d H:i:s');
+            // 指定日期
+            if (isset($_GET['date']) && $_GET['date']) {
+                $this->startTime = date($_GET['date'] . ' 00:00:00');
+                $this->endTime   = date($_GET['date'] . ' 23:59:59');
+            } else {
+                $this->startTime = date('Y-m-d 00:00:00');
+                $this->endTime   = date('Y-m-d H:i:s');
+            }
+
         } else {
             $this->startTime = date('Y-m-d H:00:00');
             $this->endTime = date('Y-m-d H:59:59');
@@ -76,8 +84,6 @@ class CrontabController extends Controller
     // 每小时查询
     public function getByHour()
     {
-        $this->addLog('请求同步订单数据开始');
-
         while (true) {
             $isMore = $this->queryOrders();
 
@@ -103,11 +109,17 @@ class CrontabController extends Controller
         );
     }
 
+    protected function debug($data, $exit = 0) {
+        if (isset($_GET['debug'])) {
+            echo '<pre>';print_r($data);
+
+            if ($exit) {
+                exit;
+            }
+        }
+    }
     protected function queryOrders()
     {
-//        $startHour = '01';
-//        $endHour = '23';
-
         $data = [
             "appId"     => $this->appId,
             "startTime" => $this->startTime,
@@ -129,6 +141,7 @@ class CrontabController extends Controller
 
         try {
             $result = $this->httpPost($this->baseUrl . self::ORDER_LIST_URL, $dataString, $this->header);
+            $this->addLog('请求同步订单数据开始:' . var_export($result, true));
         } catch (Exception $e) {
             return $this->addLog('请求同步订单数据错误：' . var_export($e->getMessage(), true), 'error');
         }
@@ -204,7 +217,7 @@ class CrontabController extends Controller
 
         if ($result['status'] == 'success' && isset($result['data']) && !empty($result['data'])) {
             $phone = $result['data']['phone'];
-//            $phone = '15359982679';
+
             $userInfo = Member::where(['telephone' => $phone])->first();
 
             if (! empty($userInfo)) {
@@ -215,6 +228,8 @@ class CrontabController extends Controller
                 Member::where(['telephone' => $phone])->update(['customerUid' => $customerUid]);
 
                 return $userInfo['id'];
+            } else {
+                $this->addLog("根据{$customerUid}，查询到用户手机号：{$phone}，未匹配");
             }
         }
 
@@ -324,10 +339,19 @@ class CrontabController extends Controller
 
         foreach ($items as $item) {
             $orderInfo = [];
+            $customerUid = $item['customerUid'];
+
+            // 过滤美团 饿了么订单
+            if (isset($item['webOrderNo']) && $item['webOrderNo']) {
+                continue;
+            }
+
+            if (! $customerUid) {
+                continue;
+            }
 
             if (! $memberId) {
                 $memberId = 0;
-                $customerUid = $item['customerUid'];
 
                 // 不重复插入
                 if (Order::where('order_sn', $item['sn'])->pluck('id')) {
@@ -391,6 +415,7 @@ class CrontabController extends Controller
                     $deploy = '';
                     $goodsName = '';
 
+                    // 第三方传过来的数据格式是：蔗糖(五分糖)
                     if ($goods['attributeName'] != '黑糖奶盖'
                         && (
                             false !== stripos($goods['attributeName'], '蔗糖')
@@ -421,6 +446,7 @@ class CrontabController extends Controller
 
                 $currentCup++;
             }
+
             //$this->addLog('同步订单新增订单表错误：' . var_export($orderDetail, true), 'error');
             DB::beginTransaction();
 
@@ -444,11 +470,62 @@ class CrontabController extends Controller
                     }
                 }
 
+                $this->setIndex($orderId); //设为首推
+
                 DB::commit();
                 $this->addLog('同步订单新增数据成功：' . $orderId);
             } catch (\Exception $e){
                 DB::rollback();//事务回滚
                 $this->addLog('同步订单新增数据错误：' . $e->getMessage() . ',line: ' . $e->getLine(), 'error');
+            }
+        }
+    }
+
+    /**
+     * 设为首推
+     */
+    protected function setIndex($orderId)
+    {
+        $order = Order::find($orderId);
+        $details = $order->details;
+        $currentTime = date('Y-m-d H:i:s');
+
+        $userInfo = Member::where('id' , $order['member_id'])->first();
+
+        if ($userInfo &&  $userInfo['formula_id']) {
+            return true; // 已设置首推
+        }
+
+        $data = [];
+        foreach ($details as $detail) {
+            $name = $detail['goods_name'];
+
+            if ($detail['deploy']) {
+                $name = $detail['goods_name'] . '(' . $detail['deploy'] . ')';
+            }
+
+            $data[$detail['package_num']][] = $name;
+        }
+
+        foreach ($data as $num => $goodsName) {
+            $item = [
+                'member_id' => $order['member_id'],
+                'order_id' => $order['id'],
+                'shop_id' => $order['shop_id'],
+                'package_num' => $num,
+                'title' => implode('+', $goodsName),
+                'updated_at' => $currentTime,
+                'created_at' => $currentTime
+            ];
+
+            if (! Formula::where(['order_id' => $orderId, 'package_num' => $num])->exists()) {
+                Formula::insert($item);
+                $formulaId = DB::getPdo()->lastInsertId();
+
+                // 首单 设置首推
+                if ($num == 1) {
+                    Member::where('id', $order['member_id'])->update(['formula_id' => $formulaId]);
+                }
             }
         }
     }

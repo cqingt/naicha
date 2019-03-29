@@ -127,6 +127,7 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/index/like/{id}','IndexController@like');
     Route::post('/index/getSession','IndexController@getSession');
     Route::get('/index/openid','IndexController@getOpenId');
+    Route::get('/index/share','IndexController@getShareInfo');
 
     Route::get('/user/coupons', 'UserController@coupons');
     Route::get('/user/tastes', 'UserController@tastes');
@@ -146,7 +147,7 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     // 创建订单
     Route::post('/order/create','OrderController@create');
     Route::get('/order/check','OrderController@check');
-    Route::get('/order/cancel','OrderController@cancel');
+    Route::post('/order/cancel','OrderController@cancel');
     Route::get('/order/index','OrderController@index');
 
     Route::get('/goods/items','GoodsController@items');
@@ -154,8 +155,7 @@ Route::group(['domain' => 'api.' . $domain, 'namespace' => 'Api'], function () {
     Route::get('/business/pay','BusinessController@pay');
     Route::get('/business/orderQuery','BusinessController@orderQuery');
     Route::get('/business/weixinPay','BusinessController@weixinPay');
-
-    Route::get('/callback/index','CallbackController@index');
+    Route::any('/business/callback','BusinessController@callback');
 
     Route::get('/crontab/index','CrontabController@getByHour');
 

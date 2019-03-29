@@ -50,10 +50,12 @@ return [
 
         'ftp' => [
             'driver'   => 'ftp',
-            'host'     => 'ftp.example.com',
-            'username' => 'your-username',
-            'password' => 'your-password',
-
+            'host'     => '47.98.58.208',
+            'username' => 'static_collocat',
+            'password' => 'PQZNMfiTehrNcHpe',
+            'root' => '/messages',
+            'passive' => false,
+            'timeout' => 100,
             // Optional FTP Settings...
             // 'port'     => 21,
             // 'root'     => '',
